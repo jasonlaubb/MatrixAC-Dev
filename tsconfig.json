@@ -2,13 +2,23 @@
   "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": ["esnext"],
     "noEmit": false,
     "strict": true,
-    "alwaysStrict": true,
+    "allowJs": true,
+    "checkJs": false,
     "outDir": "./scripts",
-    "typeRoots": ["./node_modules/@minecraft/*"],
-    "strictNullChecks": false
+    "typeRoots": ["./node_modules/@minecraft"],
+    "strictNullChecks": false,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "alwaysStrict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitThis": true,
+    "noUnusedParameters": true
   }
 }
