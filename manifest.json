@@ -1,0 +1,39 @@
+{
+    "format_version": 2,
+    "header": {
+        "name": "Matrix Anti-Cheat",
+        "description": "§7v1.20.40",
+        "uuid": "219af650-0de7-421c-a188-0c83091e5c8d",
+        "version": [1, 0, 0],
+        "min_engine_version": [1, 20, 40]
+    },
+    "metadata": {
+        "authors": ["jasonlaubb, Hutao999999, ravriv", "RaMiGamerDev"],
+        "license": "AGPLv3",
+        "url": "https://github.com/jasonlaubb/Matrix-AntiCheat"
+    },
+    "modules": [
+        {
+            "type": "data",
+            "uuid": "b23e2110-e9c1-41ce-a7b9-5d9f605c588f",
+            "version": [1, 0, 0]
+        },
+        {
+            "type": "script",
+            "language": "javascript",
+            "uuid": "0694778f-9352-416c-a03c-ad31a1d7e546",
+            "version": [0, 0, 1],
+            "entry": "scripts/index.js"
+        }
+    ],
+    "dependencies": [
+        {
+            "module_name": "@minecraft/server",
+            "version": "1.7.0-beta"
+        },
+        {
+            "module_name": "@minecraft/server-ui",
+            "version": "1.2.0-beta"
+        }
+    ]
+}

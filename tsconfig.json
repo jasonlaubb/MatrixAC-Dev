@@ -1,0 +1,14 @@
+{
+  "include": ["src"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "noEmit": false,
+    "strict": true,
+    "alwaysStrict": true,
+    "outDir": "./scripts",
+    "typeRoots": ["./node_modules/@minecraft/*"],
+    "strictNullChecks": false
+  }
+}
