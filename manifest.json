@@ -2,9 +2,9 @@
     "format_version": 2,
     "header": {
         "name": "Matrix Anti-Cheat",
-        "description": "§7v1.20.40",
+        "description": "§7The best Minecraft Bedrock AntiCheat\nBeta-API required",
         "uuid": "219af650-0de7-421c-a188-0c83091e5c8d",
-        "version": [1, 0, 0],
+        "version": [1, 0, 8],
         "min_engine_version": [1, 20, 40]
     },
     "metadata": {
