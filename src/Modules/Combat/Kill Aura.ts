@@ -24,6 +24,7 @@ function KillAura(damagingEntity: Entity, hitEntity: Entity) {
     if (angle > config.antiKillAura.minAngle) {
         world.sendMessage(`§2§l§¶Matrix >§4 ${(damagingEntity as Player).name}§m has been detected using Kill Aura\n§r§l§¶Angle:§c ${angle.toFixed(2)}°`);
         damagingEntity.addTag("pvp-disabled");
+        damagingEntity.applyDamage(6);
 
         system.runTimeout(() => {
             damagingEntity.removeTag("pvp-disabled");
