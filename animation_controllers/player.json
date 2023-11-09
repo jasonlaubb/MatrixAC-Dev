@@ -72,6 +72,30 @@
      ]
     }
    }
+  },
+  "controller.animation.four": {
+   "states": {
+    "default": {
+     "transitions": [
+      {
+       "four": "query.can_fly"
+      }
+     ],
+     "on_entry": [
+      "/tag @s add four"
+     ]
+    },
+    "four": {
+     "transitions": [
+      {
+       "default": "!query.can_fly"
+      }
+     ],
+     "on_entry": [
+      "/tag @s remove four"
+     ]
+    }
+   }
   }
  }
 }
