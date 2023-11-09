@@ -8,7 +8,7 @@ const nukerData: Map<string, number> = new Map<string, number>();
  * it detects if a player breaks more than 5 blocks.
  */
 
-
+//@ts-ignore
 world.beforeEvents.playerBreakBlock.subscribe(({ player, block, cancel }) => {
     const now: number = Date.now();
     const { name } = player;
