@@ -6,6 +6,7 @@ import {
     Entity
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
+import { flag } from "../../Assets/Util.js";
 
 const reachData: Map<Entity, number> = new Map<Entity, number>();
 
@@ -41,7 +42,7 @@ world.afterEvents.entityHitEntity.subscribe(({ damagingEntity, hitEntity }) => {
     }
 
     if (reachData.get(damagingEntity) >= 2) {
-        world.sendMessage(`§2§l§¶Matrix >§4 ${damagingEntity.name}§m has been detected using Reach`);
+        flag (damagingEntity, 'Reach', undefined, undefined)
         damagingEntity.applyDamage(6);
         reachData.delete(damagingEntity);
     }

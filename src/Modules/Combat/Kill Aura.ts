@@ -1,10 +1,10 @@
 import { world,
     system,
     Player,
-    Entity,
     Vector3
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
+import { flag } from "../../Assets/Util.js";
 
 /**
  * @author ravriv
@@ -12,7 +12,7 @@ import config from "../../Data/Config.js";
  * it will detect if the player is hitting another player from a impossible angle.
  */
 
-function KillAura(damagingEntity: Entity, hitEntity: Entity) {
+function KillAura(damagingEntity: Player, hitEntity: Player) {
     const direction: Vector3 = calculateVector(damagingEntity.location, hitEntity.location) as Vector3;
     const distance: number = calculateMagnitude(direction);
 
@@ -22,9 +22,8 @@ function KillAura(damagingEntity: Entity, hitEntity: Entity) {
     const angle: number = calculateAngle(view, direction);
 
     if (angle > config.antiKillAura.minAngle) {
-        world.sendMessage(`§2§l§¶Matrix >§4 ${(damagingEntity as Player).name}§m has been detected using Kill Aura\n§r§l§¶Angle:§c ${angle.toFixed(2)}°`);
+        flag (damagingEntity, 'Kill Aura', undefined, [`Angle:${angle.toFixed(2)}°`])
         damagingEntity.addTag("pvp-disabled");
-        damagingEntity.applyDamage(6);
 
         system.runTimeout(() => {
             damagingEntity.removeTag("pvp-disabled");

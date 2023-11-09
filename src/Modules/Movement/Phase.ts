@@ -5,6 +5,7 @@ import {
     Vector3,
     GameMode
 } from "@minecraft/server";
+import { flag } from "../../Assets/Util";
 
 class PhaseData {
     lastPos: Vector3;
@@ -23,7 +24,7 @@ const isSolidBlock = (block: Block) => Boolean(block?.isSolid && !passableBlocks
 
 system.runInterval(() => {
     world.getPlayers({ excludeTags: ["admin"], excludeGameModes: [GameMode['creative'], GameMode['spectator']] }).forEach(player => {
-        const { id, name, location, dimension } = player;
+        const { id, location, dimension } = player;
         const { x, y, z } = location;
         const floorPos: Vector3 = { x: Math.floor(x), y: Math.floor(y), z: Math.floor(z) };
         const data: PhaseData = phaseData.get(id) || { lastPos: floorPos, lastSafePos: floorPos, lastSolid: false };
@@ -41,7 +42,7 @@ system.runInterval(() => {
         data.lastSolid = isSolid;
 
         if (data.lastSolid && isSolid) {
-            world.sendMessage(`§2§l§¶Matrix >§4 ${name}§m has detected using Phase`);
+            flag (player, 'Phase', undefined, undefined)
             player.teleport(data.lastSafePos);
         }
 

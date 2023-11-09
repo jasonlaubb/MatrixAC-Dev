@@ -6,6 +6,7 @@ import {
     Player
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
+import { flag } from "../../Assets/Util.js";
 
 const speedData = new Map();
 
@@ -23,7 +24,7 @@ class PlayerInfo {
 system.runInterval(() => {
     const now: number = Date.now();
     for (const player of world.getPlayers({ excludeTags: ["admin"], excludeGameModes: [GameMode['creative'], GameMode['spectator']] })) {
-        const { id, name } = player;
+        const { id } = player;
         //@ts-expect-error
         if (player.threwTridentAt && now - player.threwTridentAt < 2000 || player.lastExplosionTime && now - player.lastExplosionTime < 2000) {
             continue;
@@ -40,7 +41,7 @@ system.runInterval(() => {
         } else if (isSpeeding) {
             if (!playerInfo.highestSpeed) {
                 player.teleport(playerInfo.initialLocation, { dimension: player.dimension, rotation: { x: -180, y: 0 } });
-                world.sendMessage(`§2§l§¶Matrix >§4 ${name}§m has been detected with Speed\n§r§l§¶Miles Per Hour:§c ${playerSpeedMph.toFixed(2)}`);
+                flag (player, 'Speed', undefined, [`Miles Per Hour:${playerSpeedMph.toFixed(2)}`])
                 player.applyDamage(6);
                 playerInfo.highestSpeed = playerSpeedMph;
             }

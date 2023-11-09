@@ -4,6 +4,7 @@ import {
     Player
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
+import { flag } from "../../Assets/Util.js";
 
 class ClickData {
     clicks: number[]
@@ -19,7 +20,7 @@ const clickData: Map<string, ClickData> = new Map<string, ClickData>();
 
 const AutoClicker = (player: Player) => {
     const currentTime: number = Date.now();
-    const { id, name } = player;
+    const { id } = player;
     const { clicks } = clickData.get(id) || { clicks: [] };
 
     const filteredClicks: number[] = clicks.filter(clickTime => currentTime - clickTime < 1500);
@@ -28,7 +29,7 @@ const AutoClicker = (player: Player) => {
     const cps: number = filteredClicks.length;
 
     if (cps > config.antiAutoClicker.maxClicksPerSecond && !player.hasTag("pvp-disabled")) {
-        world.sendMessage(`§2§l§¶Matrix > §4${name}§m has been detected using Auto Clicker\n§r§l§¶Click Per Second:§c ${cps.toFixed(0)}`);
+        flag (player, 'Auto Clicker', undefined, [`Click Per Second:${cps.toFixed(0)}`])
         player.applyDamage(6);
         player.addTag("pvp-disabled");
 

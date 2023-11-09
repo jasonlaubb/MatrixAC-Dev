@@ -9,21 +9,20 @@ const nukerData: Map<string, number> = new Map<string, number>();
  */
 
 
-world.afterEvents.playerBreakBlock.subscribe(({ player, block, brokenBlockPermutation, dimension }) => {
+world.beforeEvents.playerBreakBlock.subscribe(({ player, block, cancel }) => {
     const now: number = Date.now();
     const { name } = player;
     //@ts-expect-error
     const [blockTime, blockPermutation, blockLocation, blockBroken = 0] = player.blockData || [now, brokenBlockPermutation, block.location];
 
-    if (blockTime > now - 50) {
-        dimension.getBlock(blockLocation).setPermutation(blockPermutation);
-        dimension.getBlock(block.location).setPermutation(brokenBlockPermutation);
+    if (player.hasTag("break-disable")) {
+        //stop all block break and nuker detection in next 5 second after detected
+        cancel = true
+        return
+    }
 
-        [blockLocation, block.location].forEach(location => {
-            dimension.getEntitiesAtBlockLocation(location)
-                .filter(item => item.typeId === "minecraft:item")
-                .forEach(item => item.kill());
-        });
+    if (blockTime > now - 50) {
+        cancel = true
     }
 
     //@ts-expect-error
@@ -37,6 +36,8 @@ world.afterEvents.playerBreakBlock.subscribe(({ player, block, brokenBlockPermut
     if (player.blockData.slice(-1)[0] >= 5) {
         world.sendMessage(`§2§l§¶Matrix >§4 ${name}§m has been detected using Nuker`);
         nukerData.set(name, now + 1000);
+        player.addTag("break-disable")
+        system.runTimeout(() => player.removeTag("break-disable"), 100)
     }
 
     system.runTimeout(() => {
@@ -45,3 +46,9 @@ world.afterEvents.playerBreakBlock.subscribe(({ player, block, brokenBlockPermut
         nukerData.delete(name);
     }, 40);
 });
+
+world.afterEvents.playerSpawn.subscribe((({ initialSpawn, player }) => {
+    if (initialSpawn && player.hasTag("break-disable")) {
+        player.removeTag("break-disable")
+    }
+}))

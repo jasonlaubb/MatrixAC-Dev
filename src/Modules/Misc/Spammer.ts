@@ -4,6 +4,7 @@ import {
     Player
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
+import { flag, kick } from "../../Assets/Util.js";
 
 /**
  * @author ravriv
@@ -20,7 +21,7 @@ const spamData: Map<string, Data> = new Map<string, Data>();
 
 const checkSpam = (player: Player, behavior: string) => {
     world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has detected ${behavior}`);
-    player.runCommandAsync(`kick "${player.name}" §2§l§¶Matrix >§m You have been kicked for ${behavior}`);
+    system.run(() => flag (player, "Spammer", "kick", [`behavior:${behavior}`]));
 };
 
 const antiSpam = (player: Player, data: Data) => {
@@ -37,6 +38,7 @@ const antiSpam = (player: Player, data: Data) => {
 
     if (data.warnings > config.antiSpam.kickThreshold) {
         player.runCommandAsync(`kick "${player.name}" §2§l§¶Matrix >§m You have been kicked for spamming`);
+        system.run(() => kick (player, 'spamming', 'Matrix'))
         world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has been kicked for spamming`);
     }
 };
@@ -67,7 +69,7 @@ world.afterEvents.chatSend.subscribe(({ message, sender: player }) => {
     if (player.hasTag('two')) checkSpam(player, "sending messages while using an item");
 
     if (config.blacklistedMessages.some((word) => message.includes(word))) {
-        player.runCommandAsync(`kick "${player.name}" §2§l§¶Matrix >§m You have been kicked for saying ${message} a blacklisted message`);
+        kick (player, 'blacklisted message', 'Matrix')
         world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has been kicked for saying ${message} a blacklisted message`);
         return;
     }

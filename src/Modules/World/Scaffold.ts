@@ -7,6 +7,7 @@ import {
     Player,
     Block
 } from "@minecraft/server";
+import { flag } from "../../Assets/Util";
 
 /**
  * @author jasonlaubb
@@ -47,7 +48,7 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
 function setBlockToAir(player: Player, block: Block, message: string) {
     const { location: { x, y, z } } = block;
     player.dimension.getBlock({ x, y, z }).setType('air');
-    world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has been detected using Scaffold\n§r§l§¶Type:§c ${message}`);
+    flag (player, 'Scaffold', undefined, [`Type:${message}`])
     player.applyDamage(6);
     player.addTag("place-disabled");
 
