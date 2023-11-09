@@ -41,7 +41,7 @@ system.runInterval(() => {
         data.lastPos = floorPos;
         data.lastSolid = isSolid;
 
-        if (data.lastSolid && isSolid) {
+        if (data.lastSolid && isSolid && (data.lastPos.x !== floorPos.x || data.lastPos.z !== floorPos.z)) {
             flag (player, 'Phase', undefined, undefined)
             player.teleport(data.lastSafePos);
         }
