@@ -10,17 +10,13 @@
     "animate": [
      "one",
      "two",
-     "three",
-     "four",
-     "five"
+     "three"
     ]
    },
    "animations": {
     "one": "controller.animation.one",
     "two": "controller.animation.two",
-    "three": "controller.animation.three",
-    "four": "controller.animation.four",
-    "five": "controller.animation.five"
+    "three": "controller.animation.three"
    }
   },
   "component_groups": {
