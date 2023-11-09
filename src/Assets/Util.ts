@@ -1,6 +1,7 @@
 import {
     world,
-    Player
+    Player,
+    GameMode
 } from "@minecraft/server"
 
 export function kick (player: Player, reason?: string, by?: string) {
@@ -31,4 +32,15 @@ export function flag (player: Player, modules: string, punishment?: string, info
             }
         }
     }
+}
+
+export function isTargetGamemode (player: Player, gamemode: number) {
+    const gamemodes: GameMode[] = [
+        GameMode.survival,
+        GameMode.creative,
+        GameMode.adventure,
+        GameMode.spectator
+    ]
+
+    return world.getPlayers({ name: player.name, gameMode: gamemodes[gamemode] }).length > 0
 }
