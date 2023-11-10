@@ -42,7 +42,7 @@ const FlyB = (player: Player) => {
         z: floorPos.z + z
     })?.typeId === "minecraft:slime")))
 
-        if (data.lastExplosionTime && Date.now() - data.lastExplosionTime < 2000) return
+        if (player.lastExplosionTime && Date.now() - player.lastExplosionTime < 2000) return
 
     if (player.isOnGround == true && velocity === 0 || velocity < 0 && player.location.y < lastPos.get(player.id).y || lastPos.get(player.id) === undefined) {
         lastPos.set(player.id, playerLocation)
@@ -55,6 +55,13 @@ const FlyB = (player: Player) => {
         flag (player, 'Fly', undefined, [`velocityY:${velocity}`,"limit:0.7"])
     }
 }
+
+world.afterEvents.entityHurt.subscribe(event => {
+    const player = event.hurtEntity;
+    if (event.damageSource.cause == "entityExplosion" || event.damageSource.cause == "blockExplosion") {
+        player.lastExplosionTime = Date.now();
+    }
+});
 
 system.runInterval(() => {
     world.getPlayers({ excludeTags: ["admin"] }).forEach(player => {
