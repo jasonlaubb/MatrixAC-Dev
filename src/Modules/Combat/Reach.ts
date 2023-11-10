@@ -11,7 +11,7 @@ import { flag } from "../../Assets/Util.js";
 const reachData: Map<Entity, number> = new Map<Entity, number>();
 
 /**
- * @author ravriv
+ * @author ravriv && RamiGamerDev
  * @description This is a simple reach detector.
  * it will detect if the player is hitting another player from a long distance.
  */
@@ -31,15 +31,22 @@ function calculateDistance(b1: Vector3, b2: Vector3) {
 
 world.afterEvents.entityHurt.subscribe(({ damagingEntity, hitEntity }) => {
     if (!(damagingEntity instanceof Player) || !(hitEntity instanceof Player)) return;
-
+const yReach = damagingEntity.location.y-hitEntity.locatio.y
+let maximumYReach = 4.8
+    if(hitEntity.isJumping){
+        maximumYReach = 5.8
+    }
+if(damagingEntity.location.y < hitEntity.location.y){
+    maximumYReach = 3.8
+}
     const distance: number = calculateDistance(damagingEntity, hitEntity);
 
-    if (distance > config.antiReach.maxReach) {
+    if (distance > config.antiReach.maxReach || yReach > maximumYReach) {
         if (!reachData.has(damagingEntity)) {
             reachData.set(damagingEntity, 0);
             system.runTimeout(() => {
                 reachData.delete(damagingEntity);
-            }, 40);
+            }, 80);
         }
         reachData.set(damagingEntity, reachData.get(damagingEntity) + 1);
     }
