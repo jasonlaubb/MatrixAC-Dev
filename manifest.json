@@ -2,13 +2,13 @@
     "format_version": 2,
     "header": {
         "name": "Matrix Anti-Cheat",
-        "description": "§71.20.40\n§cBeta-API required",
+        "description": "§r§7The Best Minecraft Bedrock AntiCheat\n§c§lBeta-API required§r",
         "uuid": "219af650-0de7-421c-a188-0c83091e5c8d",
         "version": [1, 0, 8],
         "min_engine_version": [1, 20, 40]
     },
     "metadata": {
-        "authors": ["jasonlaubb, ravriv, RaMiGamerDev, Hutao999999, no1hereDev"],
+        "authors": ["jasonlaubb, Hutao999999, ravriv, RaMiGamerDev, nottinghere"],
         "license": "AGPLv3",
         "url": "https://github.com/jasonlaubb/Matrix-AntiCheat"
     },
