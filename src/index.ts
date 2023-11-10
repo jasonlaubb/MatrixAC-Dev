@@ -1,6 +1,6 @@
 /**
  * @author jasonlaubb
- * @contributors ravriv, RaMiGamerDev, notthinghere
+ * @contributors ravriv, Hutao999999, RaMiGamerDev, notthinghere
  * @license AGPLv3
  * @github https://github.com/jasonlaubb/Matrix-AntiCheat
  */
