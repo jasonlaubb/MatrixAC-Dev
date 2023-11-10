@@ -6,9 +6,12 @@ import {
     Entity
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
-import { flag } from "../../Assets/Util.js";
+import {
+    flag
+} from "../../Assets/Util.js";
 
-const reachData: Map<Entity, number> = new Map<Entity, number>();
+const reachData: Map < Entity, number > = new Map < Entity,
+    number > ();
 
 /**
  * @author ravriv && RamiGamerDev
@@ -17,28 +20,37 @@ const reachData: Map<Entity, number> = new Map<Entity, number>();
  */
 
 function calculateDistance(b1: Vector3, b2: Vector3) {
-    const { x,z } = b1.velocity()
-    const { x1,z1 } = b2.velocity()
-    const velocityB1 = Math.abs(x)+Math.abs(z)
-    const velocityB2 = Math.abs(x1)+Math.abs(z1)
+    const {
+        x,
+        z
+    } = b1.velocity()
+    const {
+        x1,
+        z1
+    } = b2.velocity()
+    const velocityB1 = Math.abs(x) + Math.abs(z)
+    const velocityB2 = Math.abs(x1) + Math.abs(z1)
     const dx: number = b1.x - b2.location.x - velocityB1
-    const dz: number = b1.z - b2.location.z- velocityB2
+    const dz: number = b1.z - b2.location.z - velocityB2
 
-    const distance: number = Math.floor(Math.hypot(dx, dz))-(velocityB1+velocityB2)
+    const distance: number = Math.floor(Math.hypot(dx, dz)) - (velocityB1 + velocityB2)
 
     return distance;
 }
 
-world.afterEvents.entityHurt.subscribe(({ damagingEntity, hitEntity }) => {
+world.afterEvents.entityHurt.subscribe(({
+    damagingEntity,
+    hitEntity
+}) => {
     if (!(damagingEntity instanceof Player) || !(hitEntity instanceof Player)) return;
-const yReach = damagingEntity.location.y-hitEntity.locatio.y
-let maximumYReach = 4.8
-    if(hitEntity.isJumping){
+    const yReach = damagingEntity.location.y - hitEntity.locatio.y
+    let maximumYReach = 4.8
+    if (hitEntity.isJumping) {
         maximumYReach = 5.8
     }
-if(damagingEntity.location.y < hitEntity.location.y){
-    maximumYReach = 3.8
-}
+    if (damagingEntity.location.y < hitEntity.location.y) {
+        maximumYReach = 3.8
+    }
     const distance: number = calculateDistance(damagingEntity, hitEntity);
 
     if (distance > config.antiReach.maxReach || yReach > maximumYReach) {
@@ -52,7 +64,7 @@ if(damagingEntity.location.y < hitEntity.location.y){
     }
 
     if (reachData.get(damagingEntity) >= 2) {
-        flag (damagingEntity, 'Reach', undefined, undefined)
+        flag(damagingEntity, 'Reach', undefined, undefined)
         damagingEntity.applyDamage(6);
         reachData.delete(damagingEntity);
     }
