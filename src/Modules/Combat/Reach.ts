@@ -45,12 +45,12 @@ world.afterEvents.entityHurt.subscribe(({
     if (!(damagingEntity instanceof Player) || !(hitEntity instanceof Player)) return;
     const yReach = damagingEntity.location.y - hitEntity.locatio.y
     let maximumYReach = 4.8
-    if (hitEntity.isJumping) {
+    if(damagingEntity.isJumping){
         maximumYReach = 5.8
     }
-    if (damagingEntity.location.y < hitEntity.location.y) {
-        maximumYReach = 3.8
-    }
+if(damagingEntity.location.y > hitEntity.location.y){
+    maximumYReach = 3.8
+        }
     const distance: number = calculateDistance(damagingEntity, hitEntity);
 
     if (distance > config.antiReach.maxReach || yReach > maximumYReach) {
