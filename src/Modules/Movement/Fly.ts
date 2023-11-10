@@ -50,7 +50,7 @@ const FlyB = (player: Player) => {
         z: floorPos.z + z
     })?.typeId === "minecraft:slime")))
 
-    if (velocity <= 0.7 || player.isOnGround) {
+    if (player.isOnGround == true && velocity === 0 || velocity < 0 && player.location.y < lastPos.get(player.id).y || lastPos.get(player.id) === undefined) {
         lastPos.set(player.id, playerLocation)
     }
 
