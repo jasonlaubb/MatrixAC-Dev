@@ -2,7 +2,6 @@ import {
     world,
     system,
     Player,
-    Vector3,
     Entity
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
@@ -10,8 +9,7 @@ import {
     flag
 } from "../../Assets/Util.js";
 
-const reachData: Map < Entity, number > = new Map < Entity,
-    number > ();
+const reachData: Map <Entity, number> = new Map <Entity,number> ();
 
 /**
  * @author ravriv && RamiGamerDev
@@ -19,19 +17,19 @@ const reachData: Map < Entity, number > = new Map < Entity,
  * it will detect if the player is hitting another player from a long distance.
  */
 
-function calculateDistance(b1: Vector3, b2: Vector3) {
+function calculateDistance(b1: Entity, b2: Entity) {
     const {
         x,
         z
-    } = b1.velocity()
+    } = b1.getVelocity()
     const {
-        x1,
-        z1
-    } = b2.velocity()
+        x: x1,
+        z: z1
+    } = b2.getVelocity()
     const velocityB1 = Math.abs(x) + Math.abs(z)
     const velocityB2 = Math.abs(x1) + Math.abs(z1)
-    const dx: number = b1.x - b2.location.x - velocityB1
-    const dz: number = b1.z - b2.location.z - velocityB2
+    const dx: number = b1.location.x - b2.location.x - velocityB1
+    const dz: number = b1.location.z - b2.location.z - velocityB2
 
     const distance: number = Math.floor(Math.hypot(dx, dz)) - (velocityB1 + velocityB2)
 
@@ -39,19 +37,21 @@ function calculateDistance(b1: Vector3, b2: Vector3) {
 }
 
 world.afterEvents.entityHurt.subscribe(({
-    damagingEntity,
-    hitEntity
+    damageSource,
+    hurtEntity
 }) => {
-    if (!(damagingEntity instanceof Player) || !(hitEntity instanceof Player)) return;
-    const yReach = damagingEntity.location.y - hitEntity.locatio.y
+    if (damageSource.cause !== "entityAttack") return
+    const damagingEntity = damageSource.damagingEntity;
+    if (!(damagingEntity instanceof Player) || !(hurtEntity instanceof Player)) return;
+    const yReach = damagingEntity.location.y - hurtEntity.location.y
     let maximumYReach = 4.8
-    if(damagingEntity.isJumping){
+    if (damagingEntity.isJumping) {
         maximumYReach = 5.8
     }
-if(damagingEntity.location.y > hitEntity.location.y){
-    maximumYReach = 3.8
-        }
-    const distance: number = calculateDistance(damagingEntity, hitEntity);
+    if (damagingEntity.location.y > hurtEntity.location.y) {
+        maximumYReach = 3.8
+    }
+    const distance: number = calculateDistance(damagingEntity, hurtEntity);
 
     if (distance > config.antiReach.maxReach || yReach > maximumYReach) {
         if (!reachData.has(damagingEntity)) {
