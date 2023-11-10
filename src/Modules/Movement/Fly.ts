@@ -1,13 +1,5 @@
-import {
-    world,
-    system,
-    Player,
-    Vector3
-} from "@minecraft/server"
-import {
-    flag,
-    isTargetGamemode
-} from "../../Assets/Util"
+import { world, system, Player, Vector3 } from "@minecraft/server"
+import { flag } from "../../Assets/Util"
 
 /**
  * @author RaMiGamerDev
@@ -50,6 +42,8 @@ const FlyB = (player: Player) => {
         z: floorPos.z + z
     })?.typeId === "minecraft:slime")))
 
+        if (data.lastExplosionTime && Date.now() - data.lastExplosionTime < 2000) return
+
     if (player.isOnGround == true && velocity === 0 || velocity < 0 && player.location.y < lastPos.get(player.id).y || lastPos.get(player.id) === undefined) {
         lastPos.set(player.id, playerLocation)
     }
@@ -62,22 +56,9 @@ const FlyB = (player: Player) => {
     }
 }
 
-const FlyC = (player: Player) => {
-    if (player.isFlying && !player.hasTag("four") && !isTargetGamemode(player, 1) && !isTargetGamemode(player, 3)) {
-        const groundLocation: Vector3 = groundPos.get(player.id) ?? player.location;
-        player.teleport(groundLocation)
-        flag (player, 'Fly', undefined, undefined)
-    }
-}
-
 system.runInterval(() => {
     world.getPlayers({ excludeTags: ["admin"] }).forEach(player => {
         FlyA (player)
         FlyB (player)
     })
-})
-system.runInterval(() => {
-    world.getPlayers({ excludeTags: ["admin"] }).forEach(player => {
-        FlyC (player)
-    })
-}, 20)
+}, 5)
