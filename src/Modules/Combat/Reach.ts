@@ -18,39 +18,35 @@ const reachData: Map <Entity, number> = new Map <Entity,number> ();
  */
 
 function calculateDistance(b1: Entity, b2: Entity) {
-    const {
-        x,
-        z
-    } = b1.getVelocity()
-    const {
-        x: x1,
-        z: z1
-    } = b2.getVelocity()
-    const velocityB1 = Math.abs(x) + Math.abs(z)
-    const velocityB2 = Math.abs(x1) + Math.abs(z1)
-    const dx: number = b1.location.x - b2.location.x - velocityB1
-    const dz: number = b1.location.z - b2.location.z - velocityB2
+    const { x: x1, z: z1 } = b1.getVelocity();
+    const { x: x2, z: z2 } = b2.getVelocity();
 
-    const distance: number = Math.floor(Math.hypot(dx, dz)) - (velocityB1 + velocityB2)
+    const velocityB1 = Math.abs(x1) + Math.abs(z1);
+    const velocityB2 = Math.abs(x2) + Math.abs(z2);
+
+    const dx: number = b1.location.x - b2.location.x - velocityB1;
+    const dz: number = b1.location.z - b2.location.z - velocityB2;
+
+    const distance: number = Math.floor(Math.hypot(dx, dz)) - (velocityB1 + velocityB2);
 
     return distance;
 }
 
-world.afterEvents.entityHurt.subscribe(({
-    damageSource,
-    hurtEntity
-}) => {
+world.afterEvents.entityHurt.subscribe(({ damageSource, hurtEntity }) => {
     if (damageSource.cause !== "entityAttack") return
     const damagingEntity = damageSource.damagingEntity;
     if (!(damagingEntity instanceof Player) || !(hurtEntity instanceof Player)) return;
     const yReach = damagingEntity.location.y - hurtEntity.location.y
     let maximumYReach = 4.8
+    
     if (damagingEntity.isJumping) {
         maximumYReach = 5.8
     }
+    
     if (damagingEntity.location.y > hurtEntity.location.y) {
         maximumYReach = 3.8
     }
+    
     const distance: number = calculateDistance(damagingEntity, hurtEntity);
 
     if (distance > config.antiReach.maxReach || yReach > maximumYReach) {
