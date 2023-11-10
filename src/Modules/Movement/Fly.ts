@@ -41,14 +41,18 @@ const FlyB = (player: Player) => {
         y: floorPos.y + y,
         z: floorPos.z + z
     })?.typeId === "minecraft:slime")))
-
+if(slimeCheck && velocity >= 0){
+    player.addTag("Matrix:slime")
+} if(slimeCheck && velocity < 0){
+    player.reamoveTag("Matrix:slime")
+                      }
     if (player.lastExplosionTime && Date.now() - player.lastExplosionTime < 2000 || player.threwTridentAt && Date.now() - player.threwTridentAt < 3000) return
 
     if (player.isOnGround == true && velocity === 0 || velocity < 0 && player.location.y < lastPos.get(player.id).y || lastPos.get(player.id) === undefined) {
         lastPos.set(player.id, playerLocation)
     }
 
-    if (player.isFlying || checkSlime) return
+    if (player.isFlying || player.hasTag("Matrix:slime")) return
 
     if (velocity > 0.7) {
         player.teleport(lastPos.get(player.id))
