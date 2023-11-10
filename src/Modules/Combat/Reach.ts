@@ -17,19 +17,22 @@ const reachData: Map<Entity, number> = new Map<Entity, number>();
  */
 
 function calculateDistance(b1: Vector3, b2: Vector3) {
-    const dx: number = b1.x - b2.x;
-    const dy: number = b1.y - b2.y;
-    const dz: number = b1.z - b2.z;
+    const { x,z } = b1.velocity()
+    const { x1,z1 } = b2.velocity()
+    const velocityB1 = Math.abs(x)+Math.abs(z)
+    const velocityB2 = Math.abs(x1)+Math.abs(z1)
+    const dx: number = b1.x - b2.location.x - velocityB1
+    const dz: number = b1.z - b2.location.z- velocityB2
 
-    const distance: number = Math.floor(Math.hypot(dx, dy, dz));
+    const distance: number = Math.floor(Math.hypot(dx, dz))-(velocityB1+velocityB2)
 
     return distance;
 }
 
-world.afterEvents.entityHitEntity.subscribe(({ damagingEntity, hitEntity }) => {
+world.afterEvents.entityHurt.subscribe(({ damagingEntity, hitEntity }) => {
     if (!(damagingEntity instanceof Player) || !(hitEntity instanceof Player)) return;
 
-    const distance: number = calculateDistance(damagingEntity.location, hitEntity.location);
+    const distance: number = calculateDistance(damagingEntity, hitEntity);
 
     if (distance > config.antiReach.maxReach) {
         if (!reachData.has(damagingEntity)) {
