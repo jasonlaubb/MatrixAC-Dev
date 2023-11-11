@@ -5,7 +5,7 @@ import {
     Vector3,
     Vector2
 } from "@minecraft/server";
-import { flag } from "../../Assets/Util";
+import { flag, isAdmin } from "../../Assets/Util";
 import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index"
 import config from "../../Data/Config.js";
 
@@ -27,8 +27,10 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
     const pos1: Vector3 = player.location;
     const pos2: Vector3 = { x: block.location.x - 0.5, z: block.location.z - 0.5 } as Vector3;
     const angle: number = calculateAngle(pos1, pos2, rotation);
+    const toggle: boolean = (world.getDynamicProperty("antiScaffold") ?? config.antiScaffold.enabled) as boolean;
+    if (toggle !== true) return;
 
-    if (player.hasTag("scaffold-disabled")) return;
+    if (isAdmin(player) || player.hasTag("scaffold-disabled")) return;
 
     let detected: boolean = false;
 

@@ -1,9 +1,28 @@
 /**
  * @author ravriv & jasonlaubb
  * @description The config json of the AntiCheat
+ * 
+ * @warning
+ * The setting of config maybe changed in dynamic properties (change config will not effect the server)
  */
 
 export default {
+    /** 
+     * @description
+     * The setting for our functions
+     */
+    commands: {
+        prefix: "-"
+    },
+    chatRank: {
+        enabled: true,
+        defaultRank: "§gMember",
+        showAllRank: true
+    },
+    /** 
+     * @description
+     * The config of all anticheat modules
+    */
 
     antiAutoClicker: {
         enabled: true,

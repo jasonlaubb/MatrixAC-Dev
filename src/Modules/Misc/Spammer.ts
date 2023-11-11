@@ -4,7 +4,9 @@ import {
     Player
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
-import { flag, kick } from "../../Assets/Util.js";
+import { flag, isAdmin, kick } from "../../Assets/Util.js";
+
+export { antiSpamModule };
 
 /**
  * @author ravriv
@@ -20,7 +22,6 @@ const previousMessage: Map<string, string> = new Map<string, string>();
 const spamData: Map<string, Data> = new Map<string, Data>();
 
 const checkSpam = (player: Player, behavior: string) => {
-    world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has detected ${behavior}`);
     system.run(() => flag (player, "Spammer", config.antiSpam.punishment, [`behavior:${behavior}`]));
 };
 
@@ -42,48 +43,69 @@ const antiSpam = (player: Player, data: Data) => {
     }
 };
 
-world.beforeEvents.chatSend.subscribe(data => {
-    const { message, sender: player } = data;
+function antiSpamModule (message: string, player: Player) {
+    const toggle: boolean = (world.getDynamicProperty("antiSpam") ?? config.antiSpam.enabled) as boolean;
+    if (toggle !== true || isAdmin (player)) return false;
+
+    let isSpamming = false;
 
     if (previousMessage.has(player.id) && previousMessage.get(player.id) === message) {
-        data.cancel = true;
-        player.sendMessage('§2§l§¶Matrix >§m You cannot send the same message again');
+        isSpamming = true;
+        system.run(() => player.sendMessage('§2§l§¶Matrix >§m You cannot send the same message again'));
     } else {
         previousMessage.set(player.id, message);
     }
 
     if (message.length > config.antiSpam.maxCharacterLimit) {
-        data.cancel = true;
+        isSpamming = true;
         player.sendMessage(`§2§2§l§¶Matrix >§m Your message is too long\n§r§l§¶§8The maximum length is ${config.antiSpam.maxCharacterLimit} characters`);
     } else if (config.chatFilter.some((word) => message.toLowerCase().includes(word))) {
-        data.cancel = true;
-        player.sendMessage(`§2§l§¶Matrix >§m Your message contains a filtered word`);
+        isSpamming = true;
+        system.run(() => player.sendMessage(`§2§l§¶Matrix >§m Your message contains a filtered word`));
     }
+
+    return isSpamming;
+};
+
+world.beforeEvents.chatSend.subscribe(({
+    message,
+    sender: player
+}) => {
+    system.run(() => {
+        const toggle: boolean = (world.getDynamicProperty("antiSpam") ?? config.antiSpam.enabled) as boolean;
+        if (toggle !== true || isAdmin (player)) return;
+
+        const data: Data = spamData.get(player.id) || {
+            lastMessageTimes: [],
+            warnings: 0
+        } as Data;
+
+        if (player.hasTag('one') && !player.getEffect("mining_fatigue")) checkSpam(player, "sending messages while swinging their hand");
+        if (player.hasTag('two')) checkSpam(player, "sending messages while using an item");
+
+        if (config.blacklistedMessages.some((word) => message.includes(word))) {
+            kick(player, 'blacklisted message', 'Matrix')
+            world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has been kicked for saying ${message} a blacklisted message`);
+            return;
+        }
+
+        const currentTime: number = Date.now();
+        data.lastMessageTimes.push(currentTime);
+
+        if (data.lastMessageTimes.length > config.antiSpam.maxMessagesPerSecond) {
+            data.lastMessageTimes.shift();
+        }
+
+        if (data.lastMessageTimes.length >= config.antiSpam.maxMessagesPerSecond &&
+            data.lastMessageTimes[data.lastMessageTimes.length - 1] - data.lastMessageTimes[0] < config.antiSpam.timer) {
+            antiSpam(player, data);
+        }
+
+        spamData.set(player.id, data);
+    })
 });
 
-world.afterEvents.chatSend.subscribe(({ message, sender: player }) => {
-    const data: Data = spamData.get(player.id) || { lastMessageTimes: [], warnings: 0 } as Data;
-
-    if (player.hasTag('one') && !player.getEffect("mining_fatigue")) checkSpam(player, "sending messages while swinging their hand");
-    if (player.hasTag('two')) checkSpam(player, "sending messages while using an item");
-
-    if (config.blacklistedMessages.some((word) => message.includes(word))) {
-        kick (player, 'blacklisted message', 'Matrix')
-        world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has been kicked for saying ${message} a blacklisted message`);
-        return;
-    }
-
-    const currentTime: number = Date.now();
-    data.lastMessageTimes.push(currentTime);
-
-    if (data.lastMessageTimes.length > config.antiSpam.maxMessagesPerSecond) {
-        data.lastMessageTimes.shift();
-    }
-
-    if (data.lastMessageTimes.length >= config.antiSpam.maxMessagesPerSecond &&
-        data.lastMessageTimes[data.lastMessageTimes.length - 1] - data.lastMessageTimes[0] < config.antiSpam.timer) {
-        antiSpam(player, data);
-    }
-
-    spamData.set(player.id, data);
-});
+world.afterEvents.playerLeave.subscribe(({ playerId }) => {
+    spamData.delete(playerId);
+    previousMessage.delete(playerId);
+})

@@ -20,7 +20,7 @@ class FallData {
 const flyData = new Map<string, FlyData>();
 const fallData = new Map<string, FallData>();
 const previousLocations = new Map<string, Vector3>();
-import { flag } from "../../Assets/Util";
+import { flag, isAdmin } from "../../Assets/Util";
 
 /**
  * @author ravriv & RaMiGamerDev
@@ -28,44 +28,52 @@ import { flag } from "../../Assets/Util";
  */
 
 system.runInterval(() => {
+    const toggle: boolean = (world.getDynamicProperty("antiFly") ?? config.antiFly.enabled) as boolean;
+    if (toggle !== true) return;
+
     for (const player of world.getAllPlayers()) {
-        const { name, location: { x, y, z }, isOnGround }: any = player;
+        if (isAdmin(player)) return;
+        const { id, location: { x, y, z }, isOnGround }: any = player;
         const velocityY: number = player.getVelocity().y;
-        const { flyTimer = 0 }: any = flyData.get(name) || {};
+        const { flyTimer = 0 }: any = flyData.get(id) || {};
 
         if (isOnGround) {
-            previousLocations.set(name, { x, y, z });
+            previousLocations.set(id, { x, y, z });
         }
 
-        if (!flyData.has(name) || (isOnGround && velocityY === 0)) {
-            flyData.set(name, { flyTimer });
+        if (!flyData.has(id) || (isOnGround && velocityY === 0)) {
+            flyData.set(id, { flyTimer });
         }
 
         if (velocityY === 0 && !isOnGround) {
-            flyData.set(name, { flyTimer: flyTimer + 1 });
+            flyData.set(id, { flyTimer: flyTimer + 1 });
         }
 
         if (flyTimer > config.antiFly.maxFlyTimer && velocityY === 0) {
-            if (flyData.has(name)) {
-                const prevLoc = previousLocations.get(name);
+            if (flyData.has(id)) {
+                const prevLoc = previousLocations.get(id);
                 flag (player, "Fly", config.antiFly.punishment, ["velocityY:0"])
                 player.teleport(prevLoc);
-                flyData.delete(name);
+                flyData.delete(id);
             }
         }
     }
 }, 20);
 
-world.afterEvents.entityHurt.subscribe(event => {
-    const player = event.hurtEntity;
-    const damageSource = event.damageSource.cause;
+world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
+    const toggle: boolean = (world.getDynamicProperty("antiFly") ?? config.antiFly.enabled) as boolean;
+    if (toggle !== true) return;
+
+    const player = hurtEntity;
+    const damageCause = damageSource.cause;
 
     if (!(player instanceof Player)) return
+    if (isAdmin(player)) return
 
-    if (player.isFalling && damageSource === EntityDamageCause.fall) {
-        const { name } = player;
+    if (player.isFalling && damageCause === EntityDamageCause.fall) {
+        const { id } = player;
 
-        const currentfallData = fallData.get(name) || { count: 0, lastFallDamageTime: 0 };
+        const currentfallData = fallData.get(id) || { count: 0, lastFallDamageTime: 0 };
         const currentTime = Date.now();
         if (currentTime - currentfallData.lastFallDamageTime < config.antiFly.minFallInterval) {
             currentfallData.count++;
@@ -73,15 +81,22 @@ world.afterEvents.entityHurt.subscribe(event => {
             currentfallData.count = 1;
         }
         currentfallData.lastFallDamageTime = currentTime;
-        fallData.set(name, currentfallData);
+        fallData.set(id, currentfallData);
 
         if (currentfallData.count >= config.antiFly.maxFallCount) {
-            const prevLoc = previousLocations.get(name);
+            const prevLoc = previousLocations.get(id);
             if (prevLoc) {
                 player.teleport(prevLoc);
                 flag(player, "Fly", config.antiFly.punishment, ["type:Invalid Fall Damage"])
-                fallData.delete(name);
+                fallData.delete(id);
             }
         }
     }
 });
+
+world.afterEvents.playerLeave.subscribe(({ playerId }) => {
+    const id = playerId;
+    flyData.delete(id);
+    fallData.delete(id);
+    previousLocations.delete(id);
+})

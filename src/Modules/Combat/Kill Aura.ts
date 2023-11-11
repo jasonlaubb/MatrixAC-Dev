@@ -4,7 +4,7 @@ import { world,
     Vector3
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
-import { flag } from "../../Assets/Util.js";
+import { flag, isAdmin } from "../../Assets/Util.js";
 
 /**
  * @author ravriv
@@ -79,6 +79,13 @@ function calculateAngle(v1: Vector3, v2: Vector3) {
 }
 
 world.afterEvents.entityHitEntity.subscribe(({ damagingEntity, hitEntity }) => {
+    const toggle = (world.getDynamicProperty("antiKillAura") ?? config.antiKillAura.enabled) as boolean;
+    if (toggle !== true) return;
     if (!(damagingEntity instanceof Player) || !(hitEntity instanceof Player)) return;
+    if (isAdmin (damagingEntity)) return
     KillAura(damagingEntity, hitEntity);
 });
+
+world.afterEvents.playerLeave.subscribe(({ playerId }) => {
+    hitLength.delete(playerId);
+})

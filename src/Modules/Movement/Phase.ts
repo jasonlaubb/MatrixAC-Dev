@@ -5,7 +5,7 @@ import {
     Vector3,
     GameMode
 } from "@minecraft/server";
-import { flag } from "../../Assets/Util";
+import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
 
 class PhaseData {
@@ -24,7 +24,11 @@ const isSolidBlock = (block: Block) => Boolean(block?.isSolid && !passableBlocks
  */
 
 system.runInterval(() => {
-    world.getPlayers({ excludeTags: ["admin"], excludeGameModes: [GameMode['creative'], GameMode['spectator']] }).forEach(player => {
+    const toggle: boolean = (world.getDynamicProperty("antiPhase") ?? config.antiPhase.enabled) as boolean;
+    if (toggle !== true) return;
+    
+    world.getPlayers({ excludeGameModes: [GameMode['creative'], GameMode['spectator']] }).forEach(player => {
+        if (isAdmin(player)) return;
         const { id, location, dimension } = player;
         const { x, y, z } = location;
         const floorPos: Vector3 = { x: Math.floor(x), y: Math.floor(y), z: Math.floor(z) };

@@ -4,7 +4,7 @@ import {
     Player
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
-import { flag } from "../../Assets/Util.js";
+import { flag, isAdmin } from "../../Assets/Util.js";
 
 class ClickData {
     clicks: number[]
@@ -43,8 +43,15 @@ const AutoClicker = (player: Player) => {
 };
 
 world.afterEvents.entityHitEntity.subscribe(({ damagingEntity }) => {
-    if (!(damagingEntity instanceof Player)) {
+    const toggle: boolean = (world.getDynamicProperty("antiAutoClicker") ?? config.antiAutoClicker.enabled) as boolean;
+
+    if (!(damagingEntity instanceof Player) || toggle !== true) {
         return;
     }
+    if (isAdmin (damagingEntity)) return
     AutoClicker(damagingEntity);
 });
+
+world.afterEvents.playerLeave.subscribe(({ playerId }) => {
+    clickData.delete(playerId);
+})

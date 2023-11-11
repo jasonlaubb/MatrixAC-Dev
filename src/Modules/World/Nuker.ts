@@ -1,8 +1,8 @@
 import { system, world } from "@minecraft/server";
-import { flag } from "../../Assets/Util";
+import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
 
-const fastBrokenBlocks: string[] = ["minecraft:yellow_flower", "minecraft:red_flower", "minecraft:double_plant",
+const fastBrokenBlocks: Set<string> = new Set(["minecraft:yellow_flower", "minecraft:red_flower", "minecraft:double_plant",
 "minecraft:wither_rose", "minecraft:tallgrass", "minecraft:hanging_roots", "minecraft:leaves",
 "minecraft:leaves2", "minecraft:azalea_leaves", "minecraft:azalea_leaves_flowered", "minecraft:deadbush",
 "minecraft:cocoa", "minecraft:chorus_plant", "minecraft:chorus_flower", "minecraft:cave_vines",
@@ -17,7 +17,7 @@ const fastBrokenBlocks: string[] = ["minecraft:yellow_flower", "minecraft:red_fl
 "minecraft:glow_lichen", "minecraft:brown_mushroom", "minecraft:red_mushroom", "minecraft:nether_wart",
 "minecraft:nether_sprouts", "minecraft:crimson_roots", "minecraft:warped_roots", "minecraft:twisting_vines",
 "minecraft:weeping_vines", "minecraft:slime", "minecraft:redstone_wire", "minecraft:unpowered_repeater",
-"minecraft:powered_repeater", "minecraft:unpowered_comparator", "minecraft:powered_comparator"];
+"minecraft:powered_repeater", "minecraft:unpowered_comparator", "minecraft:powered_comparator"]);
 
 const blockBreakData = new Map<string, number[]>();
 
@@ -29,7 +29,8 @@ const blockBreakData = new Map<string, number[]>();
 
 //@ts-ignore
 world.beforeEvents.playerBreakBlock.subscribe(({ player, block, cancel }) => {
-    if (player.hasTag("admin")) return;
+    const toggle: boolean = (world.getDynamicProperty("antiNuker") ?? config.antiNuker.enabled) as boolean;
+    if (isAdmin (player) || !toggle) return;
 
     if (player.hasTag("break-disabled")) {
         cancel = true;
@@ -41,7 +42,7 @@ world.beforeEvents.playerBreakBlock.subscribe(({ player, block, cancel }) => {
     //get the block break count in the 1 tick
     let blockBreakCount: number[] = blockBreakData.get(player.id)?.filter(time => timeNow - time < 50) ?? [];
 
-    if (!fastBrokenBlocks.includes(block.typeId)) {
+    if (!fastBrokenBlocks.has(block.typeId)) {
         blockBreakCount.push(Date.now());
     };
 

@@ -6,7 +6,7 @@ import {
     Player
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
-import { flag } from "../../Assets/Util.js";
+import { flag, isAdmin } from "../../Assets/Util.js";
 
 const speedData = new Map();
 
@@ -22,9 +22,13 @@ class PlayerInfo {
 }
 
 system.runInterval(() => {
+    const toggle: boolean = (world.getDynamicProperty("antiSpeed") ?? config.antiSpeed.enabled) as boolean;
+    if (toggle !== true) return;
+    
     const now: number = Date.now();
-    for (const player of world.getPlayers({ excludeTags: ["admin"], excludeGameModes: [GameMode['creative'], GameMode['spectator']] })) {
+    for (const player of world.getPlayers({ excludeGameModes: [GameMode['creative'], GameMode['spectator']] })) {
         const { id } = player;
+        if (isAdmin (player)) return;
         //@ts-expect-error
         if (player.threwTridentAt && now - player.threwTridentAt < 2000 || player.lastExplosionTime && now - player.lastExplosionTime < 2000) {
             continue;
@@ -65,3 +69,7 @@ world.afterEvents.entityHurt.subscribe(event => {
         player.lastExplosionTime = Date.now();
     }
 });
+
+world.afterEvents.playerLeave.subscribe(({ playerId }) => {
+    speedData.delete(playerId);
+})

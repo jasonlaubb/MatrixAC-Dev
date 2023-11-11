@@ -44,3 +44,7 @@ export function isTargetGamemode (player: Player, gamemode: number) {
 
     return world.getPlayers({ name: player.name, gameMode: gamemodes[gamemode] }).length > 0
 }
+
+export function isAdmin (player: Player) {
+    return !!player.getDynamicProperty("isAdmin")
+}

@@ -7,10 +7,10 @@ import {
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
 import {
-    flag
+    flag, isAdmin
 } from "../../Assets/Util.js";
 
-const reachData: Map <Entity, number> = new Map <Entity,number> ();
+const reachData: Map <string, number> = new Map <string, number> ();
 
 /**
  * @author ravriv && RamiGamerDev
@@ -34,9 +34,12 @@ function calculateDistance(b1: Entity, b2: Entity) {
 }
 
 world.afterEvents.entityHurt.subscribe(({ damageSource, hurtEntity }) => {
+    const toggle: boolean = (world.getDynamicProperty("antiReach") ?? config.antiReach.enabled) as boolean;
+    if (toggle !== true) return;
     if (damageSource.cause !== EntityDamageCause.entityAttack) return
     const damagingEntity = damageSource.damagingEntity;
     if (!(damagingEntity instanceof Player) || !(hurtEntity instanceof Player)) return;
+    if (isAdmin (damagingEntity)) return
     const yReach: number = Math.abs(damagingEntity.location.y - hurtEntity.location.y)
 
     let maximumYReach: number = config.antiReach.maxYReach
@@ -52,18 +55,22 @@ world.afterEvents.entityHurt.subscribe(({ damageSource, hurtEntity }) => {
     const distance: number = calculateDistance(damagingEntity, hurtEntity);
 
     if (distance > config.antiReach.maxReach || yReach > maximumYReach) {
-        if (!reachData.has(damagingEntity)) {
-            reachData.set(damagingEntity, 0);
+        if (!reachData.has(damagingEntity.id)) {
+            reachData.set(damagingEntity.id, 0);
             system.runTimeout(() => {
-                reachData.delete(damagingEntity);
+                reachData.delete(damagingEntity.id);
             }, 80);
         }
-        reachData.set(damagingEntity, reachData.get(damagingEntity) + 1);
+        reachData.set(damagingEntity.id, reachData.get(damagingEntity.id) + 1);
     }
 
-    if (reachData.get(damagingEntity) >= 2) {
+    if (reachData.get(damagingEntity.id) >= 2) {
         flag(damagingEntity, 'Reach', config.antiReach.punishment, ["distance:" + distance, "yReach:" + yReach])
         damagingEntity.applyDamage(6);
-        reachData.delete(damagingEntity);
+        reachData.delete(damagingEntity.id);
     }
 });
+
+world.afterEvents.playerLeave.subscribe(({ playerId }) => {
+    reachData.delete(playerId);
+})
