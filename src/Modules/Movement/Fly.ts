@@ -72,7 +72,7 @@ system.runInterval(() => {
 
     for (const player of world.getAllPlayers()) {
         if (isAdmin(player)) return;
-        const { id, isOnGround }: any = player;
+        const { id }: any = player;
         const velocityY: number = player.getVelocity().y;
 
         //@ts-expect-error
@@ -91,9 +91,8 @@ system.runInterval(() => {
             player.removeTag("matrix:slime")
         }
 
-
         if (velocityY > 0.7 && !player.hasTag("matrix:slime")) {
-            if(velocityY %1 == velocityY) return
+            if (velocityY % 0 === 0) return;
             const prevLoc = previousLocations.get(id);
             flag (player, "Fly", config.antiFly.punishment, [`velocityY:${velocityY.toFixed(2)}`])
             player.teleport(prevLoc);
