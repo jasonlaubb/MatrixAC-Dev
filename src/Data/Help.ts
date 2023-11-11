@@ -9,6 +9,10 @@ export function helpList (p: string): string {
         `§g${p}rank <set/add/remove> <player> <rank> - Change the rank on a player`,
         `§g${p}defaultrank <rank> - Change the default rank`,
         `§g${p}showallrank <true/false> - Show all rank in chat`,
+        `§g${p}ban <player> <time> <reason> - Ban a player`,
+        `§g${p}unban <player> - Unban a player`,
+        `§g${p}unbanremove <player> - Remove a player from unban queue`,
+        `§g${p}unbanlist - Show all player in unban queue`
     ].join("\n")
 }
 

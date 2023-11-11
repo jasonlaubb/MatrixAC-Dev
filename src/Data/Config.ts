@@ -58,6 +58,26 @@ export default {
             enabled: true,
             adminOnly: true,
             requireTag: undefined
+        },
+        ban: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        unban: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        unbanremove: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        unbanlist: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
         }
     },
     chatRank: {

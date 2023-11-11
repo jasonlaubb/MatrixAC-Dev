@@ -4,8 +4,9 @@ import {
     world
 } from "@minecraft/server";
 import { helpList, toggleList, validModules } from "../../Data/Help"
-import { isAdmin } from "../../Assets/Util";
+import { isAdmin, isTimeStr, timeToMs } from "../../Assets/Util";
 import config from "../../Data/Config";
+import { ban, unban, unbanList, unbanRemove } from "../moderateModel/banHandler";
 
 export { inputCommand }
 
@@ -157,6 +158,51 @@ const inputCommand = (player: Player, message: string, prefix: string): any => {
             if (toggle === undefined || !(new Set(["true", "false"]).has(toggle))) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown action, please use true/false only`))
             world.setDynamicProperty("showAllRank", Boolean(toggle))
             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Show all rank has been set to ${toggle}`))
+            break
+        }
+        case "ban": {
+            if (!Command.new(player, config.commands.ban as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
+            const target = world.getPlayers({ name: regax[1] })[0]
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            if (target.id === player.id) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't ban yourself`))
+            if (isAdmin(target)) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't ban admin`))
+
+            const reason = regax[2]
+            if (reason === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the reason`))
+
+            const time = regax[3]
+            if (time === undefined || (!isTimeStr(time) && time != 'forever')) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the time\nExample: 1d2h3m4s`))
+
+            ban(player, 'reason', player.name, time === 'forever' ? time : Date.now() + timeToMs(time))
+            break
+        }
+        case "unban": {
+            if (!Command.new(player, config.commands.unban as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
+
+            const targetName = regax[1]
+
+            if (unbanList().includes(targetName)) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${targetName} has unbanned already`))
+            if (targetName == player.name) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't unban yourself`))
+
+            unban(targetName)
+            break
+        }
+        case "unbanremove": {
+            if (!Command.new(player, config.commands.unbanremove as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
+
+            const targetName = regax[1]
+
+            if (!unbanRemove(targetName)) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${targetName} has not unbanned yet`))
+            break
+        }
+        case "unbanlist": {
+            if (!Command.new(player, config.commands.unbanlist as Cmds)) return
+            const list = unbanList()
+            if (list.length === 0) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 There is no one in unban list`))
+            system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unban list:\n${list.join("\n")}`))
             break
         }
         default: {
