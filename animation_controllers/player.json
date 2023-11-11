@@ -9,7 +9,7 @@
                             "may_fly": "query.can_fly"
                         }
                     ],
-                    "on_entry": ["/tag @s add ability:may_fly"]
+                    "on_entry": ["/tag @s add matrix:may_fly"]
                 },
                 "may_fly": {
                     "transitions": [
@@ -17,7 +17,7 @@
                             "default": "!query.can_fly"
                         }
                     ],
-                    "on_entry": ["/tag @s remove ability:may_fly"]
+                    "on_entry": ["/tag @s remove matrix:may_fly"]
                 }
             }
         },
@@ -30,8 +30,8 @@
                         }
                     ],
                     "on_entry": [
-                        "/tag @s remove animation:alive",
-                        "/tag @s add animation:dead"
+                        "/tag @s remove matrix:alive",
+                        "/tag @s add matrix:dead"
                     ]
                 },
                 "alive": {
@@ -41,9 +41,9 @@
                         }
                     ],
                     "on_entry": [
-                        "/tag @s add animation:alive",
-                        "/tag @s remove animation:dead",
-                        "/tag @s remove animation:moving"
+                        "/tag @s add matrix:alive",
+                        "/tag @s remove matrix:dead",
+                        "/tag @s remove matrix:moving"
                     ]
                 }
             }
@@ -56,7 +56,7 @@
                             "attack_time": "variable.attack_time"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:attack_time"]
+                    "on_entry": ["/tag @s add matrix:attack_time"]
                 },
                 "attack_time": {
                     "transitions": [
@@ -64,7 +64,7 @@
                             "default": "!variable.attack_time"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:attack_time"]
+                    "on_entry": ["/tag @s remove matrix:attack_time"]
                 }
             }
         },
@@ -76,7 +76,7 @@
                             "gliding": "query.is_gliding"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:gliding"]
+                    "on_entry": ["/tag @s remove matrix:gliding"]
                 },
                 "gliding": {
                     "transitions": [
@@ -84,7 +84,7 @@
                             "default": "!query.is_gliding"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:gliding"]
+                    "on_entry": ["/tag @s add matrix:gliding"]
                 }
             }
         },
@@ -96,7 +96,7 @@
                             "jump_action": "query.is_jumping"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:jump_action"]
+                    "on_entry": ["/tag @s remove matrix:jump_action"]
                 },
                 "jump_action": {
                     "transitions": [
@@ -104,7 +104,7 @@
                             "default": "!query.is_jumping"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:jump_action"]
+                    "on_entry": ["/tag @s add matrix:jump_action"]
                 }
             }
         },
@@ -116,7 +116,7 @@
                             "jumping": "query.is_jumping"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:jumping"]
+                    "on_entry": ["/tag @s remove matrix:jumping"]
                 },
                 "jumping": {
                     "transitions": [
@@ -124,7 +124,7 @@
                             "default": "!query.is_jumping && query.is_on_ground"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:jumping"]
+                    "on_entry": ["/tag @s add matrix:jumping"]
                 }
             }
         },
@@ -136,7 +136,7 @@
                             "levitating": "query.is_levitating"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:levitating"]
+                    "on_entry": ["/tag @s remove matrix:levitating"]
                 },
                 "levitating": {
                     "transitions": [
@@ -144,7 +144,7 @@
                             "default": "!query.is_levitating"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:levitating"]
+                    "on_entry": ["/tag @s add matrix:levitating"]
                 }
             }
         },
@@ -156,7 +156,7 @@
                             "moving": "query.is_moving"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:moving"]
+                    "on_entry": ["/tag @s remove matrix:moving"]
                 },
                 "moving": {
                     "transitions": [
@@ -164,7 +164,7 @@
                             "default": "!query.is_moving"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:moving"]
+                    "on_entry": ["/tag @s add matrix:moving"]
                 }
             }
         },
@@ -177,8 +177,8 @@
                         }
                     ],
                     "on_entry": [
-                        "/tag @s remove animation:on_ground",
-                        "/tag @s add animation:floating"
+                        "/tag @s remove matrix:on_ground",
+                        "/tag @s add matrix:floating"
                     ]
                 },
                 "on_ground": {
@@ -188,8 +188,8 @@
                         }
                     ],
                     "on_entry": [
-                        "/tag @s add animation:on_ground",
-                        "/tag @s remove animation:floating"
+                        "/tag @s add matrix:on_ground",
+                        "/tag @s remove matrix:floating"
                     ]
                 }
             }
@@ -202,7 +202,7 @@
                             "riding": "query.is_riding"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:riding"]
+                    "on_entry": ["/tag @s remove matrix:riding"]
                 },
                 "riding": {
                     "transitions": [
@@ -210,7 +210,7 @@
                             "default": "!query.is_riding"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:riding"]
+                    "on_entry": ["/tag @s add matrix:riding"]
                 }
             }
         },
@@ -222,7 +222,7 @@
                             "sneaking": "query.is_sneaking"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:sneaking"]
+                    "on_entry": ["/tag @s remove matrix:sneaking"]
                 },
                 "sneaking": {
                     "transitions": [
@@ -230,7 +230,7 @@
                             "default": "!query.is_sneaking"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:sneaking"]
+                    "on_entry": ["/tag @s add matrix:sneaking"]
                 }
             }
         },
@@ -242,7 +242,7 @@
                             "sprinting": "query.is_sprinting"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:sprinting"]
+                    "on_entry": ["/tag @s remove matrix:sprinting"]
                 },
                 "sprinting": {
                     "transitions": [
@@ -250,7 +250,7 @@
                             "default": "!query.is_sprinting"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:sprinting"]
+                    "on_entry": ["/tag @s add matrix:sprinting"]
                 }
             }
         },
@@ -262,7 +262,7 @@
                             "swimming": "query.is_swimming || query.is_in_water"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:swimming"]
+                    "on_entry": ["/tag @s remove matrix:swimming"]
                 },
                 "swimming": {
                     "transitions": [
@@ -270,7 +270,7 @@
                             "default": "!query.is_swimming && !query.is_in_water"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:swimming"]
+                    "on_entry": ["/tag @s add matrix:swimming"]
                 }
             }
         },
@@ -282,7 +282,7 @@
                             "sleeping": "query.is_sleeping"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:sleeping"]
+                    "on_entry": ["/tag @s remove matrix:sleeping"]
                 },
                 "sleeping": {
                     "transitions": [
@@ -290,7 +290,7 @@
                             "default": "!query.is_sleeping"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:sleeping"]
+                    "on_entry": ["/tag @s add matrix:sleeping"]
                 }
             }
         },
@@ -302,7 +302,7 @@
                             "using_item": "query.is_using_item && query.get_equipped_item_name != 'fishing_rod'"
                         }
                     ],
-                    "on_entry": ["/tag @s remove animation:using_item"]
+                    "on_entry": ["/tag @s remove matrix:using_item"]
                 },
                 "using_item": {
                     "transitions": [
@@ -310,7 +310,7 @@
                             "default": "!query.is_using_item"
                         }
                     ],
-                    "on_entry": ["/tag @s add animation:using_item"]
+                    "on_entry": ["/tag @s add matrix:using_item"]
                 }
             }
         },
@@ -323,7 +323,7 @@
                             "is_not_facing": "query.cardinal_facing_2d != 2"
                         }
                     ],
-                    "on_entry": ["/tag @s add facing:north"]
+                    "on_entry": ["/tag @s add matrix:north"]
                 },
                 "is_not_facing": {
                     "transitions": [
@@ -331,7 +331,7 @@
                             "is_facing": "query.cardinal_facing_2d == 2"
                         }
                     ],
-                    "on_entry": ["/tag @s remove facing:north"]
+                    "on_entry": ["/tag @s remove matrix:north"]
                 }
             }
         },
@@ -344,7 +344,7 @@
                             "is_not_facing": "query.cardinal_facing_2d != 3"
                         }
                     ],
-                    "on_entry": ["/tag @s add facing:south"]
+                    "on_entry": ["/tag @s add matrix:south"]
                 },
                 "is_not_facing": {
                     "transitions": [
@@ -352,7 +352,7 @@
                             "is_facing": "query.cardinal_facing_2d == 3"
                         }
                     ],
-                    "on_entry": ["/tag @s remove facing:south"]
+                    "on_entry": ["/tag @s remove matrix:south"]
                 }
             }
         },
@@ -365,7 +365,7 @@
                             "is_not_facing": "query.cardinal_facing_2d != 5"
                         }
                     ],
-                    "on_entry": ["/tag @s add facing:east"]
+                    "on_entry": ["/tag @s add matrix:east"]
                 },
                 "is_not_facing": {
                     "transitions": [
@@ -373,7 +373,7 @@
                             "is_facing": "query.cardinal_facing_2d == 5"
                         }
                     ],
-                    "on_entry": ["/tag @s remove facing:east"]
+                    "on_entry": ["/tag @s remove matrix:east"]
                 }
             }
         },
@@ -386,7 +386,7 @@
                             "is_not_facing": "query.cardinal_facing_2d != 4"
                         }
                     ],
-                    "on_entry": ["/tag @s add facing:west"]
+                    "on_entry": ["/tag @s add matrix:west"]
                 },
                 "is_not_facing": {
                     "transitions": [
@@ -394,7 +394,7 @@
                             "is_facing": "query.cardinal_facing_2d == 4"
                         }
                     ],
-                    "on_entry": ["/tag @s remove facing:west"]
+                    "on_entry": ["/tag @s remove matrix:west"]
                 }
             }
         }
