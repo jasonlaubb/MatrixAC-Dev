@@ -7,7 +7,7 @@ import {
 } from "@minecraft/server";
 import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
-import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
+import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 
 class PhaseData {
     lastPos: Vector3;
