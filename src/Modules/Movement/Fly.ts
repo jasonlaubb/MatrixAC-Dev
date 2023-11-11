@@ -32,11 +32,6 @@ system.runInterval(() => {
         if (isAdmin(player)) return;
         const { id, location: { x, y, z }, isOnGround }: any = player;
         const velocityY: number = player.getVelocity().y;
-
-        if (isOnGround && velocityY === 0) {
-            previousLocations.set(id, { x, y, z });
-        }
-
         if (player.isFlying || player.isInWater) return
 
         if (!isOnGround && velocityY === 0) {
@@ -74,7 +69,9 @@ system.runInterval(() => {
         if (isAdmin(player)) return;
         const { id }: any = player;
         const velocityY: number = player.getVelocity().y;
-
+if (isOnGround && velocityY === 0 || velocityY<0 && player.location.y<previousLocations.get(id).y) {
+            previousLocations.set(id, { x, y, z });
+        }
         //@ts-expect-error
         if ((player.threwTridentAt && now - player.threwTridentAt < 2000) || (player.lastExplosionTime && now - player.lastExplosionTime < 2000)) return;
         if (player.isInWater || player.isGliding) return;
