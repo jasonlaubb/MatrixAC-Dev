@@ -8,16 +8,11 @@ import {
 
 import config from "../../Data/Config";
 
-class FlyData {
-    flyTimer: number;
-}
-
 class FallData {
     count: number;
     lastFallDamageTime: number;
 }
 
-const flyData = new Map<string, FlyData>();
 const fallData = new Map<string, FallData>();
 const previousLocations = new Map<string, Vector3>();
 import { flag, isAdmin } from "../../Assets/Util";
@@ -35,27 +30,15 @@ system.runInterval(() => {
         if (isAdmin(player)) return;
         const { id, location: { x, y, z }, isOnGround }: any = player;
         const velocityY: number = player.getVelocity().y;
-        const { flyTimer = 0 }: any = flyData.get(id) || {};
 
         if (isOnGround) {
             previousLocations.set(id, { x, y, z });
         }
 
-        if (!flyData.has(id) || (isOnGround && velocityY === 0)) {
-            flyData.set(id, { flyTimer });
-        }
-
-        if (velocityY === 0 && !isOnGround) {
-            flyData.set(id, { flyTimer: flyTimer + 1 });
-        }
-
-        if (flyTimer > config.antiFly.maxFlyTimer && velocityY === 0) {
-            if (flyData.has(id)) {
-                const prevLoc = previousLocations.get(id);
-                flag (player, "Fly", config.antiFly.punishment, ["velocityY:0"])
-                player.teleport(prevLoc);
-                flyData.delete(id);
-            }
+        if (velocityY === 0) {
+            const prevLoc = previousLocations.get(id);
+            flag (player, "Fly", config.antiFly.punishment, ["velocityY:0"])
+            player.teleport(prevLoc);
         }
     }
 }, 20);
@@ -96,7 +79,6 @@ world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
 
 world.afterEvents.playerLeave.subscribe(({ playerId }) => {
     const id = playerId;
-    flyData.delete(id);
     fallData.delete(id);
     previousLocations.delete(id);
 })
