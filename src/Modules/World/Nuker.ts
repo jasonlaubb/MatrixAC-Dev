@@ -27,6 +27,7 @@ const blockBreakData = new Map<string, number[]>();
  * it detects if a player breaks more than 5 blocks in a tick.
  */
 
+//@ts-ignore
 world.beforeEvents.playerBreakBlock.subscribe(({ player, block, cancel }) => {
     if (player.hasTag("admin")) return;
 
