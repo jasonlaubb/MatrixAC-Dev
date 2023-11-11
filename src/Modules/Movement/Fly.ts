@@ -93,7 +93,7 @@ system.runInterval(() => {
 
 
         if (velocityY > 0.7 && !player.hasTag("matrix:slime")) {
-            if(velocityY == Math.turnc(velocityY) return
+            if(velocityY %1 == velocityY) return
             const prevLoc = previousLocations.get(id);
             flag (player, "Fly", config.antiFly.punishment, [`velocityY:${velocityY.toFixed(2)}`])
             player.teleport(prevLoc);
