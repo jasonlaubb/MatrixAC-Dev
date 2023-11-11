@@ -12,7 +12,17 @@ export default {
      * The setting for our functions
      */
     commands: {
-        prefix: "-"
+        prefix: "-", // The prefix of commands
+        help: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        toggles: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        }
     },
     chatRank: {
         enabled: true,
