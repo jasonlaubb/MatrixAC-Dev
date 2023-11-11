@@ -4,11 +4,12 @@ import {
     Vector3,
     GameMode,
     Player,
-    EntityDamageCause
+    EntityDamageCause,
+    Effect
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
 import { flag, isAdmin } from "../../Assets/Util.js";
-import { MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index.js";
+import { MinecraftEffectTypes, MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index.js";
 
 const speedData = new Map();
 
@@ -23,12 +24,17 @@ class PlayerInfo {
     initialLocation: Vector3;
 }
 
+function getSpeedIncrease (speedEffect: Effect | undefined) {
+    if (speedEffect === undefined) return 0;
+    return (speedEffect?.amplifier + 1) * 0.056;
+}
+
 system.runInterval(() => {
     const toggle: boolean = (world.getDynamicProperty("antiSpeed") ?? config.antiSpeed.enabled) as boolean;
     if (toggle !== true) return;
     
     const now: number = Date.now();
-    for (const player of world.getPlayers({ excludeGameModes: [GameMode['creative'], GameMode['spectator']] })) {
+    for (const player of world.getPlayers({ excludeGameModes: [GameMode.creative, GameMode.spectator] })) {
         const { id } = player;
         if (isAdmin (player)) return;
         //@ts-expect-error
@@ -39,8 +45,10 @@ system.runInterval(() => {
         const { x, z } = player.getVelocity();
         const playerSpeedMph: number = Math.hypot(x, z) * 72000 / 1609.34;
         const playerInfo: PlayerInfo = speedData.get(id);
-        const isSpeeding: boolean = playerSpeedMph > config.antiSpeed.mphThreshold && speedData.has(id);
-        const isNotSpeeding: boolean = playerSpeedMph <= config.antiSpeed.mphThreshold && speedData.has(id);
+        const limitIncrease: number = getSpeedIncrease(player.getEffect(MinecraftEffectTypes.Speed));
+        const mphThreshold: number = config.antiSpeed.mphThreshold + limitIncrease;
+        const isSpeeding: boolean = playerSpeedMph > mphThreshold && speedData.has(id);
+        const isNotSpeeding: boolean = playerSpeedMph <= mphThreshold && speedData.has(id);
 
         if (playerSpeedMph === 0) {
             speedData.set(id, { initialLocation: player.location });

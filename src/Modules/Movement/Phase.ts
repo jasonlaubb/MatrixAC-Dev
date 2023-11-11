@@ -7,6 +7,7 @@ import {
 } from "@minecraft/server";
 import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
+import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 
 class PhaseData {
     lastPos: Vector3;
@@ -15,8 +16,8 @@ class PhaseData {
 };
 
 const phaseData: Map<string, PhaseData> = new Map<string, PhaseData>();
-const passableBlocks = new Set(["minecraft:sand", "minecraft:gravel"]);
-const isSolidBlock = (block: Block) => Boolean(block?.isSolid && !passableBlocks.has(block.typeId) && !block.typeId.endsWith('_powder'));
+const passableBlocks = new Set([MinecraftBlockTypes.Sand, MinecraftBlockTypes.Gravel]);
+const isSolidBlock = (block: Block) => Boolean(block?.isSolid && !passableBlocks.has(block.typeId as MinecraftBlockTypes) && !block.typeId.endsWith('_powder'));
 
 /**
  * @author ravriv & jasonlaubb
@@ -27,7 +28,7 @@ system.runInterval(() => {
     const toggle: boolean = (world.getDynamicProperty("antiPhase") ?? config.antiPhase.enabled) as boolean;
     if (toggle !== true) return;
     
-    world.getPlayers({ excludeGameModes: [GameMode['creative'], GameMode['spectator']] }).forEach(player => {
+    world.getPlayers({ excludeGameModes: [GameMode.creative, GameMode.spectator] }).forEach(player => {
         if (isAdmin(player)) return;
         const { id, location, dimension } = player;
         const { x, y, z } = location;

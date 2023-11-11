@@ -9,7 +9,7 @@ class BanInfo {
     isBanned: boolean;
     reason: string;
     by: string;
-    time: number;
+    time: number | "forever";
 }
 
 function checksBan (player: Player): void {
@@ -29,15 +29,23 @@ function checksBan (player: Player): void {
 
     const { reason, by, time }: BanInfo = baninfo
 
-    if (Date.now() > time) {
-        player.setDynamicProperty("isBanned", undefined)
-        return
+    if (time !== "forever") {
+        if (Date.now() > time) {
+            player.setDynamicProperty("isBanned", undefined)
+            return
+        }
     }
 
-    const timeLeft = msToTime(time - Date.now())
-    const { days: d, hours: h, minutes: m, seconds: s } = timeLeft
+    const timeLeft = time === "forever" ? "forever" : msToTime(time - Date.now())
+    let timeTherShold;
+    if (timeLeft === "forever") {
+        timeTherShold = "forever"
+    } else {
+        const { days: d, hours: h, minutes: m, seconds: s } = timeLeft
+        timeTherShold = `${d} days, ${h} hours, ${m} minutes, ${s} seconds`
+    }
 
-    player.runCommand(`kick "${player.name}" \n§c§lYou have been banned!\n§r§7Time Left:§c ${d} days, ${h} hours, ${m} minutes, ${s} seconds\n§7Reason: §c${reason}§r\n§7By: §c${by}`)
+    player.runCommand(`kick "${player.name}" \n§c§lYou have been banned!\n§r§7Time Left:§c ${timeTherShold}\n§7Reason: §c${reason}§r\n§7By: §c${by}`)
 }
 
 function ban (player: Player, reason: string, by: string, time: number | "forever") {

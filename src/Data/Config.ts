@@ -176,6 +176,12 @@ export default {
         punishment: undefined
     },
 
+    antiNoSlow: {
+        enabled: true,
+        maxSpeedTherehold: 0.04,
+        punishment: undefined
+    },
+
     antiSpam: {
         enabled: true,
         maxMessagesPerSecond: 3,

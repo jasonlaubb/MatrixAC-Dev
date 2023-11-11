@@ -35,5 +35,6 @@ export const validModules: string[] = [
     "antiFly",
     "antiPhase",
     "antiSpeed",
-    "antiNuker"
+    "antiNuker",
+    "antiNoSlow"
 ]

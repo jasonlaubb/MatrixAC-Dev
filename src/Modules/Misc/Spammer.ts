@@ -81,7 +81,7 @@ world.beforeEvents.chatSend.subscribe(({
         } as Data;
 
         if (player.hasTag('matrix:attack_time') && !player.getEffect("mining_fatigue")) checkSpam(player, "sending messages while swinging their hand");
-        if (player.hasTag('matrix::using_item')) checkSpam(player, "sending messages while using an item");
+        if (player.hasTag('matrix:using_item')) checkSpam(player, "sending messages while using an item");
 
         if (config.blacklistedMessages.some((word) => message.includes(word))) {
             kick(player, 'blacklisted message', 'Matrix')
