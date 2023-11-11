@@ -3,7 +3,8 @@ import {
     system,
     Player,
     EntityDamageCause,
-    Vector3
+    Vector3,
+    Dimension
 } from "@minecraft/server";
 
 import config from "../../Data/Config";
@@ -16,6 +17,7 @@ class FallData {
 const fallData = new Map<string, FallData>();
 const previousLocations = new Map<string, Vector3>();
 import { flag, isAdmin } from "../../Assets/Util";
+import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 
 /**
  * @author ravriv & RaMiGamerDev
@@ -31,7 +33,7 @@ system.runInterval(() => {
         const { id, location: { x, y, z }, isOnGround }: any = player;
         const velocityY: number = player.getVelocity().y;
 
-        if (isOnGround) {
+        if (isOnGround && velocityY === 0) {
             previousLocations.set(id, { x, y, z });
         }
 
@@ -41,7 +43,61 @@ system.runInterval(() => {
             player.teleport(prevLoc);
         }
     }
-}, 20);
+}, 10);
+
+function seachForSlimeBlock (dimension: Dimension, location: Vector3) {
+    const index = [-1, 0, 1]
+
+    const floorPos = {
+        x: Math.floor(location.x),
+        y: Math.floor(location.y),
+        z: Math.floor(location.z)
+    } as Vector3
+
+    return index.some(x => index.some(y => index.some(z => {
+        dimension.getBlock({
+            x: floorPos.x + x, y: floorPos.y + y, z: floorPos.z + z
+        }).typeId === MinecraftBlockTypes.Slime
+    })))
+    
+}
+
+system.runInterval(() => {
+    const toggle: boolean = (world.getDynamicProperty("antiFly") ?? config.antiFly.enabled) as boolean;
+    if (toggle !== true) return;
+
+    const now: number = Date.now()
+
+    for (const player of world.getAllPlayers()) {
+        if (isAdmin(player)) return;
+        const { id, isOnGround }: any = player;
+        const velocityY: number = player.getVelocity().y;
+
+        //@ts-expect-error
+        if ((player.threwTridentAt && now - player.threwTridentAt < 2000) || (player.lastExplosionTime && now - player.lastExplosionTime < 2000)) return;
+        if (player.isInWater || player.isGliding) return;
+
+        const didFindSlime: boolean = seachForSlimeBlock (player.dimension, player.location)
+
+        if (didFindSlime) {
+            player.addTag("matrix:slime")
+        } else {
+            player.removeTag("matrix:slime")
+        }
+
+        if (didFindSlime && player.isFalling) {
+            player.removeTag("matrix:slime")
+        }
+
+        if (isOnGround) return
+
+        if (velocityY > 0.7 && !player.hasTag("matrix:slime")) {
+            const prevLoc = previousLocations.get(id);
+            flag (player, "Fly", config.antiFly.punishment, [`velocityY:${velocityY.toFixed(2)}`])
+            player.teleport(prevLoc);
+        }
+    }
+})
 
 world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
     const toggle: boolean = (world.getDynamicProperty("antiFly") ?? config.antiFly.enabled) as boolean;

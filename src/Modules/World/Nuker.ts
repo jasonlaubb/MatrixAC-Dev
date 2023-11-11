@@ -1,8 +1,9 @@
 import { system, world } from "@minecraft/server";
 import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
+import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
 
-const fastBrokenBlocks: Set<string> = new Set(["minecraft:yellow_flower", "minecraft:red_flower", "minecraft:double_plant",
+const fastBrokenBlocks = new Set(["minecraft:yellow_flower", "minecraft:red_flower", "minecraft:double_plant",
 "minecraft:wither_rose", "minecraft:tallgrass", "minecraft:hanging_roots", "minecraft:leaves",
 "minecraft:leaves2", "minecraft:azalea_leaves", "minecraft:azalea_leaves_flowered", "minecraft:deadbush",
 "minecraft:cocoa", "minecraft:chorus_plant", "minecraft:chorus_flower", "minecraft:cave_vines",
@@ -17,7 +18,7 @@ const fastBrokenBlocks: Set<string> = new Set(["minecraft:yellow_flower", "minec
 "minecraft:glow_lichen", "minecraft:brown_mushroom", "minecraft:red_mushroom", "minecraft:nether_wart",
 "minecraft:nether_sprouts", "minecraft:crimson_roots", "minecraft:warped_roots", "minecraft:twisting_vines",
 "minecraft:weeping_vines", "minecraft:slime", "minecraft:redstone_wire", "minecraft:unpowered_repeater",
-"minecraft:powered_repeater", "minecraft:unpowered_comparator", "minecraft:powered_comparator"]);
+"minecraft:powered_repeater", "minecraft:unpowered_comparator", "minecraft:powered_comparator"] as MinecraftBlockTypes[]);
 
 const blockBreakData = new Map<string, number[]>();
 
@@ -28,12 +29,12 @@ const blockBreakData = new Map<string, number[]>();
  */
 
 //@ts-ignore
-world.beforeEvents.playerBreakBlock.subscribe(({ player, block, cancel }) => {
+world.beforeEvents.playerBreakBlock.subscribe(({ player, block }, event) => {
     const toggle: boolean = (world.getDynamicProperty("antiNuker") ?? config.antiNuker.enabled) as boolean;
     if (isAdmin (player) || !toggle) return;
 
     if (player.hasTag("maxtrix:break-disabled")) {
-        cancel = true;
+        event.cancel = true;
         return;
     }
 
@@ -42,14 +43,14 @@ world.beforeEvents.playerBreakBlock.subscribe(({ player, block, cancel }) => {
     //get the block break count in the 1 tick
     let blockBreakCount: number[] = blockBreakData.get(player.id)?.filter(time => timeNow - time < 50) ?? [];
 
-    if (!fastBrokenBlocks.has(block.typeId)) {
+    if (!fastBrokenBlocks.has(block.typeId as MinecraftBlockTypes)) {
         blockBreakCount.push(Date.now());
     };
 
     blockBreakData.set(player.id, blockBreakCount);
 
     if (blockBreakCount.length > config.antiNuker.maxBreakPerTick) {
-        cancel = true;
+        event.cancel = true;
         player.addTag("matrix:break-disabled");
 
         //prevent the player from breaking blocks for 3 seconds
