@@ -30,7 +30,7 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
     const toggle: boolean = (world.getDynamicProperty("antiScaffold") ?? config.antiScaffold.enabled) as boolean;
     if (toggle !== true) return;
 
-    if (isAdmin(player) || player.hasTag("scaffold-disabled")) return;
+    if (isAdmin(player) || player.hasTag("matrix:scaffold-disabled")) return;
 
     let detected: boolean = false;
 
@@ -53,8 +53,8 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
 
     if (detected) {
         block.setType(MinecraftBlockTypes.Air);
-        player.addTag("scaffold-disabled");
-        system.runTimeout(() => player.removeTag("scaffold-disabled"), config.antiScaffold.timeout);
+        player.addTag("matrix:scaffold-disabled");
+        system.runTimeout(() => player.removeTag("matrix:scaffold-disabled"), config.antiScaffold.timeout);
     }
 });
 
@@ -71,7 +71,7 @@ function calculateAngle(pos1:Vector3, pos2: Vector3, rotation: Vector2) {
 world.beforeEvents.playerPlaceBlock.subscribe(event => {
     const { player } = event;
 
-    if (player.hasTag("scaffold-disabled")) {
+    if (player.hasTag("matrix:scaffold-disabled")) {
         event.cancel = true;
     }
 });

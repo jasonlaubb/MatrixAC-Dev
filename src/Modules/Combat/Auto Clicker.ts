@@ -28,13 +28,13 @@ const AutoClicker = (player: Player) => {
 
     const cps: number = filteredClicks.length;
 
-    if (cps > config.antiAutoClicker.maxClicksPerSecond && !player.hasTag("pvp-disabled")) {
+    if (cps > config.antiAutoClicker.maxClicksPerSecond && !player.hasTag("matrix:pvp-disabled")) {
         flag (player, 'Auto Clicker', config.antiAutoClicker.punishment, [`Click Per Second:${cps.toFixed(0)}`])
         player.applyDamage(6);
-        player.addTag("pvp-disabled");
+        player.addTag("matrix:pvp-disabled");
 
         system.runTimeout(() => {
-            player.removeTag("pvp-disabled");
+            player.removeTag("matrix:pvp-disabled");
             clickData.delete(id);
         }, config.antiAutoClicker.timeout);
     }

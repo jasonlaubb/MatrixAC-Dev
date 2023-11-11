@@ -24,16 +24,16 @@ function KillAura(damagingEntity: Player, hitEntity: Player) {
         hitLength.set(damagingEntity.name, playerHitEntity);
     }
 
-    if (playerHitEntity.length > config.antiKillAura.maxEntityHit && !damagingEntity.hasTag("pvp-disabled")) {
+    if (playerHitEntity.length > config.antiKillAura.maxEntityHit && !damagingEntity.hasTag("matrix:pvp-disabled")) {
         hitLength.delete(damagingEntity.name);
-        damagingEntity.addTag("pvp-disabled");
+        damagingEntity.addTag("matrix:pvp-disabled");
         flag (damagingEntity, 'Kill Aura', config.antiKillAura.punishment, [`HitLength:${playerHitEntity.length}`])
         system.runTimeout(() => {
             damagingEntity.removeTag("pvp-disabled");
         }, config.antiKillAura.timeout);
     }
 
-    if (distance < 2 || damagingEntity.hasTag("pvp-disabled")) return;
+    if (distance < 2 || damagingEntity.hasTag("matrix:pvp-disabled")) return;
 
     const view: Vector3 = damagingEntity.getViewDirection();
     const angle: number = calculateAngle(view, direction);
@@ -41,9 +41,9 @@ function KillAura(damagingEntity: Player, hitEntity: Player) {
     if (angle > config.antiKillAura.minAngle) {
         flag (damagingEntity, 'Kill Aura', config.antiKillAura.punishment, [`Angle:${angle.toFixed(2)}°`])
 
-        damagingEntity.addTag("pvp-disabled");
+        damagingEntity.addTag("matrix:pvp-disabled");
         system.runTimeout(() => {
-            damagingEntity.removeTag("pvp-disabled");
+            damagingEntity.removeTag("matrix:pvp-disabled");
         }, config.antiKillAura.timeout);
     }
 }

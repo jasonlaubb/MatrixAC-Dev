@@ -32,7 +32,7 @@ world.beforeEvents.playerBreakBlock.subscribe(({ player, block, cancel }) => {
     const toggle: boolean = (world.getDynamicProperty("antiNuker") ?? config.antiNuker.enabled) as boolean;
     if (isAdmin (player) || !toggle) return;
 
-    if (player.hasTag("break-disabled")) {
+    if (player.hasTag("maxtrix:break-disabled")) {
         cancel = true;
         return;
     }
@@ -50,10 +50,10 @@ world.beforeEvents.playerBreakBlock.subscribe(({ player, block, cancel }) => {
 
     if (blockBreakCount.length > config.antiNuker.maxBreakPerTick) {
         cancel = true;
-        player.addTag("break-disabled");
+        player.addTag("matrix:break-disabled");
 
         //prevent the player from breaking blocks for 3 seconds
-        system.runTimeout(() => player.removeTag("break-disabled"), config.antiNuker.timeout);
+        system.runTimeout(() => player.removeTag("matrix:break-disabled"), config.antiNuker.timeout);
 
         blockBreakData.delete(player.id);
         flag(player, "Nuker", config.antiNuker.punishment, ["block:" + block.typeId]);
@@ -62,7 +62,7 @@ world.beforeEvents.playerBreakBlock.subscribe(({ player, block, cancel }) => {
 
 world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
     if (!initialSpawn) return;
-    player.removeTag("break-disabled");
+    player.removeTag("matrix:break-disabled");
 })
 
 world.afterEvents.playerLeave.subscribe(({ playerId }) => {

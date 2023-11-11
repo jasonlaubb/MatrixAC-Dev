@@ -14,6 +14,11 @@ export default {
     commands: {
         password: "password", // The password for op command
         prefix: "-", // The prefix of commands
+        example: {
+            enabled: true, // true mearns the example command will be enabled, false means the example command will be disabled
+            adminOnly: true, // true means only admin can use the command, false means everyone can use the command
+            requireTag: ["mod","manager"] // The tag that the player must have 1 of the tag to use the command, undefined means no tag is required
+        },
         help: {
             enabled: true,
             adminOnly: true,
@@ -100,15 +105,20 @@ export default {
             requireTag: undefined
         }
     },
+    /** 
+     * @description
+     * The config of all modules
+    */
+    example_anticheat_module: {
+        enabled: true, // true mearns the module will be enabled, false means the module will be disabled
+        punishment: "ban" // The punishment of the module, undefined means no punishment
+        //punishmentType: "ban", "kick"
+    },
     chatRank: {
         enabled: true,
         defaultRank: "§gMember",
         showAllRank: true
     },
-    /** 
-     * @description
-     * The config of all anticheat modules
-    */
 
     antiAutoClicker: {
         enabled: true,
