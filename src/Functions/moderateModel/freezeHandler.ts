@@ -19,8 +19,10 @@ system.runInterval(() => {
 
         freezeInfo = JSON.parse(freezeInfo as string) as Freeze;
 
-        player.teleport(freezeInfo.location, {
-            dimension: world.getDimension(freezeInfo.dimension)
+        const freeze = freezeInfo as Freeze
+
+        player.teleport(freeze.location, {
+        dimension: world.getDimension(freeze.dimension)
         })
         player.addEffect("minecraft:slowness", 2, { amplifier: 255, showParticles: false })
     }
@@ -33,13 +35,13 @@ function freeze (player: Player) {
         z: Math.floor(player.location.z)
     } as Vector3
     if (player.getDynamicProperty("freeze") !== undefined) return false
-    player.setDynamicProperty("freeze", JSON.stringify({ location: floorPos, dimension: player.dimension }))
+    system.run(() => player.setDynamicProperty("freeze", JSON.stringify({ location: floorPos, dimension: player.dimension })))
     return true
 }
 
 function unfreeze (player: Player) {
     if (player.getDynamicProperty("freeze") === undefined) return false
-    player.setDynamicProperty("freeze", undefined)
+    system.run(() => player.setDynamicProperty("freeze", undefined))
     return true
 }
 

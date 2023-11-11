@@ -1,6 +1,7 @@
 import {
     world,
-    Player
+    Player,
+    system
 } from "@minecraft/server";
 import { msToTime } from "../../Assets/Util";
 
@@ -40,25 +41,27 @@ function checksBan (player: Player): void {
 }
 
 function ban (player: Player, reason: string, by: string, time: number | "forever") {
-    player.setDynamicProperty("isBanned", JSON.stringify({
-        isBanned: true,
-        reason,
-        by,
-        time
-    }))
-    checksBan (player)
+    system.run(() => {
+        player.setDynamicProperty("isBanned", JSON.stringify({
+            isBanned: true,
+            reason,
+            by,
+            time
+        }))
+        checksBan (player)
+    })
 }
 
 function unban (playerName: string) {
     const unbanListing: string[] = JSON.parse(world.getDynamicProperty("unbanListing") as string)
 
-    world.setDynamicProperty("unbanListing", JSON.stringify([...unbanListing, playerName]))
+    system.run(() => world.setDynamicProperty("unbanListing", JSON.stringify([...unbanListing, playerName])))
 }
 
 function unbanRemove (playerName: string) {
     const unbanListing: string[] = JSON.parse(world.getDynamicProperty("unbanListing") as string)
     if (!unbanListing.includes(playerName)) return false;
-    world.setDynamicProperty("unbanListing", JSON.stringify(unbanListing.filter(name => name !== playerName)))
+    system.run(() => world.setDynamicProperty("unbanListing", JSON.stringify(unbanListing.filter(name => name !== playerName))))
     return true
 }
 

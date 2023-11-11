@@ -88,6 +88,16 @@ export default {
             enabled: true,
             adminOnly: true,
             requireTag: undefined
+        },
+        mute: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        unmute: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
         }
     },
     chatRank: {

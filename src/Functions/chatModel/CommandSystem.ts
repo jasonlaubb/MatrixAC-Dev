@@ -176,6 +176,7 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             if (time === undefined || (!isTimeStr(time) && time != 'forever')) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the time\nExample: 1d2h3m4s`))
 
             ban(player, 'reason', player.name, time === 'forever' ? time : Date.now() + timeToMs(time))
+            system.run(() => world.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been banned by ${player.name}`))
             break
         }
         case "unban": {
@@ -217,9 +218,9 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             const freezed = freeze (target)
 
             if (freezed) {
-                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been freezed`))
+                system.run(() => world.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been freezed by ${player.name}`))
             } else {
-                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has freezed already`))
+                system.run(() => world.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has freezed already`))
             }
             break
         }
@@ -234,12 +235,37 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             const unfreezed = unfreeze (target)
 
             if (unfreezed) {
-                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been unfreezed`))
+                system.run(() => world.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been unfreezed by ${player.name}`))
             } else {
-                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has unfreezed already`))
+                system.run(() => world.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has unfreezed already by ${player.name}`))
             }
             break
         }
+        case "mute": {
+            if (!Command.new(player, config.commands.mute as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
+            const target = world.getPlayers({ name: regax[1] })[0]
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            if (target.id === player.id) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't mute yourself`))
+            if (isAdmin(target)) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't mute admin`))
+
+            target.setDynamicProperty("mute", true)
+            system.run(() => world.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been muted by ${player.name}`))
+            break
+        }
+        case "unmute": {
+            if (!Command.new(player, config.commands.unmute as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
+            const target = world.getPlayers({ name: regax[1] })[0]
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            if (target.id === player.id) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't unmute yourself`))
+            if (isAdmin(target)) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't unmute admin`))
+
+            target.setDynamicProperty("mute", undefined)
+            system.run(() => world.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been unmuted by ${player.name}`))
+            break
+        }
+
         default: {
             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown command, try ${prefix}help`))
             break

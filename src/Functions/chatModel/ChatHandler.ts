@@ -1,5 +1,6 @@
 import {
-    world
+    world,
+    system
 } from "@minecraft/server";
 
 import config from "../../Data/Config";
@@ -14,6 +15,12 @@ world.beforeEvents.chatSend.subscribe(({ sender: player, message, cancel }) => {
     if (message.startsWith(prefix)) {
         cancel = true
         inputCommand (player, message, prefix)
+        return
+    }
+
+    if (player.getDynamicProperty("mute") === true) {
+        cancel = true;
+        system.run(() => player.sendMessage("§2§l§¶Matrix >§4 You are muted!"))
         return
     }
 
