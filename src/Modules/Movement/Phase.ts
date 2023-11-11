@@ -42,7 +42,7 @@ system.runInterval(() => {
         data.lastPos = floorPos;
         data.lastSolid = isSolid;
 
-        if (data.lastSolid && isSolid && (data.lastPos.x !== floorPos.x || data.lastPos.z !== floorPos.z)) {
+        if (data.lastSolid && isSolid) {
             if(bodyBlock.typeId.includes("soul_sand") && headBlock.isSolid == false) return
             flag (player, 'Phase', config.antiPhase.punishment, undefined)
             player.teleport(data.lastSafePos);
