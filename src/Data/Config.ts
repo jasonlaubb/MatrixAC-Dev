@@ -144,8 +144,6 @@ export default {
 
     antiFly: {
         enabled: true,
-        minFallInterval: 1200,
-        maxFallCount: 2,
         punishment: undefined
     },
 
