@@ -36,7 +36,7 @@ world.beforeEvents.playerBreakBlock.subscribe((event) => {
     const { player, block } = event;
     if (isAdmin (player) || !toggle) return;
 
-    if (player.hasTag("maxtrix:break-disabled")) {
+    if (player.hasTag("matrix-break-disabled")) {
         event.cancel = true;
         return;
     }

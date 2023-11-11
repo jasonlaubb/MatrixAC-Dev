@@ -5,6 +5,9 @@
  * @github https://github.com/jasonlaubb/Matrix-AntiCheat
  */
 
+import { system } from "@minecraft/server"
+system.beforeEvents.watchdogTerminate.subscribe(data => data.cancel = true)
+
 import "./Modules/Combat/Auto Clicker"
 import "./Modules/Combat/Kill Aura"
 import "./Modules/Combat/Reach"

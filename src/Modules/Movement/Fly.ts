@@ -30,7 +30,7 @@ system.runInterval(() => {
 
     for (const player of world.getAllPlayers()) {
         if (isAdmin(player)) return;
-        const { id, location: { x, y, z }, isOnGround }: any = player;
+        const { id, isOnGround }: any = player;
         const velocityY: number = player.getVelocity().y;
         if (player.isFlying || player.isInWater) return
 
@@ -69,11 +69,9 @@ system.runInterval(() => {
         if (isAdmin(player)) return;
         const { id }: any = player;
         const velocityY: number = player.getVelocity().y;
-        if(previousLocations.get(id) == undefined){
-            previousLocations.set(id,player.location)
-        }
-if (isOnGround && velocityY === 0 || velocityY<0 && player.location.y<previousLocations.get(id).y) {
-            previousLocations.set(id, { x, y, z });
+        const playerPrevPos = previousLocations.get(id);
+        if (playerPrevPos === undefined || player.isOnGround && velocityY === 0 || velocityY < 0 && player.location.y < previousLocations.get(id)?.y) {
+            previousLocations.set(id, player.location);
         }
         //@ts-expect-error
         if ((player.threwTridentAt && now - player.threwTridentAt < 2000) || (player.lastExplosionTime && now - player.lastExplosionTime < 2000)) return;

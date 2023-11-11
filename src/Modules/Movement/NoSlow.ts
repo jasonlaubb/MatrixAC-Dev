@@ -10,12 +10,14 @@ import config from "../../Data/Config";
 
 function getSpeedIncrease (speedEffect: Effect | undefined) {
     if (speedEffect === undefined) return 0;
-    return (speedEffect?.amplifier + 1) * 0.056;
+    return (speedEffect?.amplifier + 1) * 0.056 * 0.85;
 }
 
+const lastPosition = new Map();
+
 async function antiNoSlow(player: Player) {
-    const lastPosition = new Map();
     const playerLocation = player.location;
+    const playerLastPos = lastPosition.get(player) ?? player.location;
     const velocity = player.getVelocity();
     const { x: velocityX, z: velocityZ } = velocity
 
@@ -44,6 +46,7 @@ async function antiNoSlow(player: Player) {
         } else {
             if (player.getEffect(MinecraftEffectTypes.Speed)) return
             flag (player, "NoSlow", config.antiNoSlow.punishment, [`playerSpeed:${playerSpeed.toFixed(2)}`])
+            player.teleport(playerLastPos)
         }
     }
 }
