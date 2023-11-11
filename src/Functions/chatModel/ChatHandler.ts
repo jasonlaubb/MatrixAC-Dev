@@ -5,6 +5,7 @@ import {
 import config from "../../Data/Config";
 import { antiSpamModule } from "../../Modules/Misc/Spammer";
 import { inputCommand } from "./CommandSystem";
+import { chatRank } from "./ChatRank";
 
 //@ts-ignore
 world.beforeEvents.chatSend.subscribe(({ sender: player, message, cancel }) => {
@@ -22,18 +23,9 @@ world.beforeEvents.chatSend.subscribe(({ sender: player, message, cancel }) => {
     }
 
     const chatRankToggle = (world.getDynamicProperty("chatRank") ?? config.chatRank.enabled) as boolean;
-
+    
     if (chatRankToggle) {
         cancel = true;
-        let ranks: string[] | string = player.getTags().filter(rank => rank.startsWith("rank:"))
-        ranks = ranks.length > 0 ? ranks.map(rank => `§r§7${rank.slice(5)}§r`) : [config.chatRank.defaultRank]
-
-        if (config.chatRank.showAllRank) {
-            ranks = ranks.join("§8, §r")
-        } else {
-            ranks = ranks[0]
-        }
-
-        world.sendMessage(`§8[§7${ranks}§r§8] §r§f${player.name} §r§c»§r ${message}`)
+        chatRank(player, message)
     }
 })
