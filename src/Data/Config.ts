@@ -1,5 +1,5 @@
 /**
- * @author ravriv & jasonlaubb
+ * @author ravriv & jasonlaubb & RaMiGamerDev
  * @description The config json of the AntiCheat
  * 
  * @warning
@@ -137,7 +137,7 @@ export default {
 
     antiReach: {
         enabled: true,
-        maxReach: 6,
+        maxReach: 3.7,
         maxYReach: 4.8,
         punishment: undefined
     },
