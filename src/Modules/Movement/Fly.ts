@@ -17,7 +17,7 @@ class FallData {
 const fallData = new Map<string, FallData>();
 const previousLocations = new Map<string, Vector3>();
 import { flag, isAdmin } from "../../Assets/Util";
-import { MinecraftBlockTypes } from "@minecraft/vanilla-data";
+import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 
 /**
  * @author ravriv & RaMiGamerDev
@@ -37,7 +37,9 @@ system.runInterval(() => {
             previousLocations.set(id, { x, y, z });
         }
 
-        if (velocityY === 0) {
+        if (player.isFlying || player.isInWater) return
+
+        if (!isOnGround && velocityY === 0) {
             const prevLoc = previousLocations.get(id);
             flag (player, "Fly", config.antiFly.punishment, ["velocityY:0"])
             player.teleport(prevLoc);

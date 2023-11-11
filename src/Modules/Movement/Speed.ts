@@ -8,7 +8,7 @@ import {
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
 import { flag, isAdmin } from "../../Assets/Util.js";
-import { MinecraftItemTypes } from "@minecraft/vanilla-data";
+import { MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index.js";
 
 const speedData = new Map();
 
