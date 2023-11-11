@@ -59,6 +59,36 @@ const inputCommand = (player: Player, message: string, prefix: string): any => {
             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${regax[1]} module has been ${regax[2]}d`))
             break
         }
+        case "op": {
+            if (!Command.new(player, config.commands.op as Cmds)) return
+            if (isAdmin(player)) {
+                if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
+                const target = world.getPlayers({ name: regax[1] })[0]
+                if (target === null) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+                target.setDynamicProperty("isAdmin", true)
+                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been opped by ${player.name}`))
+            } else {
+                const password: string = regax[1]
+                const correctPassword = (world.getDynamicProperty("password") ?? config.commands.password) as string
+                if (password === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the password`))
+                if (password == correctPassword) {
+                    player.setDynamicProperty("isAdmin", true)
+                    system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You are now admin`))
+                } else {
+                    system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Wrong password`))
+                }
+            }
+            break      
+        }
+        case "deop": {
+            if (!Command.new(player, config.commands.op as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
+            const target = world.getPlayers({ name: regax[1] })[0]
+            if (target === null) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            target.setDynamicProperty("isAdmin", undefined)
+            system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been deopped by ${player.name}`))
+            break
+        }
         default: {
             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown command, try ${prefix}help`))
             break
