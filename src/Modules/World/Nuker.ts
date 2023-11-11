@@ -29,8 +29,11 @@ const blockBreakData = new Map<string, number[]>();
  */
 
 //@ts-ignore
-world.beforeEvents.playerBreakBlock.subscribe(({ player, block }, event) => {
+world.beforeEvents.playerBreakBlock.subscribe((event) => {
     const toggle: boolean = (world.getDynamicProperty("antiNuker") ?? config.antiNuker.enabled) as boolean;
+    if (toggle !== true) return;
+
+    const { player, block } = event;
     if (isAdmin (player) || !toggle) return;
 
     if (player.hasTag("maxtrix:break-disabled")) {
@@ -51,13 +54,15 @@ world.beforeEvents.playerBreakBlock.subscribe(({ player, block }, event) => {
 
     if (blockBreakCount.length > config.antiNuker.maxBreakPerTick) {
         event.cancel = true;
-        player.addTag("matrix:break-disabled");
+        system.run(() => {
+            player.addTag("matrix:break-disabled");
 
         //prevent the player from breaking blocks for 3 seconds
-        system.runTimeout(() => player.removeTag("matrix:break-disabled"), config.antiNuker.timeout);
+            system.runTimeout(() => player.removeTag("matrix:break-disabled"), config.antiNuker.timeout);
 
-        blockBreakData.delete(player.id);
-        flag(player, "Nuker", config.antiNuker.punishment, ["block:" + block.typeId]);
+            blockBreakData.delete(player.id);
+            flag(player, "Nuker", config.antiNuker.punishment, ["block:" + block.typeId]);
+        })
     }
 });
 
