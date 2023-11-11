@@ -146,7 +146,6 @@ export default {
         enabled: true,
         minFallInterval: 1200,
         maxFallCount: 2,
-        maxFlyTimer: 1,
         punishment: undefined
     },
 
