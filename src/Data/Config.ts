@@ -12,6 +12,7 @@ export default {
      * The setting for our functions
      */
     commands: {
+        password: "password", // The password for op command
         prefix: "-", // The prefix of commands
         help: {
             enabled: true,
@@ -24,6 +25,36 @@ export default {
             requireTag: undefined
         },
         toggle: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        op: {
+            enabled: true,
+            adminOnly: false,
+            requireTag: undefined
+        },
+        deop: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        passwords: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        rank: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        defaultrank: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        showallrank: {
             enabled: true,
             adminOnly: true,
             requireTag: undefined
