@@ -1,81 +1,67 @@
-import { world, system, Player, Vector3 } from "@minecraft/server"
-import { flag } from "../../Assets/Util"
+import { world, system } from "@minecraft/server";
+
+const flyData = new Map();
+const fallData = new Map();
+const previousLocations = new Map();
 
 /**
- * @author RaMiGamerDev
- * @description A simple check to detect fly
+ * @author ravriv & RaMiGamerDev
+ * @description This is a simple anti-fly that detects players using Fly Vanilla/CubeGlide/Motion.
  */
 
-const groundPos = new Map<string, Vector3>()
+system.runInterval(() => {
+    for (const player of world.getAllPlayers()) {
+        const { name, location: { x, y, z }, isOnGround } = player;
+        const velocityY = player.getVelocity().y;
+        const { flyTimer = 0 } = flyData.get(name) || {};
 
-const FlyA = (player: Player) => {
-    const groundLocation: Vector3 = groundPos.get(player.id) ?? player.location
+        if (isOnGround) {
+            previousLocations.set(name, { x, y, z });
+        }
 
-    const velocity: Vector3 = player.getVelocity()
+        if (!flyData.has(name) || (isOnGround && velocityY === 0)) {
+            flyData.set(name, { flyTimer });
+        }
 
-    if (player.isOnGround) {
-        groundPos.set(player.id, player.location)
+        if (velocityY === 0 && !isOnGround) {
+            flyData.set(name, { flyTimer: flyTimer + 1 });
+        }
+
+        if (flyTimer > 1 && velocityY === 0) {
+            if (flyData.has(name)) {
+                const prevLoc = previousLocations.get(name);
+                world.sendMessage(`§2§l§¶Matrix >§4 ${name}§m has been detected using Fly\n§r§l§¶Velocity Y:§c ${velocityY}`);
+                player.teleport(prevLoc);
+                flyData.delete(name);
+            }
+        }
     }
-
-    if (player.isFlying || player.isClimbing || player.isInWater || player.isSwimming) return
-
-    if (velocity.y === 0 && !player.isOnGround && Math.hypot(velocity.x, velocity.z) > 0.1) {
-        player.teleport(groundLocation)
-        flag (player, 'Fly', undefined, [`velocityY:0`])
-    }
-}
-
-const lastPos = new Map<string, Vector3>()
-
-const FlyB = (player: Player) => {
-    const playerLocation: Vector3 = player.location
-    const velocity: number = player.getVelocity().y
-    const floorPos: Vector3 = {
-        x: Math.floor(player.location.x),
-        y: Math.floor(player.location.y),
-        z: Math.floor(player.location.z)
-    }
-
-    const checkSlime: boolean = [-1, 0, 1].some(x => [-1, 0, 1].some(y => [-1, 0, 1].some(z => player.dimension.getBlock({
-        x: floorPos.x + x,
-        y: floorPos.y + y,
-        z: floorPos.z + z
-    })?.typeId === "minecraft:slime")))
-if(slimeCheck && velocity >= 0){
-    player.addTag("Matrix:slime")
-} if(slimeCheck && velocity < 0){
-    player.reamoveTag("Matrix:slime")
-                      }
-    if (player.lastExplosionTime && Date.now() - player.lastExplosionTime < 2000 || player.threwTridentAt && Date.now() - player.threwTridentAt < 3000) return
-
-    if (player.isOnGround == true && velocity === 0 || velocity < 0 && player.location.y < lastPos.get(player.id).y || lastPos.get(player.id) === undefined) {
-        lastPos.set(player.id, playerLocation)
-    }
-
-    if (player.isFlying || player.hasTag("Matrix:slime")) return
-
-    if (velocity > 0.7) {
-        player.teleport(lastPos.get(player.id))
-        flag (player, 'Fly', undefined, [`velocityY:${velocity}`,"limit:0.7"])
-    }
-}
+}, 20);
 
 world.afterEvents.entityHurt.subscribe(event => {
     const player = event.hurtEntity;
-    if (event.damageSource.cause == "entityExplosion" || event.damageSource.cause == "blockExplosion") {
-        player.lastExplosionTime = Date.now();
+    const damageSource = event.damageSource.cause;
+
+    if (player.isFalling && damageSource === "fall") {
+        const { name } = player;
+
+        const currentfallData = fallData.get(name) || { count: 0, lastFallDamageTime: 0 };
+        const currentTime = Date.now();
+        if (currentTime - currentfallData.lastFallDamageTime < 1200) {
+            currentfallData.count++;
+        } else {
+            currentfallData.count = 1;
+        }
+        currentfallData.lastFallDamageTime = currentTime;
+        fallData.set(name, currentfallData);
+
+        if (currentfallData.count >= 2) {
+            const prevLoc = previousLocations.get(name);
+            if (prevLoc) {
+                player.teleport(prevLoc);
+                world.sendMessage(`§2§l§¶Matrix >§4 ${name}§m has been detected using Fly\n§r§l§¶Type:§c Invalid Fall Damage`);
+                fallData.delete(name);
+            }
+        }
     }
 });
-
-world.afterEvents.itemReleaseUse.subscribe(({ itemStack, source: player }) => {
-    if (itemStack.typeId === 'minecraft:trident' && player instanceof Player) {
-        player.threwTridentAt = Date.now();
-    }
-});
-
-system.runInterval(() => {
-    world.getPlayers({ excludeTags: ["admin"] }).forEach(player => {
-        FlyA (player)
-        FlyB (player)
-    })
-}, 5)
