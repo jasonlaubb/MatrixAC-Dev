@@ -9,30 +9,32 @@ import { inputCommand } from "./CommandSystem";
 import { chatRank } from "./ChatRank";
 
 //@ts-ignore
-world.beforeEvents.chatSend.subscribe(({ sender: player, message, cancel }) => {
+world.beforeEvents.chatSend.subscribe((event) => {
     const prefix: string = (world.getDynamicProperty("prefix") ?? config.commands.prefix) as string
+
+    const { message, sender: player } = event;
     
     if (message.startsWith(prefix)) {
-        cancel = true
+        event.cancel = true
         inputCommand (player, message, prefix)
         return
     }
 
     if (player.getDynamicProperty("mute") === true) {
-        cancel = true;
+        event.cancel = true;
         system.run(() => player.sendMessage("§2§l§¶Matrix >§4 You are muted!"))
         return
     }
 
     if (antiSpamModule(message, player) === true) {
-        cancel = true;
+        event.cancel = true;
         return
     }
 
     const chatRankToggle = (world.getDynamicProperty("chatRank") ?? config.chatRank.enabled) as boolean;
     
     if (chatRankToggle) {
-        cancel = true;
+        event.cancel = true;
         chatRank(player, message)
     }
 })

@@ -11,7 +11,13 @@ import { freeze, unfreeze } from "../moderateModel/freezeHandler";
 
 export { inputCommand }
 
-const turnRegax = (input: string, prefix: string) => [(input.match(/(["'])(.*?)\1|\S+/g).shift().slice(prefix.length)), ...(input.match(/(["'])(.*?)\1|\S+/g).map(arg => arg.replace(/^[@"]/g, '').replace(/"$/, '')))]
+const turnRegax = (message: string, prefix: string) => {
+    const regex = /(["'])(.*?)\1|\S+/g
+    const matches = message.match(regex)
+    const command = matches.shift().slice(prefix.length)
+    const args = matches.map(arg => arg.replace(/^[@"]/g, '').replace(/"$/, ''))
+    return [command, ...args]
+}
 
 class Cmds {
     enabled: boolean;
@@ -48,7 +54,7 @@ async function inputCommand (player: Player, message: string, prefix: string): P
         }
         case "toggles": {
             if (!Command.new(player, config.commands.toggles as Cmds)) return
-            system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 §2§l§¶Matrix >§4 Toggle list:\n${toggleList(prefix)}`))
+            system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Toggle list:\n${toggleList(prefix)}`))
             break
         }
         case "toggle": {
@@ -66,13 +72,13 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             if (isAdmin(player)) {
                 if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
                 const target = world.getPlayers({ name: regax[1] })[0]
-                if (target === null) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+                if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
                 target.setDynamicProperty("isAdmin", true)
                 system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been opped by ${player.name}`))
             } else {
                 const password: string = regax[1]
                 const correctPassword = (world.getDynamicProperty("password") ?? config.commands.password) as string
-                if (password === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the password`))
+                if (password === undefined || password.length <= 0) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the password`))
                 if (password == correctPassword) {
                     player.setDynamicProperty("isAdmin", true)
                     system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You are now admin`))
@@ -86,7 +92,7 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             if (!Command.new(player, config.commands.deop as Cmds)) return
             if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
             const target = world.getPlayers({ name: regax[1] })[0]
-            if (target === null) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
             if (!isAdmin(target)) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} is not admin`))
             target.setDynamicProperty("isAdmin", undefined)
             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been deopped by ${player.name}`))
@@ -109,21 +115,25 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             if (regax[1] === undefined || !(new Set(["set", "add", "remove"]).has(regax[1]))) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown action, please use set/add/remove only`))
             if (regax[2] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
             const target = world.getPlayers({ name: regax[2] })[0]
-            if (target === null) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
             const rank: string = regax[3]
             if (rank === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the rank`))
             const ranks: string[] = target.getTags().filter(tag => tag.startsWith("rank:"))
             switch (regax[1]) {
                 case "set": {
-                    ranks.forEach(rank => target.removeTag(rank))
-                    target.addTag(`rank:${rank}`)
-                    system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name}'s rank has been set to ${rank}`))
+                    system.run(() => {
+                        ranks.forEach(rank => target.removeTag(rank))
+                        target.addTag(`rank:${rank}`)
+                        player.sendMessage(`§2§l§¶Matrix >§4 ${target.name}'s rank has been set to ${rank}`)
+                    })
                     break
                 }
                 case "add": {
                     if (!player.hasTag(`rank:${rank}`)) {
-                        target.addTag(`rank:${rank}`)
-                        system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name}'s rank has been added to ${rank}`))
+                        system.run(() => {
+                            target.addTag(`rank:${rank}`)
+                            player.sendMessage(`§2§l§¶Matrix >§4 ${target.name}'s rank has been added to ${rank}`)
+                        })
                     } else {
                         system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} already has ${rank} §r§4 rank`))
                     }
@@ -132,8 +142,10 @@ async function inputCommand (player: Player, message: string, prefix: string): P
                 case "remove": {
                     if (ranks.length > 0) {
                         if (player.hasTag(`rank:${rank}`)) {
-                            system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name}'s rank has been removed`))
-                            player.removeTag(`rank:${rank}`)
+                            system.run(() => {
+                                player.sendMessage(`§2§l§¶Matrix >§4 ${target.name}'s rank has been removed`)
+                                player.removeTag(`rank:${rank}`)
+                            })
                         } else {
                             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} doesn't have ${rank} §r§4 rank`))
                         }
