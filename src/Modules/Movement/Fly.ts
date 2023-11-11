@@ -69,6 +69,9 @@ system.runInterval(() => {
         if (isAdmin(player)) return;
         const { id }: any = player;
         const velocityY: number = player.getVelocity().y;
+        if(previousLocations.get(id) == undefined){
+            previousLocations.set(id,player.location)
+        }
 if (isOnGround && velocityY === 0 || velocityY<0 && player.location.y<previousLocations.get(id).y) {
             previousLocations.set(id, { x, y, z });
         }
