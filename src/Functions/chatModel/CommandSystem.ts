@@ -7,6 +7,7 @@ import { helpList, toggleList, validModules } from "../../Data/Help"
 import { isAdmin, isTimeStr, timeToMs } from "../../Assets/Util";
 import config from "../../Data/Config";
 import { ban, unban, unbanList, unbanRemove } from "../moderateModel/banHandler";
+import { freeze, unfreeze } from "../moderateModel/freezeHandler";
 
 export { inputCommand }
 
@@ -35,7 +36,7 @@ class Command {
         return true
     }
 }
-const inputCommand = (player: Player, message: string, prefix: string): any => {
+async function inputCommand (player: Player, message: string, prefix: string): Promise<any> {
     const regax = turnRegax(message, prefix)
 
     switch (regax[0]) {
@@ -203,6 +204,40 @@ const inputCommand = (player: Player, message: string, prefix: string): any => {
             const list = unbanList()
             if (list.length === 0) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 There is no one in unban list`))
             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unban list:\n${list.join("\n")}`))
+            break
+        }
+        case "freeze": {
+            if (!Command.new(player, config.commands.freeze as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
+            const target = world.getPlayers({ name: regax[1] })[0]
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            if (target.id === player.id) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't freeze yourself`))
+            if (isAdmin(target)) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't freeze admin`))
+
+            const freezed = freeze (target)
+
+            if (freezed) {
+                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been freezed`))
+            } else {
+                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has freezed already`))
+            }
+            break
+        }
+        case "unfreeze": {
+            if (!Command.new(player, config.commands.unfreeze as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
+            const target = world.getPlayers({ name: regax[1] })[0]
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            if (target.id === player.id) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't unfreeze yourself`))
+            if (isAdmin(target)) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't unfreeze admin`))
+
+            const unfreezed = unfreeze (target)
+
+            if (unfreezed) {
+                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been unfreezed`))
+            } else {
+                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has unfreezed already`))
+            }
             break
         }
         default: {

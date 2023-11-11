@@ -78,6 +78,16 @@ export default {
             enabled: true,
             adminOnly: true,
             requireTag: undefined
+        },
+        freeze: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        unfreeze: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
         }
     },
     chatRank: {

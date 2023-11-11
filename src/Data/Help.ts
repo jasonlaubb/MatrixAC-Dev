@@ -12,7 +12,9 @@ export function helpList (p: string): string {
         `§g${p}ban <player> <time> <reason> - Ban a player`,
         `§g${p}unban <player> - Unban a player`,
         `§g${p}unbanremove <player> - Remove a player from unban queue`,
-        `§g${p}unbanlist - Show all player in unban queue`
+        `§g${p}unbanlist - Show all player in unban queue`,
+        `§g${p}freeze <player> - Freeze a player`,
+        `§g${p}unfreeze <player> - Unfreeze a player`
     ].join("\n")
 }
 
