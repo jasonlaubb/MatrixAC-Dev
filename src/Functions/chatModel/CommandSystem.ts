@@ -45,12 +45,12 @@ const inputCommand = (player: Player, message: string, prefix: string): any => {
             break
         }
         case "toggles": {
-            if (!Command.new(player, config.commands.help as Cmds)) return
+            if (!Command.new(player, config.commands.toggles as Cmds)) return
             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 §2§l§¶Matrix >§4 Toggle list:\n${toggleList(prefix)}`))
             break
         }
         case "toggle": {
-            if (!Command.new(player, config.commands.toggles as Cmds)) return
+            if (!Command.new(player, config.commands.toggle as Cmds)) return
             if (regax[1] === undefined || !(new Set(validModules).has(regax[1]))) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown module, try ${prefix}toggles`))
             if (regax[2] === undefined || !(new Set(["enable", "disable"]).has(regax[2]))) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown action, please use enable/disable only`))
 

@@ -22,6 +22,11 @@ export default {
             enabled: true,
             adminOnly: true,
             requireTag: undefined
+        },
+        toggle: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
         }
     },
     chatRank: {
