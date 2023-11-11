@@ -2,7 +2,8 @@ import {
     world,
     system,
     Player,
-    Entity
+    Entity,
+    EntityDamageCause
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
 import {
@@ -33,18 +34,19 @@ function calculateDistance(b1: Entity, b2: Entity) {
 }
 
 world.afterEvents.entityHurt.subscribe(({ damageSource, hurtEntity }) => {
-    if (damageSource.cause !== "entityAttack") return
+    if (damageSource.cause !== EntityDamageCause.entityAttack) return
     const damagingEntity = damageSource.damagingEntity;
     if (!(damagingEntity instanceof Player) || !(hurtEntity instanceof Player)) return;
-    const yReach = damagingEntity.location.y - hurtEntity.location.y
-    let maximumYReach = 4.8
+    const yReach: number = Math.abs(damagingEntity.location.y - hurtEntity.location.y)
+
+    let maximumYReach: number = config.antiReach.maxYReach
     
     if (damagingEntity.isJumping) {
-        maximumYReach = 5.8
+        maximumYReach += 1
     }
     
     if (damagingEntity.location.y > hurtEntity.location.y) {
-        maximumYReach = 3.8
+        maximumYReach -= 1
     }
     
     const distance: number = calculateDistance(damagingEntity, hurtEntity);
@@ -60,7 +62,7 @@ world.afterEvents.entityHurt.subscribe(({ damageSource, hurtEntity }) => {
     }
 
     if (reachData.get(damagingEntity) >= 2) {
-        flag(damagingEntity, 'Reach', undefined, undefined)
+        flag(damagingEntity, 'Reach', config.antiReach.punishment, ["distance:" + distance, "yReach:" + yReach])
         damagingEntity.applyDamage(6);
         reachData.delete(damagingEntity);
     }

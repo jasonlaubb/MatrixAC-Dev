@@ -1,8 +1,26 @@
-import { world, system } from "@minecraft/server";
+import {
+    world,
+    system,
+    Player,
+    EntityDamageCause,
+    Vector3
+} from "@minecraft/server";
 
-const flyData = new Map();
-const fallData = new Map();
-const previousLocations = new Map();
+import config from "../../Data/Config";
+
+class FlyData {
+    flyTimer: number;
+}
+
+class FallData {
+    count: number;
+    lastFallDamageTime: number;
+}
+
+const flyData = new Map<string, FlyData>();
+const fallData = new Map<string, FallData>();
+const previousLocations = new Map<string, Vector3>();
+import { flag } from "../../Assets/Util";
 
 /**
  * @author ravriv & RaMiGamerDev
@@ -11,9 +29,9 @@ const previousLocations = new Map();
 
 system.runInterval(() => {
     for (const player of world.getAllPlayers()) {
-        const { name, location: { x, y, z }, isOnGround } = player;
-        const velocityY = player.getVelocity().y;
-        const { flyTimer = 0 } = flyData.get(name) || {};
+        const { name, location: { x, y, z }, isOnGround }: any = player;
+        const velocityY: number = player.getVelocity().y;
+        const { flyTimer = 0 }: any = flyData.get(name) || {};
 
         if (isOnGround) {
             previousLocations.set(name, { x, y, z });
@@ -27,10 +45,10 @@ system.runInterval(() => {
             flyData.set(name, { flyTimer: flyTimer + 1 });
         }
 
-        if (flyTimer > 1 && velocityY === 0) {
+        if (flyTimer > config.antiFly.maxFlyTimer && velocityY === 0) {
             if (flyData.has(name)) {
                 const prevLoc = previousLocations.get(name);
-                world.sendMessage(`§2§l§¶Matrix >§4 ${name}§m has been detected using Fly\n§r§l§¶Velocity Y:§c ${velocityY}`);
+                flag (player, "Fly", config.antiFly.punishment, ["velocityY:0"])
                 player.teleport(prevLoc);
                 flyData.delete(name);
             }
@@ -42,12 +60,14 @@ world.afterEvents.entityHurt.subscribe(event => {
     const player = event.hurtEntity;
     const damageSource = event.damageSource.cause;
 
-    if (player.isFalling && damageSource === "fall") {
+    if (!(player instanceof Player)) return
+
+    if (player.isFalling && damageSource === EntityDamageCause.fall) {
         const { name } = player;
 
         const currentfallData = fallData.get(name) || { count: 0, lastFallDamageTime: 0 };
         const currentTime = Date.now();
-        if (currentTime - currentfallData.lastFallDamageTime < 1200) {
+        if (currentTime - currentfallData.lastFallDamageTime < config.antiFly.minFallInterval) {
             currentfallData.count++;
         } else {
             currentfallData.count = 1;
@@ -55,11 +75,11 @@ world.afterEvents.entityHurt.subscribe(event => {
         currentfallData.lastFallDamageTime = currentTime;
         fallData.set(name, currentfallData);
 
-        if (currentfallData.count >= 2) {
+        if (currentfallData.count >= config.antiFly.maxFallCount) {
             const prevLoc = previousLocations.get(name);
             if (prevLoc) {
                 player.teleport(prevLoc);
-                world.sendMessage(`§2§l§¶Matrix >§4 ${name}§m has been detected using Fly\n§r§l§¶Type:§c Invalid Fall Damage`);
+                flag(player, "Fly", config.antiFly.punishment, ["type:Invalid Fall Damage"])
                 fallData.delete(name);
             }
         }

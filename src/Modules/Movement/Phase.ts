@@ -6,6 +6,7 @@ import {
     GameMode
 } from "@minecraft/server";
 import { flag } from "../../Assets/Util";
+import config from "../../Data/Config";
 
 class PhaseData {
     lastPos: Vector3;
@@ -43,7 +44,7 @@ system.runInterval(() => {
 
         if (data.lastSolid && isSolid && (data.lastPos.x !== floorPos.x || data.lastPos.z !== floorPos.z)) {
             if(bodyBlock.typeId.includes("soul_sand") && headBlock.isSolid == false) return
-            flag (player, 'Phase', undefined, undefined)
+            flag (player, 'Phase', config.antiPhase.punishment, undefined)
             player.teleport(data.lastSafePos);
         }
 

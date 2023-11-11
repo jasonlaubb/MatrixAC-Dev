@@ -41,7 +41,7 @@ system.runInterval(() => {
         } else if (isSpeeding) {
             if (!playerInfo.highestSpeed) {
                 player.teleport(playerInfo.initialLocation, { dimension: player.dimension, rotation: { x: -180, y: 0 } });
-                flag (player, 'Speed', undefined, [`Miles Per Hour:${playerSpeedMph.toFixed(2)}`])
+                flag (player, 'Speed', config.antiSpeed.punishment, [`Miles Per Hour:${playerSpeedMph.toFixed(2)}`])
                 player.applyDamage(6);
                 playerInfo.highestSpeed = playerSpeedMph;
             }

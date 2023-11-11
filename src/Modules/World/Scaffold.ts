@@ -3,11 +3,11 @@ import {
     system,
     Vector,
     Vector3,
-    Vector2,
-    Player,
-    Block
+    Vector2
 } from "@minecraft/server";
 import { flag } from "../../Assets/Util";
+import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index"
+import config from "../../Data/Config.js";
 
 /**
  * @author jasonlaubb
@@ -28,34 +28,33 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
     const pos2: Vector3 = { x: block.location.x - 0.5, z: block.location.z - 0.5 } as Vector3;
     const angle: number = calculateAngle(pos1, pos2, rotation);
 
-    if (player.hasTag("place-disabled")) return;
+    if (player.hasTag("scaffold-disabled")) return;
 
-    if (rotation.x % 1 === 0 || rotation.y % 1 === 0) {
-        if (Math.abs(rotation.x) !== 90) {
-            setBlockToAir(player, block, "Invalid Rotation");
-        }
+    let detected: boolean = false;
 
-        if (angle > 95 && Vector.distance({ x: pos1.x, y: 0, z: pos1.z }, { x: pos2.x, y: 0, z: pos2.z }) > 1.5 && rotation.x < 78.5) {
-            setBlockToAir(player, block, "Invalid Angle");
-        }
+    const factor: number = config.antiScaffold.factor;
 
-        if (rotation.x < 34.98 && isUnderPlayer(player.location, block.location)) {
-            setBlockToAir(player, block, "Invalid Position");
-        }
+    if ((rotation.x % factor === 0 || rotation.y % factor === 0) && Math.abs(rotation.x) !== 90) {
+        detected = true
+        flag (player, 'Scaffold', config.antiScaffold.punishment, [`RotationX:${rotation.x.toFixed(2)}°`, `RotationY:${rotation.y.toFixed(2)}°`])
+    }
+
+    if (angle > config.antiScaffold.maxAngle && Vector.distance({ x: pos1.x, y: 0, z: pos1.z }, { x: pos2.x, y: 0, z: pos2.z }) > 1.5 && Math.abs(rotation.x) < 79.5) {
+        detected = true;
+        flag (player, 'Scaffold', config.antiScaffold.punishment, [`Angle:${angle.toFixed(2)}°`])
+    }
+
+    if (rotation.x < config.antiScaffold.minRotation && isUnderPlayer(player.location, block.location)) {
+        detected = true;
+        flag (player, 'Scaffold', config.antiScaffold.punishment, [`RotationX:${rotation.x.toFixed(2)}°`])
+    }
+
+    if (detected) {
+        block.setType(MinecraftBlockTypes.Air);
+        player.addTag("scaffold-disabled");
+        system.runTimeout(() => player.removeTag("scaffold-disabled"), config.antiScaffold.timeout);
     }
 });
-
-function setBlockToAir(player: Player, block: Block, message: string) {
-    const { location: { x, y, z } } = block;
-    player.dimension.getBlock({ x, y, z }).setType('air');
-    flag (player, 'Scaffold', undefined, [`Type:${message}`])
-    player.applyDamage(6);
-    player.addTag("place-disabled");
-
-    system.runTimeout(() => {
-        player.removeTag("place-disabled");
-    }, 200);
-}
 
 function calculateAngle(pos1:Vector3, pos2: Vector3, rotation: Vector2) {
     const dx: number = pos2.x - pos1.x;
@@ -70,7 +69,7 @@ function calculateAngle(pos1:Vector3, pos2: Vector3, rotation: Vector2) {
 world.beforeEvents.playerPlaceBlock.subscribe(event => {
     const { player } = event;
 
-    if (player.hasTag("place-disabled")) {
+    if (player.hasTag("scaffold-disabled")) {
         event.cancel = true;
     }
 });

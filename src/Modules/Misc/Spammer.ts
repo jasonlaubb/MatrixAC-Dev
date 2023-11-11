@@ -21,7 +21,7 @@ const spamData: Map<string, Data> = new Map<string, Data>();
 
 const checkSpam = (player: Player, behavior: string) => {
     world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has detected ${behavior}`);
-    system.run(() => flag (player, "Spammer", "kick", [`behavior:${behavior}`]));
+    system.run(() => flag (player, "Spammer", config.antiSpam.punishment, [`behavior:${behavior}`]));
 };
 
 const antiSpam = (player: Player, data: Data) => {
@@ -37,7 +37,6 @@ const antiSpam = (player: Player, data: Data) => {
     }, config.antiSpam.timeout);
 
     if (data.warnings > config.antiSpam.kickThreshold) {
-        player.runCommandAsync(`kick "${player.name}" §2§l§¶Matrix >§m You have been kicked for spamming`);
         system.run(() => kick (player, 'spamming', 'Matrix'))
         world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has been kicked for spamming`);
     }
