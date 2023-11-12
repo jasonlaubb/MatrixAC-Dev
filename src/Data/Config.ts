@@ -109,6 +109,13 @@ export default {
      * @description
      * The config of all modules
     */
+    punishment_kick: {
+        reason: "Unfair advantage"
+    },
+    punishment_ban: {
+        minutes: 30,
+        reason: "Unfair advantage"
+    },
     example_anticheat_module: {
         enabled: true, // true mearns the module will be enabled, false means the module will be disabled
         punishment: "ban" // The punishment of the module, undefined means no punishment
@@ -131,7 +138,7 @@ export default {
         enabled: true,
         minAngle: 120,
         timeout: 200,
-        maxEntityHit: 2,
+        maxEntityHit: 1,
         punishment: undefined
     },
 
@@ -144,6 +151,8 @@ export default {
 
     antiFly: {
         enabled: true,
+        maxVelocityY: 0.7,
+        skipCheck: 100,
         punishment: undefined
     },
 
@@ -161,7 +170,7 @@ export default {
     antiNuker: {
         enabled: true,
         maxBreakPerTick: 5,
-        timeout: 60,
+        timeout: 100,
         punishment: undefined
     },
 
@@ -177,6 +186,7 @@ export default {
     antiNoSlow: {
         enabled: true,
         maxSpeedTherehold: 0.04,
+        maxNoSlowBuff: 1,
         punishment: undefined
     },
 

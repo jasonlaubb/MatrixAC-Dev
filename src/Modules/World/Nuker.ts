@@ -28,7 +28,6 @@ const blockBreakData = new Map<string, number[]>();
  * it detects if a player breaks more than 5 blocks in a tick.
  */
 
-//@ts-ignore
 world.afterEvents.playerBreakBlock.subscribe((event) => {
     const toggle: boolean = (world.getDynamicProperty("antiNuker") ?? config.antiNuker.enabled) as boolean;
     if (toggle !== true) return;
@@ -51,6 +50,7 @@ world.afterEvents.playerBreakBlock.subscribe((event) => {
 
     if (blockBreakCount.length > config.antiNuker.maxBreakPerTick) {
         player.addTag("matrix:break-disabled");
+        block.setPermutation(block.permutation.clone())
 
         //prevent the player from breaking blocks for 3 seconds
         system.runTimeout(() => player.removeTag("matrix:break-disabled"), config.antiNuker.timeout);

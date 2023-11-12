@@ -19,7 +19,7 @@ system.runInterval(() => {
         if (isAdmin(player)) return;
         const { id, isOnGround }: any = player;
         const velocityY: number = player.getVelocity().y;
-        if (player.isFlying || player.isInWater) return
+        if (player.isFlying || player.isInWater || player.hasTag("matrix:joined")) return
 
         if (!isOnGround && velocityY === 0) {
             const prevLoc = previousLocations.get(id);
@@ -76,8 +76,8 @@ system.runInterval(() => {
             player.removeTag("matrix:slime")
         }
 
-        if (velocityY > 0.7 && !player.hasTag("matrix:slime")) {
-            if (velocityY % 0 === 0) return;
+        if (velocityY > config.antiFly.maxVelocityY && !player.hasTag("matrix:slime")) {
+            if (velocityY % 1 === 0) return;
             const prevLoc = previousLocations.get(id);
             flag (player, "Fly", config.antiFly.punishment, [`velocityY:${velocityY.toFixed(2)}`])
             player.teleport(prevLoc);
@@ -88,4 +88,10 @@ system.runInterval(() => {
 world.afterEvents.playerLeave.subscribe(({ playerId }) => {
     const id = playerId;
     previousLocations.delete(id);
+})
+
+world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
+    if (!initialSpawn) return;
+    player.addTag("matrix:joined")
+    system.runTimeout(() => player.removeTag("matrix:joined"), config.antiFly.skipCheck)
 })
