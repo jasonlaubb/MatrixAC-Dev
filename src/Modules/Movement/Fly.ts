@@ -12,7 +12,7 @@ import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/
  */
 
 system.runInterval(() => {
-    const toggle: boolean = (world.getDynamicProperty("antiFly") ?? config.antiFly.enabled) as boolean;
+    const toggle: boolean = (world.getDynamicProperty("antiNofall") ?? config.antiNofall.enabled) as boolean;
     if (toggle !== true) return;
 
     for (const player of world.getAllPlayers()) {
@@ -23,7 +23,7 @@ system.runInterval(() => {
 
         if (!isOnGround && velocityY === 0) {
             const prevLoc = previousLocations.get(id);
-            flag (player, "Fly", config.antiFly.punishment, ["velocityY:0"])
+            flag (player, "Fly", config.antiNofall.punishment, ["velocityY:0"])
             player.teleport(prevLoc);
         }
     }
@@ -38,10 +38,10 @@ function seachForSlimeBlock (dimension: Dimension, location: Vector3) {
         z: Math.floor(location.z)
     } as Vector3
 
-    return index.some(x => index.some(y => index.some(z =>
+    return index.some(x => index.some(y => index.some(z => 
         dimension.getBlock({
             x: floorPos.x + x, y: floorPos.y + y, z: floorPos.z + z
-        }).typeId === MinecraftBlockTypes.Slime
+        })?.typeId == MinecraftBlockTypes.Slime
     )))
     
 }
