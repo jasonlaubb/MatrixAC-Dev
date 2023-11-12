@@ -54,6 +54,11 @@ export default {
             adminOnly: true,
             requireTag: undefined
         },
+        rankclear: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
         defaultrank: {
             enabled: true,
             adminOnly: true,
@@ -202,6 +207,20 @@ export default {
         maxCharacterLimit: 200,
         kickThreshold: 3,
         timeout: 200,
+        punishment: undefined
+    },
+
+    antiBlockReach: {
+        enabled: true,
+        maxPlaceDistance: 6.3,
+        maxBreakDistance: 5.8,
+        timeout: 60
+    },
+
+    antiAim: {
+        enabled: true,
+        maxRotSpeed: 15,
+        timeout: 50,
         punishment: undefined
     },
 

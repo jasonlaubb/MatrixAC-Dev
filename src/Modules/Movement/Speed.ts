@@ -37,7 +37,7 @@ system.runInterval(() => {
     const now: number = Date.now();
     for (const player of world.getPlayers({ excludeGameModes: [GameMode.creative, GameMode.spectator] })) {
         const { id } = player;
-        if (isAdmin (player)) return;
+        if (isAdmin (player)) continue;
         //@ts-expect-error
         if (player.threwTridentAt && now - player.threwTridentAt < 2000 || player.lastExplosionTime && now - player.lastExplosionTime < 2000) {
             continue;

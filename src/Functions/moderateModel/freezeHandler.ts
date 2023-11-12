@@ -14,12 +14,12 @@ class Freeze {
 system.runInterval(() => {
     for (const player of world.getAllPlayers()) {
         if (isAdmin(player)) continue;
-        let freezeInfo = player.getDynamicProperty("freeze") as string | undefined | Freeze;
+        let freezeInfo = player.getDynamicProperty("freeze") as string | undefined;
         if (freezeInfo === undefined) continue;
 
-        freezeInfo = JSON.parse(freezeInfo as string) as Freeze;
+        freezeInfo = JSON.parse(freezeInfo as string);
 
-        const freeze = freezeInfo as Freeze;
+        const freeze = freezeInfo as any as Freeze;
 
         player.teleport(freeze.location, {
             dimension: world.getDimension(freeze.dimension)

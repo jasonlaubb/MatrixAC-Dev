@@ -32,7 +32,7 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
 
     if (isAdmin (player)) return;
 
-    if (player.hasTag("matrix:scaffold-disabled")) {
+    if (player.hasTag("matrix:place-disabled")) {
         block.setType(MinecraftBlockTypes.Air);
         return;
     }
@@ -58,8 +58,8 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
 
     if (detected) {
         block.setType(MinecraftBlockTypes.Air);
-        player.addTag("matrix:scaffold-disabled");
-        system.runTimeout(() => player.removeTag("matrix:scaffold-disabled"), config.antiScaffold.timeout);
+        player.addTag("matrix:place-disabled");
+        system.runTimeout(() => player.removeTag("matrix:place-disabled"), config.antiScaffold.timeout);
     }
 });
 
@@ -76,7 +76,14 @@ function calculateAngle(pos1:Vector3, pos2: Vector3, rotation: Vector2) {
 world.beforeEvents.playerPlaceBlock.subscribe(event => {
     const { player } = event;
 
-    if (player.hasTag("matrix:scaffold-disabled")) {
+    if (player.hasTag("matrix:place-disabled")) {
         event.cancel = true;
+    }
+});
+
+world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
+    if (!initialSpawn) return;
+    if (player.hasTag("matrix:place-disabled")) {
+        player.removeTag("matrix:place-disabled")
     }
 });

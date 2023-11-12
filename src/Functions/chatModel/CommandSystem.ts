@@ -157,6 +157,23 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             }
             break
         }
+        case "rankclear": {
+            if (!Command.new(player, config.commands.rankclear as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
+            const target = world.getPlayers({ name: regax[1] })[0]
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+
+            const ranks: string[] = target.getTags().filter(tag => tag.startsWith("rank:"))
+            if (ranks.length > 0) {
+                system.run(() => {
+                    ranks.forEach(rank => target.removeTag(rank))
+                    player.sendMessage(`§2§l§¶Matrix >§4 ${target.name}'s rank has been cleared`)
+                })
+            } else {
+                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 ${target.name} doesn't have any rank`))
+            }
+            break
+        }
         case "defaultrank": {
             if (!Command.new(player, config.commands.defaultrank as Cmds)) return
             const rank: string = regax[1]

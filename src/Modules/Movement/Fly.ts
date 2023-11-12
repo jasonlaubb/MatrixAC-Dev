@@ -5,7 +5,6 @@ import config from "../../Data/Config";
 const previousLocations = new Map<string, Vector3>();
 import { flag, isAdmin } from "../../Assets/Util";
 import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
-
 /**
  * @author ravriv & RaMiGamerDev
  * @description This is a simple anti-fly that detects players using Fly Vanilla/CubeGlide/Motion.
@@ -16,7 +15,7 @@ system.runInterval(() => {
     if (toggle !== true) return;
 
     for (const player of world.getAllPlayers()) {
-        if (isAdmin(player)) return;
+        if (isAdmin(player)) continue;
         const { id, isOnGround }: any = player;
         const velocity: Vector3 = player.getVelocity();
         if (player.isFlying || player.isInWater || player.hasTag("matrix:joined")) return
@@ -53,7 +52,7 @@ system.runInterval(() => {
     const now: number = Date.now()
 
     for (const player of world.getAllPlayers()) {
-        if (isAdmin(player)) return;
+        if (isAdmin(player)) continue;
         const { id }: any = player;
         const velocityY: number = player.getVelocity().y;
         const playerPrevPos = previousLocations.get(id);
@@ -71,7 +70,7 @@ system.runInterval(() => {
 
         const jumpBoostEffect = player.getEffect(MinecraftEffectTypes.JumpBoost)?.amplifier ?? 0
 
-        if (jumpBoostEffect >= 4) return;
+        if (jumpBoostEffect >= 4) continue;
 
         const didFindSlime: boolean = seachForSlimeBlock (player.dimension, player.location)
 
@@ -84,7 +83,7 @@ system.runInterval(() => {
         }
 
         if (velocityY > config.antiFly.maxVelocityY && !player.hasTag("matrix:slime")) {
-            if (velocityY % 1 === 0) return;
+            if (velocityY % 1 === 0) continue;
             const prevLoc = previousLocations.get(id);
             flag (player, "Fly", config.antiFly.punishment, [`velocityY:${velocityY.toFixed(2)}`])
             player.teleport(prevLoc);
