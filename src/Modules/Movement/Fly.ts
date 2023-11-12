@@ -17,10 +17,10 @@ system.runInterval(() => {
     for (const player of world.getAllPlayers()) {
         if (isAdmin(player)) return;
         const { id, isOnGround }: any = player;
-        const velocityY: number = player.getVelocity().y;
+        const velocity: Vector3 = player.getVelocity();
         if (player.isFlying || player.isInWater || player.hasTag("matrix:joined")) return
 
-        if (!isOnGround && velocityY === 0) {
+        if (!isOnGround && velocity.y === 0 && Math.hypot(velocity.x, velocity.z) > 0) {
             const prevLoc = previousLocations.get(id);
             flag (player, "NoFall", config.antiNofall.punishment, ["velocityY:0"])
             player.teleport(prevLoc);
@@ -40,7 +40,7 @@ function seachForSlimeBlock (dimension: Dimension, location: Vector3) {
     return index.some(x => index.some(y => index.some(z => 
         dimension.getBlock({
             x: floorPos.x + x, y: floorPos.y + y, z: floorPos.z + z
-        }).type.id.includes("slime")
+        })?.type?.id?.includes("slime")
     )))
     
 }
