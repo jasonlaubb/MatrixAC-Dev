@@ -66,7 +66,7 @@ system.runInterval(() => {
 }, 2);
 
 world.afterEvents.itemReleaseUse.subscribe(({ itemStack, source: player }) => {
-    if (itemStack.typeId === MinecraftItemTypes.Trident && player instanceof Player) {
+    if (itemStack?.typeId === MinecraftItemTypes.Trident && player instanceof Player) {
         //@ts-expect-error
         player.threwTridentAt = Date.now();
     }
