@@ -4,7 +4,7 @@ import config from "../../Data/Config";
 
 const previousLocations = new Map<string, Vector3>();
 import { flag, isAdmin } from "../../Assets/Util";
-import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
+import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 
 /**
  * @author ravriv & RaMiGamerDev
@@ -41,7 +41,7 @@ function seachForSlimeBlock (dimension: Dimension, location: Vector3) {
     return index.some(x => index.some(y => index.some(z => 
         dimension.getBlock({
             x: floorPos.x + x, y: floorPos.y + y, z: floorPos.z + z
-        })?.type?.id?.includes("slime")
+        })?.typeId === MinecraftBlockTypes.Slime
     )))
     
 }
@@ -60,9 +60,14 @@ system.runInterval(() => {
         if (playerPrevPos === undefined || player.isOnGround && velocityY === 0 || velocityY < 0 && player.location.y < previousLocations.get(id)?.y) {
             previousLocations.set(id, player.location);
         }
+
+        if (player.hasTag("matrix:knockback") && velocityY <= 0) {
+            player.removeTag("matrix:knockback")
+        }
+
         //@ts-expect-error
         if ((player.threwTridentAt && now - player.threwTridentAt < 2000) || (player.lastExplosionTime && now - player.lastExplosionTime < 2000)) return;
-        if (player.isInWater || player.isGliding || (player.isOnGround && velocityY === 0)) return;
+        if (player.hasTag("matrix:knockback") || player.isInWater || player.isGliding || (player.isOnGround && velocityY === 0)) return;
 
         const jumpBoostEffect = player.getEffect(MinecraftEffectTypes.JumpBoost)?.amplifier ?? 0
 
@@ -72,10 +77,10 @@ system.runInterval(() => {
 
         if (didFindSlime) {
             player.addTag("matrix:slime")
-        }
-
-        if (!didFindSlime && velocityY <= 0) {
-            player.removeTag("matrix:slime")
+        } else {
+            if (velocityY <= 0) {
+                player.removeTag("matrix:slime")
+            }
         }
 
         if (velocityY > config.antiFly.maxVelocityY && !player.hasTag("matrix:slime")) {

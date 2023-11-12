@@ -30,7 +30,12 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
     const toggle: boolean = (world.getDynamicProperty("antiScaffold") ?? config.antiScaffold.enabled) as boolean;
     if (toggle !== true) return;
 
-    if (isAdmin(player) || player.hasTag("matrix:scaffold-disabled")) return;
+    if (isAdmin (player)) return;
+
+    if (player.hasTag("matrix:scaffold-disabled")) {
+        block.setType(MinecraftBlockTypes.Air);
+        return;
+    }
 
     let detected: boolean = false;
 
