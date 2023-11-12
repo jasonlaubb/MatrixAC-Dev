@@ -4,6 +4,7 @@ import config from "../../Data/Config";
 
 const previousLocations = new Map<string, Vector3>();
 import { flag, isAdmin } from "../../Assets/Util";
+import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 
 /**
  * @author ravriv & RaMiGamerDev
@@ -62,6 +63,10 @@ system.runInterval(() => {
         //@ts-expect-error
         if ((player.threwTridentAt && now - player.threwTridentAt < 2000) || (player.lastExplosionTime && now - player.lastExplosionTime < 2000)) return;
         if (player.isInWater || player.isGliding || (player.isOnGround && velocityY === 0)) return;
+
+        const jumpBoostEffect = player.getEffect(MinecraftEffectTypes.JumpBoost)?.amplifier ?? 0
+
+        if (jumpBoostEffect >= 4) return;
 
         const didFindSlime: boolean = seachForSlimeBlock (player.dimension, player.location)
 
