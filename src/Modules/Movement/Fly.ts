@@ -41,7 +41,7 @@ function seachForSlimeBlock (dimension: Dimension, location: Vector3) {
     return index.some(x => index.some(y => index.some(z => 
         dimension.getBlock({
             x: floorPos.x + x, y: floorPos.y + y, z: floorPos.z + z
-        })?.typeId == MinecraftBlockTypes.Slime
+        })?.typeId.includes("slime")
     )))
     
 }
