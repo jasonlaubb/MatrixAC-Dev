@@ -29,7 +29,7 @@ function KillAura(damagingEntity: Player, hitEntity: Player) {
         damagingEntity.addTag("matrix:pvp-disabled");
         flag (damagingEntity, 'Kill Aura', config.antiKillAura.punishment, [`HitLength:${playerHitEntity.length}`])
         system.runTimeout(() => {
-            damagingEntity.removeTag("pvp-disabled");
+            damagingEntity.removeTag("matrix:pvp-disabled");
         }, config.antiKillAura.timeout);
     }
 
