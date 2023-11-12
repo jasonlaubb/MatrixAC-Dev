@@ -4,7 +4,6 @@ import config from "../../Data/Config";
 
 const previousLocations = new Map<string, Vector3>();
 import { flag, isAdmin } from "../../Assets/Util";
-import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 
 /**
  * @author ravriv & RaMiGamerDev
@@ -23,7 +22,7 @@ system.runInterval(() => {
 
         if (!isOnGround && velocityY === 0) {
             const prevLoc = previousLocations.get(id);
-            flag (player, "Fly", config.antiNofall.punishment, ["velocityY:0"])
+            flag (player, "NoFall", config.antiNofall.punishment, ["velocityY:0"])
             player.teleport(prevLoc);
         }
     }
@@ -41,7 +40,7 @@ function seachForSlimeBlock (dimension: Dimension, location: Vector3) {
     return index.some(x => index.some(y => index.some(z => 
         dimension.getBlock({
             x: floorPos.x + x, y: floorPos.y + y, z: floorPos.z + z
-        })?.typeId.includes("slime")
+        }).type.id.includes("slime")
     )))
     
 }
@@ -68,11 +67,9 @@ system.runInterval(() => {
 
         if (didFindSlime) {
             player.addTag("matrix:slime")
-        } else {
-            player.removeTag("matrix:slime")
         }
 
-        if (didFindSlime && player.isFalling) {
+        if (!didFindSlime && velocityY <= 0) {
             player.removeTag("matrix:slime")
         }
 
