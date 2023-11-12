@@ -62,7 +62,7 @@ world.afterEvents.playerBreakBlock.subscribe((event) => {
 
 world.beforeEvents.playerBreakBlock.subscribe((event) => {
     const player: Player = event.player;
-    if (player.hasTag("matrix:break-disable")) {
+    if (player.hasTag("matrix:break-disabled")) {
         event.cancel = true
     }
 })
