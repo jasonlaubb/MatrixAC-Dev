@@ -61,7 +61,7 @@ system.runInterval(() => {
         }
         //@ts-expect-error
         if ((player.threwTridentAt && now - player.threwTridentAt < 2000) || (player.lastExplosionTime && now - player.lastExplosionTime < 2000)) return;
-        if (player.isInWater || player.isGliding) return;
+        if (player.isInWater || player.isGliding || (player.isOnGround && velocityY === 0)) return;
 
         const didFindSlime: boolean = seachForSlimeBlock (player.dimension, player.location)
 
