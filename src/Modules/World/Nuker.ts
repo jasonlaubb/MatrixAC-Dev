@@ -1,4 +1,9 @@
-import { system, world, Player } from "@minecraft/server";
+import {
+    Block,
+    Player,
+    system,
+    world
+} from "@minecraft/server";
 import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
 import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
@@ -28,12 +33,8 @@ const blockBreakData = new Map<string, number[]>();
  * it detects if a player breaks more than 5 blocks in a tick.
  */
 
-world.afterEvents.playerBreakBlock.subscribe((event) => {
-    const toggle: boolean = (world.getDynamicProperty("antiNuker") ?? config.antiNuker.enabled) as boolean;
-    if (toggle !== true) return;
-
-    const { player, block } = event;
-    if (isAdmin (player) || !toggle || player.hasTag("matrix:break-disabled")) return;
+async function antiNuker (player: Player, block: Block) {
+    if (player.hasTag("matrix:break-disabled")) return;
 
     const timeNow = Date.now();
 
@@ -57,6 +58,16 @@ world.afterEvents.playerBreakBlock.subscribe((event) => {
         blockBreakData.delete(player.id);
         flag(player, "Nuker", config.antiNuker.punishment, ["block:" + block.typeId.replace("minecraft:","")]);
     }
+}
+
+world.afterEvents.playerBreakBlock.subscribe((event) => {
+    const toggle: boolean = (world.getDynamicProperty("antiNuker") ?? config.antiNuker.enabled) as boolean;
+    if (toggle !== true) return;
+
+    const { player, block } = event;
+    if (isAdmin (player)) return;
+
+    antiNuker (player, block)
 });
 
 world.afterEvents.playerBreakBlock.subscribe((event) => {

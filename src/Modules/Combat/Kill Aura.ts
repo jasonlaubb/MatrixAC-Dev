@@ -14,7 +14,7 @@ import { flag, isAdmin } from "../../Assets/Util.js";
 
 const hitLength = new Map<string, any[]>();
 
-function KillAura(damagingEntity: Player, hitEntity: Player) {
+async function KillAura(damagingEntity: Player, hitEntity: Player) {
     let playerHitEntity = hitLength.get(damagingEntity.name) ?? [];
     const direction: Vector3 = calculateVector(damagingEntity.location, hitEntity.location) as Vector3;
     const distance: number = calculateMagnitude(direction);
@@ -35,8 +35,7 @@ function KillAura(damagingEntity: Player, hitEntity: Player) {
 
     if (distance < 2 || damagingEntity.hasTag("matrix:pvp-disabled")) return;
 
-    const view: Vector3 = damagingEntity.getViewDirection();
-    const angle: number = calculateAngle(view, direction);
+    const angle: number = calculateAngle(damagingEntity.location, hitEntity.location, damagingEntity.getRotation().y);
 
     if (angle > config.antiKillAura.minAngle) {
         flag (damagingEntity, 'Kill Aura', config.antiKillAura.punishment, [`Angle:${angle.toFixed(2)}°`])
@@ -63,13 +62,14 @@ function calculateMagnitude({ x, y, z }: Vector3) {
     return Math.sqrt(x ** 2 + y ** 2 + z ** 2);
 }
 
-const calculateAngle = (pos1, pos2, rotation = -90) => (Math.atan2((pos2.z - pos1.z), (pos2.x - pos1.x)) * 180 / Math.PI - rotation - 90 + 360) % 360;
+const calculateAngle = (pos1: Vector3, pos2: Vector3, rotation: number = -90) => (Math.atan2((pos2.z - pos1.z), (pos2.x - pos1.x)) * 180 / Math.PI - rotation - 90 + 360) % 360;
 
 world.afterEvents.entityHitEntity.subscribe(({ damagingEntity, hitEntity }) => {
     const toggle = (world.getDynamicProperty("antiKillAura") ?? config.antiKillAura.enabled) as boolean;
     if (toggle !== true) return;
-    if (!(damagingEntity instanceof Player) || !(hitEntity instanceof Player)) return;
-    if (isAdmin (damagingEntity)) return
+
+    if (!(damagingEntity instanceof Player) || !(hitEntity instanceof Player) || isAdmin (damagingEntity)) return;
+
     KillAura(damagingEntity, hitEntity);
 });
 

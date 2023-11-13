@@ -5,7 +5,7 @@ import {
     Effect
 } from "@minecraft/server";
 import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
-import { flag } from "../../Assets/Util";
+import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
 
 function getSpeedIncrease (speedEffect: Effect | undefined) {
@@ -50,7 +50,7 @@ async function antiNoSlow(player: Player) {
             player.noSlowBuffer += 1
             if (buffer + 1 <= config.antiNoSlow.maxNoSlowBuff) return
             if (player.getEffect(MinecraftEffectTypes.Speed)) return
-            //@ta-expect-error
+            //@ts-expect-error
             player.noSlowBuffer = 0
             flag (player, "NoSlow", config.antiNoSlow.punishment, [`playerSpeed:${playerSpeed.toFixed(2)}`])
             player.teleport(playerLastPos)
@@ -68,6 +68,7 @@ system.runInterval(() => {
     if (toggle !== true) return;
 
     for (const player of world.getAllPlayers()) {
+        if (isAdmin (player)) continue;
         antiNoSlow(player);
     }
-})
+}, 1)
