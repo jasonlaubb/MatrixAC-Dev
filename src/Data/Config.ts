@@ -11,6 +11,7 @@ export default {
      * @description
      * The setting for our functions
      */
+    flagMode: "tag",
     commands: {
         password: "password", // The password for op command
         prefix: "-", // The prefix of commands
