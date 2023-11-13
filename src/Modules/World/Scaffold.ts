@@ -30,12 +30,7 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
     const toggle: boolean = (world.getDynamicProperty("antiScaffold") ?? config.antiScaffold.enabled) as boolean;
     if (toggle !== true) return;
 
-    if (isAdmin (player)) return;
-
-    if (player.hasTag("matrix:place-disabled")) {
-        block.setType(MinecraftBlockTypes.Air);
-        return;
-    }
+    if (isAdmin (player) || player.hasTag("place-disabled")) return;
 
     let detected: boolean = false;
 
@@ -78,6 +73,14 @@ world.beforeEvents.playerPlaceBlock.subscribe(event => {
 
     if (player.hasTag("matrix:place-disabled")) {
         event.cancel = true;
+    }
+});
+
+world.afterEvents.playerPlaceBlock.subscribe(event => {
+    const { player, block } = event;
+    
+    if (player.hasTag("matrix:place-disabled")) {
+        block.setType(MinecraftBlockTypes.Air);
     }
 });
 
