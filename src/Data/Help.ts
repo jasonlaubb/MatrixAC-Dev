@@ -6,6 +6,7 @@ export function helpList (p: string): string {
         `§g${p}op <player> - Give player admin permission`,
         `§g${p}deop <player> - Remove player's admin permission`,
         `§g${p}passwords <oldPassword> <newPassword> - Change the password`,
+        `§g${p}flagmode <all/tag/bypass/admin> - Change the flag mode`,
         `§g${p}rank <set/add/remove> <player> <rank> - Change the rank on a player`,
         `§g${p}rankclear <player> - Clear all rank on a player`,
         `§g${p}defaultrank <rank> - Change the default rank`,

@@ -110,6 +110,14 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             world.setDynamicProperty("password", newPassword)
             break
         }
+        case "flagmode": {
+            if (!Command.new(player, config.commands.flagmode as Cmds)) return
+            const mode: string = regax[1]
+            if (mode === undefined || !(new Set(["all", "tag", "bypass", "admin"]).has(mode))) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown action, please use all/tag/bypass/admin only`))
+            world.setDynamicProperty("flagMode", mode)
+            system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Flag mode has been set to ${mode}`))
+            break
+        }
         case "rank": {
             if (!Command.new(player, config.commands.rank as Cmds)) return
             if (regax[1] === undefined || !(new Set(["set", "add", "remove"]).has(regax[1]))) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown action, please use set/add/remove only`))

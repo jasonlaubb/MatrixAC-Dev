@@ -50,6 +50,11 @@ export default {
             adminOnly: true,
             requireTag: undefined
         },
+        flagmode: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
         rank: {
             enabled: true,
             adminOnly: true,
