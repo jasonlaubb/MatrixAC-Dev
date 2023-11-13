@@ -17,7 +17,6 @@ class QueueFlag {
 }
 
 let lastAction: LastAction = {
-    location: {},
     rotation: {},
 };
 
