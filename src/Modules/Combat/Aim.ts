@@ -8,7 +8,6 @@ import { flag, isAdmin } from "../../Assets/Util";
  */
 
 class LastAction {
-    location: Record<string, any>;
     rotation: Record<string, { x: number; y: number; rotationSpeed: { x: number; y: number }; averageSpeed: number }>;
 }
 
