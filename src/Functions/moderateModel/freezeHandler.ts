@@ -22,8 +22,11 @@ system.runInterval(() => {
         const freeze = freezeInfo as any as Freeze;
 
         player.teleport(freeze.location, {
-            dimension: world.getDimension(freeze.dimension)
+            dimension: world.getDimension(freeze.dimension),
+            rotation: { x: 0, y: 0 }
         });
+        player.runCommand("inputpermission set @s movement disabled")
+        player.runCommand("inputpermission set @s camera disabled")
         player.addEffect("minecraft:slowness", 2, { amplifier: 255, showParticles: false });
     }
 }, 20);
@@ -43,6 +46,8 @@ function freeze(player: Player) {
 
 function unfreeze (player: Player) {
     if (player.getDynamicProperty("freeze") === undefined) return false
+    player.runCommand("inputpermission set @s movement enabled")
+    player.runCommand("inputpermission set @s camera enabled")
     system.run(() => player.setDynamicProperty("freeze", undefined))
     return true
 }
