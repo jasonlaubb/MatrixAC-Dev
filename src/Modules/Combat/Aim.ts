@@ -1,4 +1,4 @@
-import { world, system } from "@minecraft/server";
+import { world, system, Player } from "@minecraft/server";
 import config from "../../Data/Config";
 import { flag, isAdmin } from "../../Assets/Util";
 
@@ -23,11 +23,7 @@ const timer = new Map<string, number>();
 
 let queueFlag: QueueFlag = {};
 
-system.runInterval(() => {
-    const toggle: boolean = (world.getDynamicProperty("antiAim") ?? config.antiAim.enabled) as boolean;
-    if (toggle !== true) return;
-    for (const player of world.getAllPlayers()) {
-        if (isAdmin (player)) continue;
+async function AntiAim (player: Player) {
         const rotation = player.getRotation();
         const rotationSpeed = {x: Math.abs(rotation.x - (lastAction.rotation[player.id]?.x || rotation.x)), y: Math.abs(rotation.y - (lastAction.rotation[player.id]?.y || rotation.y))};
         const averageSpeed = Math.sqrt(rotationSpeed.x**2 + rotationSpeed.y**2);
@@ -64,8 +60,17 @@ system.runInterval(() => {
             } else timer.set(`aim-c:${player.id}`, 0);
         }
         lastAction.rotation[player.id] = {...rotation, rotationSpeed, averageSpeed};
-    };
-}, 0);
+};
+
+system.runInterval(() => {
+    const toggle: boolean = (world.getDynamicProperty("antiAim") ?? config.antiAim.enabled) as boolean;
+    if (toggle !== true) return;
+    for (const player of world.getAllPlayers()) {
+        if (isAdmin (player)) continue;
+        AntiAim (player)
+    }
+}, 1)
+        
 
 world.afterEvents.itemStartUse.subscribe((event) => {
     const toggle: boolean = (world.getDynamicProperty("antiAim") ?? config.antiAim.enabled) as boolean;
