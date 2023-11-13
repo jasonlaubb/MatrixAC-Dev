@@ -33,13 +33,7 @@ world.afterEvents.playerBreakBlock.subscribe((event) => {
     if (toggle !== true) return;
 
     const { player, block } = event;
-    if (isAdmin (player) || !toggle) return;
-
-    if (player.hasTag("matrix:break-disabled")) {
-        block.dimension.getEntities({ location: block.location, maxDistance: 2, minDistance: 0, type: "minecraft:item" }).forEach((item) => { item.kill() })
-        block.setPermutation(block.permutation.clone())
-        return
-    }
+    if (isAdmin (player) || !toggle || player.hasTag("matrix:break-disabled")) return;
 
     const timeNow = Date.now();
 
@@ -65,8 +59,17 @@ world.afterEvents.playerBreakBlock.subscribe((event) => {
     }
 });
 
+world.afterEvents.playerBreakBlock.subscribe((event) => {
+    const { player, block } = event
+
+    if (player.hasTag("matrix:break-disabled")) {
+        block.dimension.getEntities({ location: block.location, maxDistance: 2, minDistance: 0, type: "minecraft:item" }).forEach((item) => { item.kill() })
+        block.setPermutation(block.permutation.clone())
+    }
+})
+
 world.beforeEvents.playerBreakBlock.subscribe((event) => {
-    const player: Player = event.player;
+    const { player } = event
     if (player.hasTag("matrix:break-disabled")) {
         event.cancel = true
     }
