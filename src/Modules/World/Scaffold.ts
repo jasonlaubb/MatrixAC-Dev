@@ -58,15 +58,7 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
     }
 });
 
-function calculateAngle(pos1:Vector3, pos2: Vector3, rotation: Vector2) {
-    const dx: number = pos2.x - pos1.x;
-    const dz: number = pos2.z - pos1.z;
-    const radToDeg: number = 180 / Math.PI;
-    const rawAngle: number = Math.atan2(dz, dx) * radToDeg;
-    let adjustedAngle: number = rawAngle - rotation.y - 90;
-    adjustedAngle = (adjustedAngle <= -180) ? adjustedAngle + 360 : adjustedAngle;
-    return Math.abs(adjustedAngle);
-}
+const calculateAngle = (pos1, pos2, rotation = -90) => (Math.atan2((pos2.z - pos1.z), (pos2.x - pos1.x)) * 180 / Math.PI - rotation - 90 + 360) % 360;
 
 world.beforeEvents.playerPlaceBlock.subscribe(event => {
     const { player } = event;
