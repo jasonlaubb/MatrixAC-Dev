@@ -67,7 +67,11 @@ world.afterEvents.playerPlaceBlock.subscribe(({ block, player }) => {
     antiScaffold (player, block)
 });
 
-const calculateAngle = (pos1: Vector3, pos2: Vector3, rotation: number = -90) => (Math.atan2((pos2.z - pos1.z), (pos2.x - pos1.x)) * 180 / Math.PI - rotation - 90 + 360) % 360;
+function calculateAngle (pos1, pos2, rotation = -90) {
+  let angle = Math.atan2((pos2.z - pos1.z), (pos2.x - pos1.x)) * 180 / Math.PI - rotation - 90;
+  if (angle <= -180) angle += 360;
+  return Math.abs(angle);
+}
 
 world.beforeEvents.playerPlaceBlock.subscribe(event => {
     const { player } = event;
