@@ -2,7 +2,7 @@
  * @author jasonlaubb
  * @contributors ravriv, Hutao999999, RaMiGamerDev, notthinghere
  * @license AGPLv3
- * @github https://github.com/jasonlaubb/Matrix-AntiCheat
+ * @link https://github.com/jasonlaubb/Matrix-AntiCheat
  */
 
 import "./Modules/Combat/Auto Clicker"
@@ -20,6 +20,7 @@ import "./Modules/Movement/NoSlow"
 
 import "./Modules/World/Nuker"
 import "./Modules/World/Scaffold"
+import "./Modules/World/SpeedMine"
 
 import "./Modules/Player/BlockReach"
 

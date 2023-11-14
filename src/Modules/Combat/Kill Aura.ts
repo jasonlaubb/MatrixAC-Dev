@@ -1,4 +1,5 @@
-import { world,
+import {
+    world,
     system,
     Player,
     Vector3
@@ -62,10 +63,10 @@ function calculateMagnitude({ x, y, z }: Vector3) {
     return Math.sqrt(x ** 2 + y ** 2 + z ** 2);
 }
 
-function calculateAngle (pos1, pos2, rotation = -90) {
-  let angle = Math.atan2((pos2.z - pos1.z), (pos2.x - pos1.x)) * 180 / Math.PI - rotation - 90;
-  if (angle <= -180) angle += 360;
-  return Math.abs(angle);
+function calculateAngle (pos1: Vector3, pos2: Vector3, rotation = -90) {
+    let angle = Math.atan2((pos2.z - pos1.z), (pos2.x - pos1.x)) * 180 / Math.PI - rotation - 90;
+    angle = angle <= -180 ? angle += 360 : angle
+    return Math.abs(angle)
 }
 
 world.afterEvents.entityHitEntity.subscribe(({ damagingEntity, hitEntity }) => {

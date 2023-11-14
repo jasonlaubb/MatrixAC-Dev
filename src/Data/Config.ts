@@ -230,6 +230,12 @@ export default {
         punishment: undefined
     },
 
+    antiSpeedMine: {
+        enabled: true,
+        timeout: 50,
+        punishment: undefined
+    },
+
     chatFilter: [
         "niger",
         "nigers",

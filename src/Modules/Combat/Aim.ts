@@ -26,7 +26,7 @@ let queueFlag: QueueFlag = {};
 async function AntiAim (player: Player) {
     const rotation = player.getRotation();
     const rotationSpeed = {x: Math.abs(rotation.x - (lastAction.rotation[player.id]?.x || rotation.x)), y: Math.abs(rotation.y - (lastAction.rotation[player.id]?.y || rotation.y))};
-    const averageSpeed = Math.sqrt(rotationSpeed.x**2 + rotationSpeed.y**2);
+    const averageSpeed = Math.sqrt(rotationSpeed.x ** 2 + rotationSpeed.y ** 2);
     if (lastAction.rotation[player.id]) {
         let isFlagged = false;
         const maxRotSpeed = config.antiAim.maxRotSpeed;
@@ -64,7 +64,7 @@ async function AntiAim (player: Player) {
             player.applyDamage(6)
             if (!player.hasTag("matrix:pvp-disabled")) {
                 player.addTag("matrix:pvp-disabled")
-                system.runTimeOut(() => player.removeTag("matrix:pvp-disabled"), 40)
+                system.runTimeout(() => player.removeTag("matrix:pvp-disabled"), config.antiAim.timeout)
             }
         }
     }
