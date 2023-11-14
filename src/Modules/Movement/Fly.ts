@@ -9,7 +9,7 @@ import {
 import config from "../../Data/Config";
 
 const previousLocations = new Map<string, Vector3>();
-import { flag, isAdmin } from "../../Assets/Util";
+import { flag, isAdmin,blockAround } from "../../Assets/Util";
 import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 /**
  * @author RaMiGamerDev
@@ -36,16 +36,16 @@ async function antiFly (player: Player, now: number) {
 
     if (jumpBoostEffect >= 4) return;
 
-    const didFindSlime: boolean = seachForSlimeBlock (player.dimension, player.location)
+    const didFindSlime: boolean = blockAround(player,"minecraft:slime")
 
-    if (didFindSlime) {
+    if (didFindSlime == true) {
         player.addTag("matrix:slime")
     } else if (velocityY <= 0) {
         player.removeTag("matrix:slime")
     }
 
     if (velocityY > config.antiFly.maxVelocityY && !player.hasTag("matrix:slime")) {
-        if (velocityY % 1 === 0) return;
+        if (velocityY === Math.abs(velocityY)) return;
 
         const prevLoc = previousLocations.get(id);
         flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, [`velocityY:${velocityY.toFixed(2)}`])
