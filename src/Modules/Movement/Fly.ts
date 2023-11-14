@@ -7,7 +7,7 @@ import {
 } from "@minecraft/server";
 
 import config from "../../Data/Config";
-
+const skipCheck = new Map();
 const previousLocations = new Map<string, Vector3>();
 import { flag, isAdmin,blockAround } from "../../Assets/Util";
 import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
@@ -23,7 +23,11 @@ async function antiFly (player: Player, now: number) {
     if (playerPrevPos === undefined || player.isOnGround && velocityY === 0 || velocityY < 0 && player.location.y < previousLocations.get(id)?.y) {
         previousLocations.set(id, player.location);
     }
-
+if(skipCheck.get(id) == undefined){
+        skipCheck.set(id,0)
+      } if(skipCheck.get(id)>0){
+        skipCheck.set(id,skipCheck.get(id)-1)
+      }
     if (player.hasTag("matrix:knockback") && velocityY <= 0) {
         player.removeTag("matrix:knockback")
     }
@@ -43,9 +47,14 @@ async function antiFly (player: Player, now: number) {
     } else if (velocityY <= 0) {
         player.removeTag("matrix:slime")
     }
-
+    if(player.hasTag("trident") && player.hasTag("matrix:using_item")){
+          skipCheck.set(id,40)
+        }       
+        if(player.hasTag("trident") && !player.hasTag("matrix:using_item")){
+          player.removeTag(`trident`)
+        }
     if (velocityY > config.antiFly.maxVelocityY && !player.hasTag("matrix:slime")) {
-        if (velocityY === Math.abs(velocityY)) return;
+        if (velocityY === Math.abs(velocityY) || skipCheck.get(id) > 0) return;
 
         const prevLoc = previousLocations.get(id);
         flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, [`velocityY:${velocityY.toFixed(2)}`])
@@ -115,3 +124,27 @@ world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
     player.addTag("matrix:joined")
     system.runTimeout(() => player.removeTag("matrix:joined"), config.antiFly.skipCheck)
 })
+world.afterEvents.itemUse.subscribe((event)=>{
+  let player = event.source
+  //@ts-expect-error
+  let getItemInSlot = player.getComponent("inventory").container.getItem(player.selectedSlot)
+let getEnchantment = getItemInSlot.getComponent("minecraft:enchantments").enchantments
+  if(getItemInSlot.typeId.includes("trident")){
+   
+    let  checkRipTide = getEnchantment.hasEnchantment("riptide")
+      if(checkRipTide>0){
+        player.addTag(`trident`)
+      }
+  }
+})
+world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
+    const player = hurtEntity;
+    const damageCause = damageSource.cause;
+    if (!(player instanceof Player))
+        return;
+    if (isAdmin(player))
+        return;
+        if(damageCause == "entityExplosion"){
+          skipCheck.set(id,60)
+        }
+          })
