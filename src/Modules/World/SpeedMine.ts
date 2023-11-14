@@ -2,8 +2,7 @@ import {
 	system,
 	GameMode,
 	world,
-	EntityEquippableComponent,
-	EquipmentSlot,
+	EntityInventoryComponent,
 	ItemEnchantsComponent,
 	EnchantmentList,
 	ItemStack,
@@ -60,8 +59,8 @@ const isGMC = (playerName: string) => world.getPlayers({
  */
 
 async function antiSpeedMine(player: Player, block: Block, event: PlayerBreakBlockBeforeEvent) {
-	const equipment: EntityEquippableComponent = player.getComponent(EntityEquippableComponent.componentId) as EntityEquippableComponent;
-	const item: ItemStack = equipment.getEquipment(EquipmentSlot.Mainhand);
+	const container = player.getComponent(EntityInventoryComponent.componentId) as EntityInventoryComponent).container;
+	const item: ItemStack = container.getItem(player.selectedSlot)
 	let enchantment: EnchantmentList | undefined;
 	let efficiency: boolean | undefined;
 
