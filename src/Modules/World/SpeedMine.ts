@@ -109,7 +109,7 @@ async function antiSpeedMine(player: Player, block: Block, event: PlayerBreakBlo
 			if (mineTimer >= 2 || timer > breakSpeed || breakSpeed == 0 || fastBrokenBlocks.has(block.typeId as MinecraftBlockTypes) || isGMC(player.name)) return
 			event.cancel = true
 			mineData.mineFlags[player.id] = 0
-			flag(player, 'Speed Mine', config.antiSpeedMine.punishment, [`Blocks:${mineFlags} BPS`])
+			flag(player, 'Speed Mine', config.antiSpeedMine.maxVL, config.antiSpeedMine.punishment, [`Blocks:${mineFlags} BPS`])
 		})
 	}
 }

@@ -48,7 +48,7 @@ async function antiFly (player: Player, now: number) {
         if (velocityY % 1 === 0) return;
 
         const prevLoc = previousLocations.get(id);
-        flag (player, "Fly", config.antiFly.punishment, [`velocityY:${velocityY.toFixed(2)}`])
+        flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, [`velocityY:${velocityY.toFixed(2)}`])
         player.teleport(prevLoc);
     }
 }
@@ -60,7 +60,7 @@ async function antiNofall (player: Player) {
 
     if (!isOnGround && velocity.y === 0 && Math.hypot(velocity.x, velocity.z) > 0) {
         const prevLoc = previousLocations.get(id);
-        flag (player, "NoFall", config.antiNofall.punishment, ["velocityY:0"])
+        flag (player, "NoFall", config.antiFly.maxVL, config.antiNofall.punishment, ["velocityY:0"])
         player.teleport(prevLoc);
     }
 }

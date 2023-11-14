@@ -45,7 +45,7 @@ async function antiPhase (player: Player) {
 
     if (data.lastSolid && isSolid) {
         if(bodyBlock.typeId === MinecraftBlockTypes.SoulSand && headBlock.isSolid == false) return
-        flag (player, 'Phase', config.antiPhase.punishment, undefined)
+        flag (player, 'Phase', config.antiPhase.maxVL,config.antiPhase.punishment, undefined)
         player.teleport(data.lastSafePos);
     }
 

@@ -40,7 +40,7 @@ async function antiNuker (player: Player, block: Block) {
         system.runTimeout(() => player.removeTag("matrix:break-disabled"), config.antiNuker.timeout);
 
         blockBreakData.delete(player.id);
-        flag(player, "Nuker", config.antiNuker.punishment, ["block:" + block.typeId.replace("minecraft:","")]);
+        flag(player, "Nuker", config.antiNuker.maxVL,config.antiNuker.punishment, ["block:" + block.typeId.replace("minecraft:","")]);
     }
 }
 

@@ -28,3 +28,5 @@ import "./Functions/chatModel/ChatHandler"
 
 import "./Functions/moderateModel/banHandler"
 import "./Functions/moderateModel/freezeHandler"
+import "./Functions/moderateModel/eventHandler"
+import "./Functions/moderateModel/dimensionLock"

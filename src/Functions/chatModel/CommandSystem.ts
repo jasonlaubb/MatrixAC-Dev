@@ -1,4 +1,6 @@
 import {
+    EntityInventoryComponent,
+    ItemStack,
     Player,
     system,
     world
@@ -8,14 +10,18 @@ import { isAdmin, isTimeStr, timeToMs } from "../../Assets/Util";
 import config from "../../Data/Config";
 import { ban, unban, unbanList, unbanRemove } from "../moderateModel/banHandler";
 import { freeze, unfreeze } from "../moderateModel/freezeHandler";
+import { triggerEvent } from "../moderateModel/eventHandler";
+import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
+import { ActionFormData } from "@minecraft/server-ui";
+import version from "../../version";
 
 export { inputCommand }
 
-const turnRegax = (message: string, prefix: string) => {
+function turnRegax (message: string, prefix: string) {
     const regex = /(["'])(.*?)\1|\S+/g
     const matches = message.match(regex)
     const command = matches.shift().slice(prefix.length)
-    const args = matches.map(arg => arg.replace(/^[@"]/g, '').replace(/"$/, ''))
+    const args = matches.map(arg => arg.replace(/[@"]/g, '').replace(/"$/, ''))
     return [command, ...args]
 }
 
@@ -46,6 +52,12 @@ async function inputCommand (player: Player, message: string, prefix: string): P
     const regax = turnRegax(message, prefix)
 
     switch (regax[0]) {
+        case "about": {
+            system.run(() =>
+                player.sendMessage(`§2§l§¶Matrix >§4 Matrix is a minecraft bedrock anticheat that is based on @minecraft API\n§4Version: §cV${version.join('.')}\n§4Author: §cjasonlaubb\n§4GitHub: §chttps://github.com/jasonlaubb/Matrix-AntiCheat`)
+            )
+            break
+        }
         case "help": {
             if (!Command.new(player, config.commands.help as Cmds)) return
             const helpMessage: string = helpList(prefix)
@@ -302,10 +314,98 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             system.run(() => world.sendMessage(`§2§l§¶Matrix >§4 ${target.name} has been unmuted by ${player.name}`))
             break
         }
-
-        default: {
-            system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown command, try ${prefix}help`))
+        case "vanish": {
+            if (!Command.new(player, config.commands.vanish as Cmds)) return
+            system.run(() => {
+                triggerEvent(player, "matrix:vanish")
+                player.addEffect(MinecraftEffectTypes.Invisibility, 19999999, { showParticles: false, amplifier: 2 })
+                player.sendMessage(`§2§l§¶Matrix >§4 You are now vanished`)
+            })
             break
+        }
+        case "unvanish": {
+            if (!Command.new(player, config.commands.unvanish as Cmds)) return
+            system.run(() => {
+                triggerEvent(player, "matrix:unvanish")
+                player.removeEffect(MinecraftEffectTypes.Invisibility)
+                player.sendMessage(`§2§l§¶Matrix >§4 You are now no longer vanished`)
+            })
+            break
+        }
+        case "invcopy": {
+            if (!Command.new(player, config.commands.invcopy as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the player`))
+            const target = world.getPlayers({ name: regax[1] })[0]
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            if (target.id === player.id) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't copy yourself`))
+
+            const inputInv = ((target.getComponent(EntityInventoryComponent.componentId)) as EntityInventoryComponent).container;
+            const outputInv = ((player.getComponent(EntityInventoryComponent.componentId)) as EntityInventoryComponent).container;
+
+            for (let i = 0; i < inputInv.size; i++) {
+                const item: ItemStack | undefined = inputInv.getItem(i);
+
+                system.run(() => outputInv.setItem(i, item))
+            }
+
+            system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Copied inventory from ${target.name}`))
+            break
+        }
+        case "invsee": {
+            if (!Command.new(player, config.commands.invsee as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the player`))
+            const target = world.getPlayers({ name: regax[1] })[0]
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            if (target.id === player.id) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't invsee yourself`))
+
+            const inv = ((target.getComponent(EntityInventoryComponent.componentId)) as EntityInventoryComponent).container;
+
+            let itemArray = []
+
+            for (let i = 0; i < inv.size; i++) {
+                const item: ItemStack | undefined = inv.getItem(i);
+
+                if (item) {
+                    itemArray.push(`§eSlot: §c${i} | §eItem: §c${item.typeId}`)
+                } else {
+                    itemArray.push(`§eSlot: §c${i} | §eItem: §cEmpty`)
+                }
+            }
+
+            const invseeUI = new ActionFormData ()
+                .title("inventory of " + player.name)
+                .body(itemArray.join("\n"))
+                .button("close")
+
+            system.run(() => {
+                invseeUI.show(player).then(res => {
+                    if (res.canceled) return;
+                    player.sendMessage(`§2§l§¶Matrix >§4 Closed inventory of ${target.name}`)
+                })
+            })
+            break
+        }
+        case "echestwipe": {
+            if (!Command.new(player, config.commands.invcopy as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the player`))
+            const target = world.getPlayers({ name: regax[1] })[0]
+            if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
+            if (target.id === player.id) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't wipe yourself`))
+            if (isAdmin (player)) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You can't wipe admin's enderchest`))
+
+            for (let i = 0; i < 27; i++) {
+                player.runCommandAsync(`replaceitem entity @s slot.enderchest ${i} air`)
+            }
+
+            system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Wiped enderchest from ${target.name}`))
+            break
+        }
+        default: {
+            if (isAdmin (player)) {
+                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown command, try ${prefix}help`))
+            } else {
+                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown command, try ${prefix}help\n§r§7§o(Use -about to see more information)`))
+            }
         }
     }
 }

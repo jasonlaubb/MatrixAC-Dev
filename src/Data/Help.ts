@@ -30,6 +30,7 @@ export function toggleList (p: string): string {
 
 export const validModules: string[] = [
     "chatRank",
+    "dimensionLock",
     "antiReach",
     "antiKillAura",
     "antiAutoClicker",
