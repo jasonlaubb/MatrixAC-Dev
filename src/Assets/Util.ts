@@ -6,7 +6,23 @@ import {
 import { ban } from "../Functions/moderateModel/banHandler";
 import config from "../Data/Config";
 import { triggerEvent } from "../Functions/moderateModel/eventHandler";
+export function blockAround(player, block) {
+    const checkBlock = [
+        { x: 0, y: -1, z: 0 },
+        { x: 1, y: -1, z: 0 },
+        { x: -1, y: -1, z: 0 },
+        { x: 0, y: -1, z: 1 },
+        { x: 0, y: -1, z: -1 },
+        { x: 1, y: -1, z: 1 },
+        { x: -1, y: -1, z: 1 },
+        { x: -1, y: -1, z: -1 },
+        { x: 1, y: -1, z: -1 },
+    ].map((offset) => player.dimension.getBlock(
+        { x: Math.floor(player.location.x + offset.x), y: Math.floor(player.location.y + offset.y), z: Math.floor(player.location.z + offset.z) }
+    ).typeId);
 
+    return checkBlock.includes(block);
+}
 export function kick (player: Player, reason?: string, by?: string) {
     try {
         player.runCommand(`kick "${player.name}" \n§2§l§¶Matrix >§4 ${player.name} §mYou have been kicked\n§fReason: §c${reason ?? 'No reason provided'}\n§fBy: §c${by ?? 'Unknown'}`)
