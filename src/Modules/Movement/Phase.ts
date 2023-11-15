@@ -16,9 +16,32 @@ class PhaseData {
     lastSolid: boolean;
 };
 
+const powderBlock: MinecraftBlockTypes[] = [
+    MinecraftBlockTypes.RedConcretePowder,
+    MinecraftBlockTypes.BlueConcretePowder,
+    MinecraftBlockTypes.GreenConcretePowder,
+    MinecraftBlockTypes.YellowConcretePowder,
+    MinecraftBlockTypes.BlackConcretePowder,
+    MinecraftBlockTypes.BrownConcretePowder,
+    MinecraftBlockTypes.CyanConcretePowder,
+    MinecraftBlockTypes.GrayConcretePowder,
+    MinecraftBlockTypes.LightBlueConcretePowder,
+    MinecraftBlockTypes.LightGrayConcretePowder,
+    MinecraftBlockTypes.LimeConcretePowder,
+    MinecraftBlockTypes.MagentaConcretePowder,
+    MinecraftBlockTypes.OrangeConcretePowder,
+    MinecraftBlockTypes.PinkConcretePowder,
+    MinecraftBlockTypes.PurpleConcretePowder,
+    MinecraftBlockTypes.WhiteConcretePowder
+]
+
 const phaseData: Map<string, PhaseData> = new Map<string, PhaseData>();
-const passableBlocks = new Set([MinecraftBlockTypes.Sand, MinecraftBlockTypes.Gravel]);
-const isSolidBlock = (block: Block) => Boolean(block?.isSolid && !passableBlocks.has(block.typeId as MinecraftBlockTypes) && !block.typeId.endsWith('_powder'));
+const passableBlocks = [
+    MinecraftBlockTypes.Sand,
+    MinecraftBlockTypes.Gravel
+];
+
+const isSolidBlock = (block: Block) => Boolean(block?.isSolid && !passableBlocks.includes(block.typeId as MinecraftBlockTypes) && !powderBlock.includes(block.typeId as MinecraftBlockTypes));
 
 /**
  * @author ravriv & jasonlaubb

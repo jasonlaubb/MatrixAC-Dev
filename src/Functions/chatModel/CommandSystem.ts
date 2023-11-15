@@ -6,7 +6,7 @@ import {
     world
 } from "@minecraft/server";
 import { helpList, toggleList, validModules } from "../../Data/Help"
-import { isAdmin, isTimeStr, timeToMs } from "../../Assets/Util";
+import { isAdmin, isTimeStr, kick, timeToMs } from "../../Assets/Util";
 import config from "../../Data/Config";
 import { ban, unban, unbanList, unbanRemove } from "../moderateModel/banHandler";
 import { freeze, unfreeze } from "../moderateModel/freezeHandler";
@@ -102,6 +102,7 @@ async function inputCommand (player: Player, message: string, prefix: string): P
         }
         case "deop": {
             if (!Command.new(player, config.commands.deop as Cmds)) return
+            if (world.getDynamicProperty("lockdown") === true) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 The server is in lockdown mode`))
             if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please specify the player`))
             const target = world.getPlayers({ name: regax[1] })[0]
             if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
@@ -386,7 +387,7 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             break
         }
         case "echestwipe": {
-            if (!Command.new(player, config.commands.invcopy as Cmds)) return
+            if (!Command.new(player, config.commands.echestwipe as Cmds)) return
             if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the player`))
             const target = world.getPlayers({ name: regax[1] })[0]
             if (target === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown player`))
@@ -398,6 +399,85 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             }
 
             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Wiped enderchest from ${target.name}`))
+            break
+        }
+        case "lockdowncode": {
+            if (!Command.new(player, config.commands.lockdowncode as Cmds)) return
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the action you want`))
+
+            switch (regax[1]) {
+                case "get": {
+                    const code = world.getDynamicProperty("lockdowncode") ?? config.lockdowncode
+                    system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Lockdown code is ${code}`))
+                    break
+                }
+                case "set": {
+                    if (regax[2] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the code you want`))
+                    system.run(() => {
+                        world.setDynamicProperty("lockdowncode", regax[2])
+                        player.sendMessage(`§2§l§¶Matrix >§4 Sucessfully changed lockdown code to ${regax[2]}`)
+                    })
+                    break
+                }
+                case "random": {
+                    const codeLength = regax[2] ?? 6
+
+                    if (Number.isNaN(codeLength)) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 The code length should be a number`))
+                    if (Number(codeLength) < 1 || Number(codeLength) > 128) {
+                        system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the code length between 1 and 128`))
+                        return
+                    }
+
+                    const candidate = [
+                        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+                        'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+                        'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+                        'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+                        'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+                        'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                        'w', 'x', 'y', 'z'
+                    ]
+
+                    let code = ''
+                    for (let i = 0; i < Number(codeLength); i++) {
+                        code += candidate[Math.floor(Math.random() * candidate.length)]
+                    }
+
+                    system.run(() => {
+                        world.setDynamicProperty("lockdowncode", code)
+                        player.sendMessage(`§2§l§¶Matrix >§4 Sucessfully random a lockdown code - ${code}`)
+                    })
+                    break
+                }
+                default: {
+                    system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Unknown action, please use get/set/random only`))
+                
+                }
+            }
+            break
+        }
+        case "lockdown": {
+            if (!Command.new(player, config.commands.lockdown as Cmds)) return
+            const code = world.getDynamicProperty("lockdowncode") ?? config.lockdowncode
+            if (regax[1] === undefined) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Please enter the code`))
+            if (regax[1] !== code) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Wrong code`))
+            if (world.getDynamicProperty("lockdown") === true) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Lockdown has been enabled already`))
+
+            system.run(() => {
+                world.setDynamicProperty("lockdown", true)
+                world.sendMessage(`§2§l§¶Matrix >§4 Lockdown has been enabled by ${player.name}`)
+                world.getAllPlayers().filter(players => isAdmin(players) === false).forEach(players => kick(players, "LockDown", 'Matrix'))
+            })
+            break
+        }
+        case "unlock": {
+            if (!Command.new(player, config.commands.unlock as Cmds)) return
+            if (!world.getDynamicProperty("lockdown")) return system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Lockdown hasn't enabled`))
+
+            system.run(() => {
+                world.setDynamicProperty("lockdown", undefined)
+                world.sendMessage(`§2§l§¶Matrix >§4 Lockdown has been disabled by ${player.name}`)
+            })
             break
         }
         default: {

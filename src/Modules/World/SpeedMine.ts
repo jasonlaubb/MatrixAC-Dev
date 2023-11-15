@@ -8,7 +8,8 @@ import {
 	ItemStack,
 	Player,
 	Block,
-	PlayerBreakBlockBeforeEvent
+	PlayerBreakBlockBeforeEvent,
+	Container
 } from "@minecraft/server"
 
 import fastBrokenBlocks from "../../Data/FastBrokenBlocks";
@@ -59,8 +60,9 @@ const isGMC = (playerName: string) => world.getPlayers({
  */
 
 async function antiSpeedMine(player: Player, block: Block, event: PlayerBreakBlockBeforeEvent) {
-	const container = player.getComponent(EntityInventoryComponent.componentId) as EntityInventoryComponent).container;
+	const container: Container = (player.getComponent(EntityInventoryComponent.componentId) as EntityInventoryComponent).container;
 	const item: ItemStack = container.getItem(player.selectedSlot)
+	const bypassBlock: boolean = fastBrokenBlocks.includes(block.typeId as MinecraftBlockTypes)
 	let enchantment: EnchantmentList | undefined;
 	let efficiency: boolean | undefined;
 
@@ -88,12 +90,12 @@ async function antiSpeedMine(player: Player, block: Block, event: PlayerBreakBlo
 		breakSpeed = 13
 	}
 
-	if (efficiency === true || player.getEffect(MinecraftEffectTypes.Haste) || fastBrokenBlocks.has(block.typeId as MinecraftBlockTypes)) {
+	if (efficiency === true || player.getEffect(MinecraftEffectTypes.Haste) || bypassBlock) {
 		breakSpeed = 0
 	}
 
 	if (breakTimer.get(player.id) < 1) {
-		if (fastBrokenBlocks.has(block.typeId as MinecraftBlockTypes)) return
+		if (fastBrokenBlocks.includes(block.typeId as MinecraftBlockTypes)) return
 		system.run(() => {
 			mineData.mineFlags[player.id] = 0
 			mineData.mineTimer[player.id] = breakSpeed
@@ -105,7 +107,7 @@ async function antiSpeedMine(player: Player, block: Block, event: PlayerBreakBlo
 	}
 	if (mineFlags > 4) {
 		system.run(() => {
-			if (mineTimer >= 2 || timer > breakSpeed || breakSpeed == 0 || fastBrokenBlocks.has(block.typeId as MinecraftBlockTypes) || isGMC(player.name)) return
+			if (mineTimer >= 2 || timer > breakSpeed || breakSpeed == 0 || bypassBlock || isGMC(player.name)) return
 			event.cancel = true
 			mineData.mineFlags[player.id] = 0
 			flag(player, 'Speed Mine', config.antiSpeedMine.maxVL, config.antiSpeedMine.punishment, [`Blocks:${mineFlags} BPS`])

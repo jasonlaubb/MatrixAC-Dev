@@ -18,14 +18,16 @@ const blockBreakData = new Map<string, number[]>();
  */
 
 async function antiNuker (player: Player, block: Block) {
-    if (player.hasTag("matrix:break-disabled")) return;
-
+    if (player.hasTag("matrix:break-disabled")) {
+        return;
+    }
+    
     const timeNow = Date.now();
 
     //get the block break count in the 1 tick
     let blockBreakCount: number[] = blockBreakData.get(player.id)?.filter(time => timeNow - time < 50) ?? [];
 
-    if (!fastBrokenBlocks.has(block.typeId as MinecraftBlockTypes)) {
+    if (!fastBrokenBlocks.includes(block.typeId as MinecraftBlockTypes)) {
         blockBreakCount.push(Date.now());
     };
 

@@ -2,15 +2,17 @@ import {
     world,
     system,
     Vector3,
-    Dimension,
-    Player
+    Player,
+    EntityDamageCause,
+    EntityInventoryComponent,
+    ItemEnchantsComponent
 } from "@minecraft/server";
 
 import config from "../../Data/Config";
 const skipCheck = new Map();
 const previousLocations = new Map<string, Vector3>();
 import { flag, isAdmin,blockAround } from "../../Assets/Util";
-import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
+import { MinecraftBlockTypes, MinecraftEffectTypes, MinecraftEnchantmentTypes, MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 /**
  * @author RaMiGamerDev
  * @description This is a simple anti-fly that detects players using Fly Vanilla/CubeGlide/Motion.
@@ -40,18 +42,19 @@ if(skipCheck.get(id) == undefined){
 
     if (jumpBoostEffect >= 4) return;
 
-    const didFindSlime: boolean = blockAround(player,"minecraft:slime")
+    const didFindSlime: boolean = blockAround(player, MinecraftBlockTypes.Slime)
 
     if (didFindSlime == true) {
         player.addTag("matrix:slime")
     } else if (velocityY <= 0) {
         player.removeTag("matrix:slime")
     }
-    if(player.hasTag("trident") && player.hasTag("matrix:using_item")){
+    
+    if(player.hasTag("matrix:trident") && player.hasTag("matrix:using_item")){
           skipCheck.set(id,40)
         }       
-        if(player.hasTag("trident") && !player.hasTag("matrix:using_item")){
-          player.removeTag(`trident`)
+        if(player.hasTag("matrix:trident") && !player.hasTag("matrix:using_item")){
+          player.removeTag(`matrix:trident`)
         }
     if (velocityY > config.antiFly.maxVelocityY && !player.hasTag("matrix:slime")) {
         if (velocityY === Math.abs(velocityY) || skipCheck.get(id) > 0) return;
@@ -97,26 +100,10 @@ system.runInterval(() => {
     }
 }, 1)
 
-function seachForSlimeBlock (dimension: Dimension, location: Vector3) {
-    const index = [-1, 0, 1]
-
-    const floorPos = {
-        x: Math.floor(location.x),
-        y: Math.floor(location.y),
-        z: Math.floor(location.z)
-    } as Vector3
-
-    return index.some(x => index.some(y => index.some(z => 
-        dimension.getBlock({
-            x: floorPos.x + x, y: floorPos.y + y, z: floorPos.z + z
-        })?.typeId === MinecraftBlockTypes.Slime
-    )))
-    
-}
-
 world.afterEvents.playerLeave.subscribe(({ playerId }) => {
     const id = playerId;
     previousLocations.delete(id);
+    skipCheck.delete(id);
 })
 
 world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
@@ -125,26 +112,24 @@ world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
     system.runTimeout(() => player.removeTag("matrix:joined"), config.antiFly.skipCheck)
 })
 world.afterEvents.itemUse.subscribe((event)=>{
-  let player = event.source
-  //@ts-expect-error
-  let getItemInSlot = player.getComponent("inventory").container.getItem(player.selectedSlot)
-let getEnchantment = getItemInSlot.getComponent("minecraft:enchantments").enchantments
-  if(getItemInSlot.typeId.includes("trident")){
-   
-    let  checkRipTide = getEnchantment.hasEnchantment("riptide")
-      if(checkRipTide>0){
-        player.addTag(`trident`)
-      }
+    const player = event.source
+    const getItemInSlot = (player.getComponent(EntityInventoryComponent.componentId) as EntityInventoryComponent).container.getItem(player.selectedSlot)
+    if (getItemInSlot === undefined) return;
+    const getEnchantment = (getItemInSlot.getComponent(ItemEnchantsComponent.componentId) as ItemEnchantsComponent).enchantments
+    if(getItemInSlot.typeId == MinecraftItemTypes.Trident){
+        const checkRipTide = getEnchantment.hasEnchantment(MinecraftEnchantmentTypes.Riptide)
+
+        if(checkRipTide > 0){
+            player.addTag(`matrix:trident`)
+        }
   }
 })
 world.afterEvents.entityHurt.subscribe(({ hurtEntity, damageSource }) => {
     const player = hurtEntity;
     const damageCause = damageSource.cause;
-    if (!(player instanceof Player))
-        return;
-    if (isAdmin(player))
-        return;
-        if(damageCause == "entityExplosion"){
-          skipCheck.set(id,60)
-        }
-          })
+    if (!(player instanceof Player) || isAdmin(player)) return;
+
+    if(damageCause === EntityDamageCause.entityExplosion){
+        skipCheck.set(player.id ,60)
+    }
+})

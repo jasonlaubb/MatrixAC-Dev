@@ -12,6 +12,7 @@ export default {
      * The setting for our functions
      */
     flagMode: "tag",
+    lockdowncode: "AbCdEfGh",
     commands: {
         password: "password", // The password for op command
         prefix: "-", // The prefix of commands
@@ -131,6 +132,26 @@ export default {
             requireTag: undefined
         },
         invsee: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        echestwipe: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        lockdowncode: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        lockdown: {
+            enabled: true,
+            adminOnly: false,
+            requireTag: undefined
+        },
+        unlock: {
             enabled: true,
             adminOnly: true,
             requireTag: undefined
