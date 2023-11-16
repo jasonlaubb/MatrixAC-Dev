@@ -70,22 +70,6 @@ system.runInterval(() => {
     }
 }, 2);
 
-world.afterEvents.itemReleaseUse.subscribe(({ itemStack, source: player }) => {
-    if (itemStack?.typeId === MinecraftItemTypes.Trident && player instanceof Player) {
-        //@ts-expect-error
-        player.threwTridentAt = Date.now();
-    }
-});
-
-world.afterEvents.entityHurt.subscribe(event => {
-    const player = event.hurtEntity;
-    if (player instanceof Player && (event.damageSource.cause == EntityDamageCause.blockExplosion || event.damageSource.cause == EntityDamageCause.entityExplosion || event.damageSource.cause === EntityDamageCause.entityAttack)) {
-        player.addTag("matrix:knockback");
-        //@ts-expect-error
-        player.lastExplosionTime = Date.now();
-    }
-});
-
 world.afterEvents.playerLeave.subscribe(({ playerId }) => {
     speedData.delete(playerId);
 })
