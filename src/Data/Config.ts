@@ -175,7 +175,7 @@ export default {
     },
     chatRank: {
         enabled: true,
-        defaultRank: "§gMember",
+        defaultRank: "§pMember",
         showAllRank: true
     },
     dimensionLock: {
