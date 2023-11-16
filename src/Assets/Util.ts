@@ -2,6 +2,8 @@ import {
     world,
     Player,
     GameMode,
+    EntityInventoryComponent,
+    ItemEnchantsComponent
 } from "@minecraft/server"
 import { ban } from "../Functions/moderateModel/banHandler";
 import config from "../Data/Config";
