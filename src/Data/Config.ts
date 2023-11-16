@@ -148,7 +148,7 @@ export default {
         },
         lockdown: {
             enabled: true,
-            adminOnly: false,
+            adminOnly: true,
             requireTag: undefined
         },
         unlock: {
@@ -291,7 +291,7 @@ export default {
     antiTower: {
         enabled: true,
         maxVelocity: 0.65,
-        minDelay: 0.5,
+        minDelay: 400,
         timeout: 60,
         punishment: undefined,
         maxVL: 2
