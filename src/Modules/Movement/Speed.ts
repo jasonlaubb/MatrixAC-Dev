@@ -9,7 +9,7 @@ import {
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
 import { flag, isAdmin } from "../../Assets/Util.js";
-import { MinecraftEffectTypes, MinecraftItemTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index.js";
+import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index.js";
 
 const speedData = new Map();
 
