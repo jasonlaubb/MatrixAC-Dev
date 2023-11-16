@@ -41,8 +41,6 @@ async function antiTower (player: Player, block: Block) {
 
     const delay = Date.now() - lastTime
 
-    player.sendMessage(`${delay} | ${player.location.y - y} | ${playerTowering}`)
-
     if (delay < config.antiTower.minDelay && locationState && y - towerBlock.y == 1) {
         block.setType(MinecraftBlockTypes.Air)
         player.addTag("matrix:place-disabled")

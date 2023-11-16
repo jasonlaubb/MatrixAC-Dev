@@ -296,13 +296,6 @@ export default {
         maxVL: 2
     },
 
-    antiSpeedMine: {
-        enabled: true,
-        timeout: 50,
-        punishment: undefined,
-        maxVL: 1
-    },
-
     chatFilter: [
         "niger",
         "nigers",

@@ -20,7 +20,6 @@ import "./Modules/Movement/NoSlow"
 
 import "./Modules/World/Nuker"
 import "./Modules/World/Scaffold"
-import "./Modules/World/SpeedMine"
 import "./Modules/World/Tower"
 
 import "./Modules/Player/BlockReach"
