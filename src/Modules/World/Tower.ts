@@ -6,7 +6,7 @@ import {
     system
 } from "@minecraft/server"
 import { flag, isAdmin } from "../../Assets/Util";
-import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
+import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../Data/Config";
 
 const towerData = new Map<string, Vector3>();
@@ -28,7 +28,7 @@ async function antiTower (player: Player, block: Block) {
         return
     }
 
-    if (player.hasTag("matrix:place-disabled") || !player.isJumping) return
+    if (player.hasTag("matrix:place-disabled") || !player.isJumping || player.isFlying || player.isInWater || player.getEffect(MinecraftEffectTypes.JumpBoost)) return
 
     const { x, y, z } = block.location;
 
