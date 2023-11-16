@@ -12,6 +12,12 @@ import config from "../../Data/Config";
 const towerData = new Map<string, Vector3>();
 const lastBlockPlace = new Map<string, number>();
 
+/**
+ * @author jasonlaubb
+ * @description A anti tower module that can detect tower-hack with a very low false positive rate
+ * It work by patching a very small delay between player towering and with a high velocity
+ */
+
 async function antiTower (player: Player, block: Block) {
     const towerBlock = towerData.get(player.id)
     const lastTime = lastBlockPlace.get(player.id)
@@ -28,7 +34,7 @@ async function antiTower (player: Player, block: Block) {
 
     const nearBlock = Math.abs(x - towerBlock.x) <= 1 && Math.abs(z - towerBlock.z) <= 1
     const playerNearBlock = Math.abs(player.location.x - towerBlock.x) <= 1 && Math.abs(player.location.z - towerBlock.z) <= 1
-    const playerTowering = player.location.y - y <= 2.5 && player.location.y > y
+    const playerTowering = player.location.y > y && player.location.y - y <= 2.5
     const locationState = playerTowering && nearBlock && playerNearBlock
 
     const delay = Date.now() - lastTime
