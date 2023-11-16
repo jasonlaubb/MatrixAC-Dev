@@ -6,24 +6,40 @@ import {
 import { ban } from "../Functions/moderateModel/banHandler";
 import config from "../Data/Config";
 import { triggerEvent } from "../Functions/moderateModel/eventHandler";
-import { MinecraftBlockTypes } from "../node_modules/@minecraft/vanilla-data/lib/index";
-export function blockAround(player: Player, block: MinecraftBlockTypes) {
-    const checkBlock = [
-        { x: 0, y: -1, z: 0 },
-        { x: 1, y: -1, z: 0 },
-        { x: -1, y: -1, z: 0 },
-        { x: 0, y: -1, z: 1 },
-        { x: 0, y: -1, z: -1 },
-        { x: 1, y: -1, z: 1 },
-        { x: -1, y: -1, z: 1 },
-        { x: -1, y: -1, z: -1 },
-        { x: 1, y: -1, z: -1 },
-    ].map((offset) => player.dimension.getBlock(
-        { x: Math.floor(player.location.x + offset.x), y: Math.floor(player.location.y + offset.y), z: Math.floor(player.location.z + offset.z) }
-    )?.typeId as MinecraftBlockTypes);
+import { MinecraftBlockTypes, MinecraftItemTypes, MinecraftEnchantmentTypes } from "../node_modules/@minecraft/vanilla-data/lib/index";
 
-    return checkBlock.includes(block);
-}
+world.afterEvents.itemReleaseUse.subscribe(({ itemStack, source: player }) => {
+    if (itemStack?.typeId === MinecraftItemTypes.Trident && player instanceof Player) {
+        const getItemInSlot = (
+            player.getComponent(
+                EntityInventoryComponent.componentId
+            ) as EntityInventoryComponent
+        ).container.getItem(player.selectedSlot);
+        if (getItemInSlot === undefined) return;
+        const getEnchantment = (
+            getItemInSlot.getComponent(
+                ItemEnchantsComponent.componentId
+            ) as ItemEnchantsComponent
+        ).enchantments;
+        if (getItemInSlot.typeId == MinecraftItemTypes.Trident) {
+            const checkRipTide = getEnchantment.hasEnchantment(
+                MinecraftEnchantmentTypes.Riptide
+            );
+            if (checkRipTide) {
+                //@ts-expect-error
+                player.threwTridentAt = Date.now();
+            }
+        }
+    }
+});
+
+world.afterEvents.entityHurt.subscribe(event => {
+    const player = event.hurtEntity;
+    if (player instanceof Player && (event.damageSource.cause == EntityDamageCause.blockExplosion || event.damageSource.cause == EntityDamageCause.entityExplosion || event.damageSource.cause === EntityDamageCause.entityAttack)) {
+        //@ts-expect-error
+        player.lastExplosionTime = Date.now();
+    }
+});
 
 export function kick (player: Player, reason?: string, by?: string) {
     try {
