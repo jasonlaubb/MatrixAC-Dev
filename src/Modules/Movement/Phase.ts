@@ -10,12 +10,6 @@ import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
 import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 
-class PhaseData {
-    lastPos: Vector3;
-    lastSafePos: Vector3;
-    lastSolid: boolean;
-};
-
 const powderBlock: MinecraftBlockTypes[] = [
     MinecraftBlockTypes.RedConcretePowder,
     MinecraftBlockTypes.BlueConcretePowder,
@@ -35,7 +29,7 @@ const powderBlock: MinecraftBlockTypes[] = [
     MinecraftBlockTypes.WhiteConcretePowder
 ]
 
-const phaseData: Map<string, PhaseData> = new Map<string, PhaseData>();
+const phaseData: Map<string, Vector3> = new Map<string, Vector3>();
 const passableBlocks = [
     MinecraftBlockTypes.Sand,
     MinecraftBlockTypes.Gravel
@@ -52,7 +46,7 @@ async function antiPhase (player: Player) {
     const { id, location, dimension } = player;
     const { x, y, z } = location;
     const floorPos: Vector3 = { x: Math.floor(x), y: Math.floor(y), z: Math.floor(z) };
-    const data: PhaseData = phaseData.get(id) || { lastPos: floorPos, lastSafePos: floorPos, lastSolid: false };
+    const lastSafePos: Vector3 = phaseData.get(id) || floorPos
 
     const headBlock: Block = dimension.getBlock({ x: floorPos.x, y: floorPos.y + 1, z: floorPos.z });
     const bodyBlock: Block = dimension.getBlock(floorPos);
@@ -60,19 +54,13 @@ async function antiPhase (player: Player) {
     const isSolid: boolean = isSolidBlock(bodyBlock) && isSolidBlock(headBlock);
 
     if (!isSolid) {
-        data.lastSafePos = floorPos;
-    }
-
-    data.lastPos = floorPos;
-    data.lastSolid = isSolid;
-
-    if (data.lastSolid && isSolid) {
-        if(bodyBlock.typeId === MinecraftBlockTypes.SoulSand && headBlock.isSolid == false) return
+        phaseData.set(player.id, lastSafePos)
+    } else if (bodyBlock.typeId !== MinecraftBlockTypes.SoulSand) {
         flag (player, 'Phase', config.antiPhase.maxVL,config.antiPhase.punishment, undefined)
-        player.teleport(data.lastSafePos);
+        player.teleport(lastSafePos);
     }
 
-    phaseData.set(id, data);
+    phaseData.set(id, lastSafePos);
 }
 
 system.runInterval(() => {
@@ -84,7 +72,7 @@ system.runInterval(() => {
 
         antiPhase (player);
     }
-}, 20);
+}, 2);
 
 world.afterEvents.playerLeave.subscribe(event => {
     const playerName: string = event.playerId;

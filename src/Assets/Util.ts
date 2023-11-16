@@ -3,12 +3,13 @@ import {
     Player,
     GameMode,
     EntityInventoryComponent,
-    ItemEnchantsComponent
+    ItemEnchantsComponent,
+    EntityDamageCause
 } from "@minecraft/server"
 import { ban } from "../Functions/moderateModel/banHandler";
 import config from "../Data/Config";
 import { triggerEvent } from "../Functions/moderateModel/eventHandler";
-import { MinecraftBlockTypes, MinecraftItemTypes, MinecraftEnchantmentTypes } from "../node_modules/@minecraft/vanilla-data/lib/index";
+import { MinecraftItemTypes, MinecraftEnchantmentTypes } from "../node_modules/@minecraft/vanilla-data/lib/index";
 
 world.afterEvents.itemReleaseUse.subscribe(({ itemStack, source: player }) => {
     if (itemStack?.typeId === MinecraftItemTypes.Trident && player instanceof Player) {

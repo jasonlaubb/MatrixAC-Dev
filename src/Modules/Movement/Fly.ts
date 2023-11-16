@@ -1,29 +1,43 @@
-import { world, system } from "@minecraft/server";
+import { world, system, GameMode, Player } from "@minecraft/server";
+import { flag, isAdmin } from "../../Assets/Util";
+import config from "../../Data/Config";
+import { MinecraftEffectTypes } from "@minecraft/vanilla-data";
 
 const previousLocations = new Map();
 
+async function antiFly (player: Player, now: number) {
+    //@ts-expect-error
+    const { id, name, isOnGround, isFlying, isInWater, isGliding, isFalling, threwTridentAt, lastExplosionTime } = player;
+    const jumpEffect = player.getEffect(MinecraftEffectTypes.JumpBoost)
+    const prevLoc = previousLocations.get(id);
+    const { x, y, z } = player.getVelocity();
+    const xz = Math.hypot(x, z);
+
+    if (isFlying || isInWater || isGliding || player.hasTag("matrix:levitating") || (jumpEffect && jumpEffect.amplifier > 2) || (threwTridentAt && now - threwTridentAt < 3000) || (lastExplosionTime && now - lastExplosionTime < 5000)) {
+        return;
+    }
+
+    if (!prevLoc && isOnGround) {
+        previousLocations.set(id, player.location);
+    }
+
+    if (!isOnGround && prevLoc) {
+        if ((y > 0.7 && xz > 0.39) || (y === 0 && xz > 0 && !player.isClimbing)) {
+            player.teleport(prevLoc);
+            player.applyDamage(8);
+            flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, ["velocityY:" + y.toFixed(2), "velocityXZ" + xz.toFixed(2)])
+        }
+    }
+}
+
 system.runInterval(() => {
+    const toggle: boolean = Boolean(world.getDynamicProperty("antiFly")) ?? config.antiFly.enabled;
+    if (toggle !== true) return;
+
     const now = Date.now();
-    for (const player of world.getPlayers({ excludeGameModes: ['creative', 'spectator'] })) {
-        const { id, name, isOnGround, isFlying, isInWater, isGliding, isFalling, threwTridentAt, lastExplosionTime } = player;
-        const hasEffect = player.getEffect("jump_boost") || player.getEffect("levitation");
-        const prevLoc = previousLocations.get(id);
-        const { x, y, z } = player.getVelocity();
+    for (const player of world.getPlayers({ excludeGameModes: [GameMode.creative, GameMode.spectator] })) {
+        if (isAdmin(player)) continue;
 
-        if (isFlying || isInWater || isGliding || isFalling || hasEffect || (threwTridentAt && now - threwTridentAt < 3000) || (lastExplosionTime && now - lastExplosionTime < 5000)) {
-            continue;
-        }
-
-        if (!prevLoc && isOnGround) {
-            previousLocations.set(id, player.location);
-        }
-
-        if (!isOnGround && prevLoc) {
-            if (y > 0.7 && (Math.abs(x) > 0.39 || Math.abs(z) > 0.39)) {
-                player.teleport(prevLoc);
-                player.applyDamage(8);
-                world.sendMessage(`§2§l§¶Matrix >§4 ${name}§m has been detected using Fly\n§r§l§¶Velocity:§c X:§r§l§¶ ${x.toFixed(2)}§a Y:§r§l§¶ ${y.toFixed(2)}§3 Z:§r§l§¶ ${z.toFixed(2)}`);
-            }
-        }
+        antiFly (player, now)
     }
 }, 1);

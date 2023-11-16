@@ -4,7 +4,6 @@ import {
     Vector3,
     GameMode,
     Player,
-    EntityDamageCause,
     Effect
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
