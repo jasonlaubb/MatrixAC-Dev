@@ -22,9 +22,10 @@ async function antiTower (player: Player, block: Block) {
     const towerBlock = towerData.get(player.id)
     const lastTime = lastBlockPlace.get(player.id)
 
+    towerData.set(player.id, block.location)
+    lastBlockPlace.set(player.id, Date.now())
+
     if (!towerBlock || !lastTime) {
-        towerData.set(player.id, block.location)
-        lastBlockPlace.set(player.id, Date.now())
         return
     }
 
@@ -34,17 +35,19 @@ async function antiTower (player: Player, block: Block) {
 
     const nearBlock = Math.abs(x - towerBlock.x) <= 1 && Math.abs(z - towerBlock.z) <= 1
     const playerNearBlock = Math.abs(player.location.x - towerBlock.x) <= 1 && Math.abs(player.location.z - towerBlock.z) <= 1
-    const playerTowering = player.location.y > y && player.location.y - y <= 2.5
+    const playerPosDeff = Math.abs(player.location.y - y)
+    const playerTowering = playerPosDeff < 0.5
     const locationState = playerTowering && nearBlock && playerNearBlock
 
     const delay = Date.now() - lastTime
-    const { y: velocity } = player.getVelocity()
 
-    if (delay < config.antiTower.minDelay && velocity > config.antiTower.maxVelocity && locationState && y - towerBlock.y == 1) {
+    player.sendMessage(`${delay} | ${player.location.y - y} | ${playerTowering}`)
+
+    if (delay < config.antiTower.minDelay && locationState && y - towerBlock.y == 1) {
         block.setType(MinecraftBlockTypes.Air)
         player.addTag("matrix:place-disabled")
         system.runTimeout(() => player.removeTag("matrix:place-disabled"), config.antiTower.timeout)
-        flag (player, "Tower", config.antiTower.maxVL, config.antiTower.punishment, ["Delay:" + delay.toFixed(2), "Velocity:" + velocity.toFixed(2)])
+        flag (player, "Tower", config.antiTower.maxVL, config.antiTower.punishment, ["Delay:" + delay.toFixed(2), "PosDeff:" + playerPosDeff.toFixed(2)])
     }
 }
 

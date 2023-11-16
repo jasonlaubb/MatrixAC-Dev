@@ -22,10 +22,10 @@ async function antiFly (player: Player, now: number) {
     }
 
     if (!isOnGround && prevLoc) {
-        if ((y > 0.7 && xz > 0.39) || (y === 0 && xz > 0 && !player.isClimbing)) {
+        if ((y > 0.7 && xz > 0.39) || (y === 0 && xz > 0.02 && !player.isClimbing)) {
             player.teleport(prevLoc);
             player.applyDamage(8);
-            flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, ["velocityY:" + y.toFixed(2), "velocityXZ" + xz.toFixed(2)])
+            flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, ["velocityY:" + y.toFixed(2), "velocityXZ:" + xz.toFixed(2)])
         }
     }
 }

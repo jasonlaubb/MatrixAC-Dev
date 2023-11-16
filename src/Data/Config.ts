@@ -290,8 +290,7 @@ export default {
 
     antiTower: {
         enabled: true,
-        maxVelocity: 0.65,
-        minDelay: 400,
+        minDelay: 200,
         timeout: 60,
         punishment: undefined,
         maxVL: 2
