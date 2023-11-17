@@ -14,8 +14,7 @@ const reachData: Map <string, number> = new Map <string, number> ();
 
 /**
  * @author ravriv && RamiGamerDev
- * @description This is a simple reach detector.
- * it will detect if the player is hitting another player from a long distance.
+ * @description This checks if the player is hitting another player from a long distance.
  */
 
 function calculateDistance(b1: Entity, b2: Entity) {
