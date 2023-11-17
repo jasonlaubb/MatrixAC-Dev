@@ -6,7 +6,7 @@ import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data
 const previousLocations = new Map();
 
 /**
- * @author RaMiGamerDev
+ * @author RaMiGamerDev & ravriv
  * @description This checks if a player velocity is too high.
  */
 
