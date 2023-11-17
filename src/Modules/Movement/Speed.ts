@@ -14,7 +14,7 @@ const speedData = new Map();
 
 /**
  * @author ravriv
- * @description Speed of the player is calculated based on their velocity in the x and z directions.
+ * @description A advanced checks for Speed, the player is calculated based on their velocity in the x and z directions
  * This is converted from blocks per tick to miles per hour
 */
 
