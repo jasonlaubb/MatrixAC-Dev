@@ -1,16 +1,9 @@
-import {
-    world,
-    Player,
-    Block,
-    Vector3,
-    system
-} from "@minecraft/server"
+import { world, system, Player, Block } from "@minecraft/server";
 import { flag, isAdmin } from "../../Assets/Util";
 import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../Data/Config";
-
-const towerData = new Map<string, Vector3>();
-const lastBlockPlace = new Map<string, number>();
+const towerData = new Map();
+const lastBlockPlace = new Map();
 
 /**
  * @author jasonlaubb
@@ -18,47 +11,40 @@ const lastBlockPlace = new Map<string, number>();
  * It work by patching a very small delay between player towering and with a high velocity
  */
 
-async function antiTower (player: Player, block: Block) {
-    const towerBlock = towerData.get(player.id)
-    const lastTime = lastBlockPlace.get(player.id)
-
-    towerData.set(player.id, block.location)
-    lastBlockPlace.set(player.id, Date.now())
-
+async function antiTower(player: Player, block: Block) {
+    const towerBlock = towerData.get(player.id);
+    const lastTime = lastBlockPlace.get(player.id);
+    towerData.set(player.id, block.location);
+    lastBlockPlace.set(player.id, Date.now());
     if (!towerBlock || !lastTime) {
-        return
+        return;
     }
-
-    if (player.hasTag("matrix:place-disabled") || !player.isOnGround || !player.isJumping || player.isFlying || player.isInWater || player.getEffect(MinecraftEffectTypes.JumpBoost)) return
-
+    if (player.hasTag("matrix:place-disabled") || player.isOnGround || !player.isJumping || player.isFlying || player.isInWater || player.getEffect(MinecraftEffectTypes.JumpBoost))
+        return;
     const { x, y, z } = block.location;
-
-    const towerNearBlock = x == towerBlock.x && z == towerBlock.z
-    const playerNearBlock = Math.abs(player.location.x - (x - 0.5)) < 0.75 && Math.abs(player.location.z - (z - 0.5)) < 0.75
-    const playerPosDeff = Math.abs(player.location.y - y)
-    const playerTowering = playerPosDeff < 0.5 && y - towerBlock.y == 1
-    const locationState = playerTowering && towerNearBlock && playerNearBlock
-
-    const delay = Date.now() - lastTime
-
+    const towerNearBlock = x === towerBlock.x && z === towerBlock.z;
+    const playerCentreDis = Math.hypot(player.location.x - x + 0.5, player.location.z - z + 0.5);
+    const playerNearBlock = playerCentreDis > 0.41 && playerCentreDis < 2.5;
+    const playerPosDeff = player.location.y - y;
+    const playerTowering = playerPosDeff < 0.4 && y - towerBlock.y == 1;
+    const locationState = playerTowering && towerNearBlock && playerNearBlock;
+    const delay = Date.now() - lastTime;
     if (delay < config.antiTower.minDelay && locationState) {
-        block.setType(MinecraftBlockTypes.Air)
-        player.addTag("matrix:place-disabled")
-        system.runTimeout(() => player.removeTag("matrix:place-disabled"), config.antiTower.timeout)
-        flag (player, "Tower", config.antiTower.maxVL, config.antiTower.punishment, ["Delay:" + delay.toFixed(2), "PosDeff:" + playerPosDeff.toFixed(2)])
+        block.setType(MinecraftBlockTypes.Air);
+        player.addTag("matrix:place-disabled");
+        system.runTimeout(() => player.removeTag("matrix:place-disabled"), config.antiTower.timeout);
+        flag(player, "Tower", config.antiTower.maxVL, config.antiTower.punishment, ["Delay:" + delay.toFixed(2), "PosDeff:" + playerPosDeff.toFixed(2), "CentreDis:" + playerCentreDis.toFixed(2)]);
     }
 }
-
 world.afterEvents.playerPlaceBlock.subscribe(({ player, block }) => {
-    const toggle: boolean = (world.getDynamicProperty("antiTower") ?? config.antiTower.enabled) as boolean;
-    if (toggle !== true) return;
-
-    if (isAdmin(player)) return;
-
-    antiTower (player, block)
-})
-
+    const toggle = (world.getDynamicProperty("antiTower") ?? config.antiTower.enabled);
+    if (toggle !== true)
+        return;
+    if (isAdmin(player))
+        return;
+    antiTower(player, block);
+});
 world.afterEvents.playerLeave.subscribe(({ playerId }) => {
-    towerData.delete(playerId)
-    lastBlockPlace.delete(playerId)
-})
+    towerData.delete(playerId);
+    lastBlockPlace.delete(playerId);
+});

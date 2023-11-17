@@ -22,7 +22,7 @@ async function antiFly (player: Player, now: number) {
         return;
     }
 
-    if (!prevLoc && isOnGround) {
+    if (isOnGround) {
         previousLocations.set(id, player.location);
     }
     if (prevLoc) {
