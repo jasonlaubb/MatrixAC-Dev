@@ -1,47 +1,85 @@
-import { world, system, GameMode, Player } from "@minecraft/server";
-import { flag, isAdmin } from "../../Assets/Util";
-import config from "../../Data/Config";
-import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
+import {
+    world,
+    system,
+    Vector3,
+    GameMode,
+    Player,
+    Effect
+} from "@minecraft/server";
+import config from "../../Data/Config.js";
+import { flag, isAdmin } from "../../Assets/Util.js";
+import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index.js";
 
-const previousLocations = new Map();
+const speedData = new Map();
 
 /**
- * @author RaMiGamerDev & ravriv
- * @description This checks if a player velocity is too high.
- */
+ * @author ravriv
+ * @description Speed of the player is calculated based on their velocity in the x and z directions.
+ * This is converted from blocks per tick to miles per hour
+*/
 
-async function antiFly (player: Player, now: number) {
+async function antiSpeed(player: Player, now: number) {
+    const { id } = player;
+
     //@ts-expect-error
-    const { id, isOnGround, isFlying, isInWater, isGliding, threwTridentAt, lastExplosionTime } = player;
-    const jumpEffect = player.getEffect(MinecraftEffectTypes.JumpBoost)
-    const prevLoc = previousLocations.get(id);
-    const { x, y, z } = player.getVelocity();
-    const xz = Math.hypot(x, z);
-
-    if (isFlying || isInWater || isGliding || player.hasTag("matrix:levitating") || (jumpEffect && jumpEffect.amplifier > 2) || (threwTridentAt && now - threwTridentAt < 3000) || (lastExplosionTime && now - lastExplosionTime < 5000)) {
+    if (player.threwTridentAt && now - player.threwTridentAt < 2000 || player.lastExplosionTime && now - player.lastExplosionTime < 2000) {
         return;
     }
 
-    if (!prevLoc && isOnGround) {
-        previousLocations.set(id, player.location);
-    }
-    if (prevLoc) {
-        if ((y > 0.7 && xz > 0.39) || (y === 0 && xz > 0.02 && !player.isClimbing && !player.isOnGround)) {
-            player.teleport(prevLoc);
-            player.applyDamage(8);
-            flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, ["velocityY:" + y.toFixed(2), "velocityXZ:" + xz.toFixed(2)])
+    const { x, z } = player.getVelocity();
+    const playerSpeedMph: number = Math.hypot(x, z) * 72000 / 1609.34;
+    const playerInfo: PlayerInfo = speedData.get(id);
+    const limitIncrease: number = getSpeedIncrease(player.getEffect(MinecraftEffectTypes.Speed));
+    const mphThreshold: number = config.antiSpeed.mphThreshold + limitIncrease;
+    const isSpeeding: boolean = playerSpeedMph > mphThreshold && speedData.has(id);
+    const isNotSpeeding: boolean = playerSpeedMph <= mphThreshold && speedData.has(id);
+
+    if (playerSpeedMph === 0) {
+        speedData.set(id, { initialLocation: player.location });
+    } else if (isSpeeding) {
+        if (!playerInfo.highestSpeed) {
+            player.teleport(playerInfo.initialLocation, { dimension: player.dimension, rotation: { x: -180, y: 0 } });
+            flag(player, 'Speed', config.antiSpeed.maxVL, config.antiSpeed.punishment, [`Mph:${playerSpeedMph.toFixed(2)}`]);
+            player.applyDamage(6);
+            playerInfo.highestSpeed = playerSpeedMph;
         }
+    } else if (isNotSpeeding) {
+        playerInfo.highestSpeed = 0;
     }
 }
 
-system.runInterval(() => {
-    const toggle: boolean = Boolean(world.getDynamicProperty("antiFly")) ?? config.antiFly.enabled;
-    if (toggle !== true) return;
+class PlayerInfo {
+    highestSpeed: number;
+    initialLocation: Vector3;
+}
 
-    const now = Date.now();
-    for (const player of world.getPlayers({ excludeGameModes: [GameMode.creative, GameMode.spectator] })) {
-        if (isAdmin(player)) continue;
-
-        antiFly (player, now)
+function getSpeedIncrease(speedEffect: Effect | undefined) {
+    if (speedEffect === undefined) {
+        return 0;
     }
-}, 1);
+    if (speedEffect.amplifier < 2) {
+        return 0;
+    }
+    return (speedEffect?.amplifier - 2) * 4032 / 1609.34;
+}
+
+system.runInterval(() => {
+    const toggle: boolean = (world.getDynamicProperty("antiSpeed") ?? config.antiSpeed.enabled) as boolean;
+
+    if (toggle !== true) {
+        return;
+    }
+
+    const now: number = Date.now();
+
+    for (const player of world.getPlayers({ excludeGameModes: [GameMode.creative, GameMode.spectator] })) {
+        if (isAdmin(player)) {
+            continue;
+        }
+        antiSpeed(player, now);
+    }
+}, 2);
+
+world.afterEvents.playerLeave.subscribe(({ playerId }) => {
+    speedData.delete(playerId);
+});
