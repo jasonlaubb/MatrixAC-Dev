@@ -296,6 +296,73 @@ export default {
         maxVL: 2
     },
 
+    antiIllegalItem: {
+        enabled: false,
+        illegalItem: [
+            "minecraft:barrier",
+            "minecraft:command_block",
+            "minecraft:repeating_command_block",
+            "minecraft:chain_command_block",
+            "minecraft:structure_block",
+            "minecraft:structure_void",
+            "minecraft:bedrock",
+            "minecraft:end_portal_frame",
+            "minecraft:end_portal",
+            "minecraft:end_gateway",
+            "minecraft:barrier",
+            "minecraft:moving_block",
+            "minecraft:invisible_bedrock",
+            "minecraft:water",
+            "minecraft:lava",
+            "minecraft:deny",
+            "minecraft:allow",
+            "minecraft:border_block",
+            "minecraft:light_block"
+        ],
+        state: {
+            typeCheck: {
+                enabled: true,
+                punishment: undefined
+            },
+            nameLength: {
+                enabled: true,
+                punishment: undefined,
+                maxItemNameLength: 35,
+                clearName: true
+            },
+            itemTag: {
+                enabled: true,
+                punishment: undefined,
+                maxAllowedTag: 0,
+                clearTag: false
+            },
+            loreCheck: {
+                enabled: true,
+                punishment: undefined,
+                clearLore: false
+            },
+            enchantLevel: {
+                enabled: true,
+                punishment: undefined,
+                whiteList: [], //example: ["knockback:4"] than knockback enchantment with level 4 will not be punished
+                clearEnchantment: true
+            },
+            enchantAble: {
+                enabled: true,
+                punishment: undefined,
+                whiteList: [], //example: ["superItem:super_sword"] for bypass super_word's enchantment
+                clearEnchantment: true
+            },
+            enchantRepeat: {
+                enabled: true,
+                clearEnchantment: true,
+                punishment: undefined
+            }
+        },
+        checkCreativeMode: true,
+        timeout: 60
+    },
+
     chatFilter: [
         "niger",
         "nigers",

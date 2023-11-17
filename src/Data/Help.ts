@@ -51,5 +51,6 @@ export const validModules: string[] = [
     "antiNoSlow",
     "antiBlockReach",
     "antiAim",
-    "antiScaffold"
+    "antiScaffold",
+    "antiIllegalItem"
 ]

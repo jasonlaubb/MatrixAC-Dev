@@ -23,6 +23,7 @@ import "./Modules/World/Scaffold"
 import "./Modules/World/Tower"
 
 import "./Modules/Player/BlockReach"
+import "./Modules/Player/Illegal Item"
 
 import "./Functions/chatModel/ChatHandler"
 
