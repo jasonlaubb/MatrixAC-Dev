@@ -327,35 +327,31 @@ export default {
             nameLength: {
                 enabled: true,
                 punishment: undefined,
-                maxItemNameLength: 35,
-                clearName: true
+                maxItemNameLength: 35
             },
             itemTag: {
                 enabled: true,
                 punishment: undefined,
-                maxAllowedTag: 0,
-                clearTag: false
+                maxAllowedTag: 0
             },
             loreCheck: {
                 enabled: true,
-                punishment: undefined,
-                clearLore: false
+                punishment: undefined
             },
             enchantLevel: {
                 enabled: true,
                 punishment: undefined,
                 whiteList: [], //example: ["knockback:4"] than knockback enchantment with level 4 will not be punished
-                clearEnchantment: true
+
             },
             enchantAble: {
                 enabled: true,
                 punishment: undefined,
                 whiteList: [], //example: ["superItem:super_sword"] for bypass super_word's enchantment
-                clearEnchantment: true
+
             },
             enchantRepeat: {
                 enabled: true,
-                clearEnchantment: true,
                 punishment: undefined
             }
         },
