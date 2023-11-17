@@ -14,8 +14,7 @@ const clickData: Map<string, ClickData> = new Map<string, ClickData>();
 
 /**
  * @author ravriv
- * @description This is a simple auto clicker detector.
- * it will detect if the player is clicking more than 22 times per second.
+ * @description This checks if the player is clicking more than 22 times per second.
  */
 
 async function AutoClicker (player: Player) {
