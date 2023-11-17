@@ -142,7 +142,9 @@
                     "causes_fire": false,
                     "breaks_blocks": false
                 }
-            }
+            },
+            "matrix:container_add_tag": {},
+            "matrix:container_remove_tag": {}
         },
         "components": {
             "minecraft:experience_reward": {
@@ -298,9 +300,7 @@
                         "event": "matrix:!has_container_open"
                     }
                 ]
-            },
-            "matrix:container_add_tag": {},
-            "matrix:container_remove_tag": {}
+            }
         },
         "events": {
             "matrix:has_container_open": {
