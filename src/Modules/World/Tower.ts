@@ -29,15 +29,15 @@ async function antiTower (player: Player, block: Block) {
         return
     }
 
-    if (player.hasTag("matrix:place-disabled") || !player.isJumping || player.isFlying || player.isInWater || player.getEffect(MinecraftEffectTypes.JumpBoost)) return
+    if (player.hasTag("matrix:place-disabled") || !player.isOnGround || !player.isJumping || player.isFlying || player.isInWater || player.getEffect(MinecraftEffectTypes.JumpBoost)) return
 
     const { x, y, z } = block.location;
 
-    const nearBlock = Math.abs(x - towerBlock.x) <= 1 && Math.abs(z - towerBlock.z) <= 1
-    const playerNearBlock = Math.floor(player.location.x) == x && Math.floor(player.location.z) == z
+    const towerNearBlock = x == towerBlock.x && z == towerBlock.z
+    const playerNearBlock = Math.abs(player.location.x - (x - 0.5)) < 0.75 && Math.abs(player.location.z - (z - 0.5)) < 0.75
     const playerPosDeff = Math.abs(player.location.y - y)
     const playerTowering = playerPosDeff < 0.5 && y - towerBlock.y == 1
-    const locationState = playerTowering && nearBlock && playerNearBlock
+    const locationState = playerTowering && towerNearBlock && playerNearBlock
 
     const delay = Date.now() - lastTime
 
