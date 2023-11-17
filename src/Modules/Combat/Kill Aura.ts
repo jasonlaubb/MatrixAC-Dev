@@ -9,8 +9,7 @@ import { flag, isAdmin } from "../../Assets/Util.js";
 
 /**
  * @author ravriv
- * @description This is a simple kill aura detector.
- * it will detect if the player is hitting another player from a impossible angle.
+ * @description This checks if the player is hitting another player from a impossible angle.
  */
 
 const hitLength = new Map<string, any[]>();
