@@ -54,8 +54,8 @@ export function kick (player: Player, reason?: string, by?: string) {
 
 function formatInformation (arr: string[]) {
     const formattedArr: string[] = arr.map(item => {
-      const [key, value] = item.split(":");
-      return `§r§l§¶${key}:§c ${value}§r`;
+      const [key, value, id] = item.split(":");
+      return `§r§l§¶${key}:§c ${value}${id == undefined ? '' : ':' + id}§r`;
     });
     return formattedArr.join("\n");
 }

@@ -36,6 +36,9 @@ world.beforeEvents.dataDrivenEntityTriggerEvent.subscribe((event) => {
 world.afterEvents.dataDrivenEntityTriggerEvent.subscribe((event) => {
     const { entity: player, id } = event
 
+    if (id === "matrix:container_add_tag") player.addTag("matrix:has_container_open")
+    if (id === "matrix:container_remove_tag") player.removeTag("matrix:has_container_open")
+
     if (!(player instanceof Player) || !eventList.includes(id)) return;
 
     const data: string[] = eventData.get(id) ?? []

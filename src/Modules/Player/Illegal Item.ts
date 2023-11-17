@@ -28,26 +28,21 @@ function ItemCheck (player: Player, container: Container): "Safe" | "Unsafe" {
         if (item === undefined) continue
 
         if (config.antiIllegalItem.state.typeCheck.enabled && config.antiIllegalItem.illegalItem.includes(item.typeId)) {
-            container.setItem(i, undefined)
+            container.setItem(i)
             flag (player, "Illegal Item", 0, config.antiIllegalItem.state.typeCheck.punishment, ["mode:ItemType", "typeId:" + item.typeId])
             state = "Unsafe"
             continue
         }
 
         if (config.antiIllegalItem.state.nameLength.enabled && item.nameTag && item.nameTag?.length > config.antiIllegalItem.state.nameLength.maxItemNameLength) {
-            if (config.antiIllegalItem.state.nameLength.clearName) {
-                item.nameTag = undefined
-            } else container.setItem(i, undefined)
+            container.setItem(i)
             flag (player, "Illegal Item", 0, config.antiIllegalItem.state.nameLength.punishment, ["mode:ItemNameLength", "nameTag:" + item.nameTag])
             state = "Unsafe"
             if (!config.antiIllegalItem.state.nameLength.clearName) continue
         }
 
         if (config.antiIllegalItem.state.itemTag.enabled && (item.getCanPlaceOn().length > config.antiIllegalItem.state.itemTag.maxAllowedTag || item.getCanDestroy().length > config.antiIllegalItem.state.itemTag.maxAllowedTag)) {
-            if (config.antiIllegalItem.state.itemTag.clearTag) {
-                item.setCanPlaceOn([])
-                item.setCanDestroy([])
-            } else container.setItem(i, undefined)
+            container.setItem(i)
             flag (player, "Illegal Item", 0, config.antiIllegalItem.state.itemTag.punishment, ["mode:ItemTag"])
             state = "Unsafe"
             if (!config.antiIllegalItem.state.itemTag.clearTag) continue
@@ -58,7 +53,7 @@ function ItemCheck (player: Player, container: Container): "Safe" | "Unsafe" {
             if (lore.length > 0) {
                 if (config.antiIllegalItem.state.loreCheck.clearLore) {
                     item.setLore([])
-                } else container.setItem(i, undefined)
+                } else container.setItem(i)
 
                 const loreString = lore.join(",")
                 flag (player, "Illegal Item", 0, config.antiIllegalItem.state.loreCheck.punishment, ["mode:ItemLore", "itemLore:" + truncateString(loreString)])
@@ -79,7 +74,6 @@ function ItemCheck (player: Player, container: Container): "Safe" | "Unsafe" {
 
                     if (config.antiIllegalItem.state.enchantLevel.whiteList.includes(enchantmentType.id + ":" + enchantmentLevel)) continue
                     if (enchantmentLevel > enchantmentType.maxLevel) {
-                        if (config.antiIllegalItem.state.enchantLevel.clearEnchantment) enchantments.removeEnchantment(enchantmentType)
                         patchedEnchantment.push(enchantmentType.id + ":" + enchantmentLevel + " / " + enchantmentType.maxLevel)
                     }
                 }
@@ -87,17 +81,13 @@ function ItemCheck (player: Player, container: Container): "Safe" | "Unsafe" {
             if (patchedEnchantment.length > 0) {
                 flag (player, "Illegal Item", 0, config.antiIllegalItem.state.enchantLevel.punishment, ["mode:ItemEnchantment", ...patchedEnchantment])
                 state = "Unsafe"
-                if (!config.antiIllegalItem.state.enchantLevel.clearEnchantment) {
-                    container.setItem(i, undefined)
-                    continue
-                }
+                container.setItem(i)
+                continue
             }
         }
 
         if (config.antiIllegalItem.state.enchantAble.enabled && [...enchantments].length > 0 && !enchantableItem.includes(item.typeId as MinecraftItemTypes) && !config.antiIllegalItem.state.enchantAble.whiteList.includes(item.typeId)) {
-            if (config.antiIllegalItem.state.enchantAble.clearEnchantment) {
-                [...enchantments].forEach(enc => enchantments.removeEnchantment(enc.type))
-            } else container.setItem(i, undefined)
+            container.setItem(i)
             flag (player, "Illegal Item", 0, config.antiIllegalItem.state.enchantAble.punishment, ["mode:ItemEnchantAble", "TypeId:" + item.typeId])
             state = "Unsafe"
             if (!config.antiIllegalItem.state.enchantAble.clearEnchantment) continue
@@ -106,7 +96,7 @@ function ItemCheck (player: Player, container: Container): "Safe" | "Unsafe" {
         if (config.antiIllegalItem.state.enchantRepeat.enabled && new Set([...enchantments]).size < [...enchantments].length) {
             if (config.antiIllegalItem.state.enchantRepeat.clearEnchantment) {
                 [...enchantments].forEach(enc => enchantments.removeEnchantment(enc.type))
-            } else container.setItem(i, undefined)
+            } else container.setItem(i)
 
             flag (player, "Illegal Item", 0, config.antiIllegalItem.state.enchantRepeat.punishment, ["mode:ItemEnchantRepeat"])
             state = "Unsafe"

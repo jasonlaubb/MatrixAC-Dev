@@ -34,14 +34,14 @@ async function antiTower (player: Player, block: Block) {
     const { x, y, z } = block.location;
 
     const nearBlock = Math.abs(x - towerBlock.x) <= 1 && Math.abs(z - towerBlock.z) <= 1
-    const playerNearBlock = Math.abs(player.location.x - towerBlock.x) <= 1 && Math.abs(player.location.z - towerBlock.z) <= 1
+    const playerNearBlock = Math.floor(player.location.x) == x && Math.floor(player.location.z) == z
     const playerPosDeff = Math.abs(player.location.y - y)
-    const playerTowering = playerPosDeff < 0.5
+    const playerTowering = playerPosDeff < 0.5 && y - towerBlock.y == 1
     const locationState = playerTowering && nearBlock && playerNearBlock
 
     const delay = Date.now() - lastTime
 
-    if (delay < config.antiTower.minDelay && locationState && y - towerBlock.y == 1) {
+    if (delay < config.antiTower.minDelay && locationState) {
         block.setType(MinecraftBlockTypes.Air)
         player.addTag("matrix:place-disabled")
         system.runTimeout(() => player.removeTag("matrix:place-disabled"), config.antiTower.timeout)
