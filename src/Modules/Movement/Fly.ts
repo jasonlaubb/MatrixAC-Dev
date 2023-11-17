@@ -5,9 +5,14 @@ import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data
 
 const previousLocations = new Map();
 
+/**
+ * @author RaMiGamerDev
+ * @description This checks if a player velocity is too high.
+ */
+
 async function antiFly (player: Player, now: number) {
     //@ts-expect-error
-    const { id, name, isOnGround, isFlying, isInWater, isGliding, isFalling, threwTridentAt, lastExplosionTime } = player;
+    const { id, isOnGround, isFlying, isInWater, isGliding, threwTridentAt, lastExplosionTime } = player;
     const jumpEffect = player.getEffect(MinecraftEffectTypes.JumpBoost)
     const prevLoc = previousLocations.get(id);
     const { x, y, z } = player.getVelocity();
