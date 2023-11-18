@@ -57,5 +57,7 @@ export default [
     MinecraftItemTypes.Shield,
     MinecraftItemTypes.TurtleHelmet,
     MinecraftItemTypes.Elytra,
-    MinecraftItemTypes.FlintAndSteel
+    MinecraftItemTypes.FlintAndSteel,
+    MinecraftItemTypes.EnchantedBook,
+    MinecraftItemTypes.EnchantedGoldenApple
 ]
