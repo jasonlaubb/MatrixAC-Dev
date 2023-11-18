@@ -358,6 +358,14 @@ export default {
         timeout: 60
     },
 
+    antiSurrond: {
+        enabled: true,
+        maxBlocksPer2Tick: 4,
+        timeout: 100,
+        punishment: "kick",
+        maxVL: 0
+    },
+
     antiOperator: {
         enabled: false, // this thing can't work on Realm
         punishment: undefined
