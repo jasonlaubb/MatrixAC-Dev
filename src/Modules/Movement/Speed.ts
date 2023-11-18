@@ -21,7 +21,6 @@ const speedData = new Map();
 async function antiSpeed(player: Player, now: number) {
     const { id } = player;
 
-    //@ts-expect-error
     if (player.threwTridentAt && now - player.threwTridentAt < 2000 || player.lastExplosionTime && now - player.lastExplosionTime < 2000) {
         return;
     }
