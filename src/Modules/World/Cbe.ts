@@ -1,6 +1,6 @@
 import { world, system } from "@minecraft/server";
 import config from "../../Data/Config";
-import { MinecraftEntityTypes } from "@minecraft/vanilla-data";
+import { MinecraftEntityTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import { formatInformation, isAdmin } from "../../Assets/Util";
 
 async function antiCBE () {
