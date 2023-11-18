@@ -18,6 +18,10 @@ async function antiFly (player: Player, now: number) {
 
     const xz = Math.hypot(x, z)
 
+    if (player.hasTag("matrix:knockback") && velocity <= 0) {
+        player.removeTag("matrix:knockback")
+    }
+
     if (isFlying || isInWater || isGliding || player.hasTag("matrix:levitating") || (jumpEffect && jumpEffect.amplifier > 2) || (threwTridentAt && now - threwTridentAt < 3000) || (lastExplosionTime && now - lastExplosionTime < 5000)) {
         return;
     }
@@ -35,12 +39,8 @@ async function antiFly (player: Player, now: number) {
         player.removeTag("matrix:slime");
     }
 
-    if (player.hasTag("matrix:knockback") && velocity <= 0) {
-        player.removeTag("matrix:knockback")
-    }
-
     if (prevLoc) {
-        if (velocity > config.antiFly.maxVelocityY && !player.hasTag("matrix:slime") && !player.hasTag("matrix:knockback")) {
+        if (velocity > config.antiFly.maxVelocityY && !player.hasTag("matrix:slime") && !player.hasTag("matrix:knockback") && !player.isOnGround) {
             player.teleport(prevLoc);
             player.applyDamage(0);
             flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, ["velocityY:" + velocity.toFixed(2)])
