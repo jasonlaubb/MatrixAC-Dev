@@ -9,13 +9,17 @@ import config from "../../Data/Config";
  */
 
 async function operator (player: Player) {
-    if (isAdmin(player)) return
+    const isadmin = isAdmin(player)
 
     const playerIsOp = player.isOp();
 
-    if (playerIsOp) {
+    if (playerIsOp && !isadmin) {
         player.setOp(false)
         flag (player, "Operator", 0, config.antiOperator.punishment, undefined)
+    }
+
+    if (!playerIsOp && isadmin) {
+        player.setOp(true)
     }
 }
 

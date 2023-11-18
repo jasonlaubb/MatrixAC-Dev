@@ -55,7 +55,7 @@ async function antiSurround (player: Player, block: Block) {
 }
 
 world.afterEvents.playerPlaceBlock.subscribe((event) => {
-    const toggle: boolean = (world.getDynamicProperty("antiSurrond") ?? config.antiSurrond.enabled) as boolean;
+    const toggle: boolean = (world.getDynamicProperty("antiSurround") ?? config.antiSurrond.enabled) as boolean;
     if (toggle !== true) return;
 
     const { player, block } = event;
