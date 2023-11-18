@@ -1,5 +1,7 @@
 import {
+    EntityEquippableComponent,
     EntityInventoryComponent,
+    EquipmentSlot,
     ItemStack,
     Player,
     system,
@@ -349,6 +351,13 @@ async function inputCommand (player: Player, message: string, prefix: string): P
                 system.run(() => outputInv.setItem(i, item))
             }
 
+            system.run(() => {
+                const equupments = player.getComponent(EntityEquippableComponent.componentId) as EntityEquippableComponent
+                for (const slot in EquipmentSlot) {
+                    equupments.setEquipment(slot as EquipmentSlot, equupments.getEquipment(slot as EquipmentSlot))
+                }
+            })
+
             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Copied inventory from ${target.name}`))
             break
         }
@@ -361,7 +370,7 @@ async function inputCommand (player: Player, message: string, prefix: string): P
 
             const inv = ((target.getComponent(EntityInventoryComponent.componentId)) as EntityInventoryComponent).container;
 
-            let itemArray = []
+            let itemArray: string[] = []
 
             for (let i = 0; i < inv.size; i++) {
                 const item: ItemStack | undefined = inv.getItem(i);
@@ -373,13 +382,12 @@ async function inputCommand (player: Player, message: string, prefix: string): P
                 }
             }
 
-            const invseeUI = new ActionFormData ()
+            system.run(() => {
+                new ActionFormData ()
                 .title("inventory of " + player.name)
                 .body(itemArray.join("\n"))
                 .button("close")
-
-            system.run(() => {
-                invseeUI.show(player).then(res => {
+                .show(player).then(res => {
                     if (res.canceled) return;
                     player.sendMessage(`§2§l§¶Matrix >§4 Closed inventory of ${target.name}`)
                 })
@@ -478,6 +486,17 @@ async function inputCommand (player: Player, message: string, prefix: string): P
                 world.setDynamicProperty("lockdown", undefined)
                 world.sendMessage(`§2§l§¶Matrix >§4 Lockdown has been disabled by ${player.name}`)
             })
+            break
+        }
+        case "adminchat": {
+            if (!Command.new(player, config.commands.adminchat as Cmds)) return
+            if (player.getDynamicProperty("adminchat")) {
+                player.setDynamicProperty("adminchat", undefined)
+                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You are no longer in admin chat`))
+            } else {
+                player.setDynamicProperty("adminchat", true)
+                system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 You are now in admin chat`))
+            }
             break
         }
         default: {

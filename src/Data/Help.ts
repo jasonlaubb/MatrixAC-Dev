@@ -25,6 +25,7 @@ export function helpList (p: string): string {
         `§g${p}lockdowncode <get/set/random> <set: code>/[random: length] - Do with the lockdown code`,
         `§g${p}lockdown <code> - Lockdown the server with a code`,
         `§g${p}unlock <code> - Unlock the server`,
+        `§g${p}adminchat - switch between admin channel and public channel`
     ].join("\n")
 }
 

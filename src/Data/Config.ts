@@ -155,6 +155,11 @@ export default {
             enabled: true,
             adminOnly: true,
             requireTag: undefined
+        },
+        adminchat: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
         }
     },
     /** 
