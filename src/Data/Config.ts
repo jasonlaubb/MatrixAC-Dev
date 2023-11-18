@@ -358,8 +358,9 @@ export default {
         timeout: 60
     },
 
-    antiCbe: {
-        enabled: true
+    antiOperator: {
+        enabled: false, // this thing can't work on Realm
+        punishment: undefined
     },
 
     chatFilter: [
