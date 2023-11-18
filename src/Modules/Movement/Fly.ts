@@ -51,7 +51,7 @@ async function antiNoFall (player: Player, now: number) {
     const { id, isFlying, isInWater, isGliding, threwTridentAt, lastExplosionTime } = player;
     const jumpEffect = player.getEffect(MinecraftEffectTypes.JumpBoost)
     const prevLoc = previousLocations.get(id);
-    const { y: velocity} = player.getVelocity();
+    const { y: velocity } = player.getVelocity();
 
     if (isFlying || isInWater || isGliding || player.hasTag("matrix:levitating") || (jumpEffect && jumpEffect.amplifier > 2) || (threwTridentAt && now - threwTridentAt < 3000) || (lastExplosionTime && now - lastExplosionTime < 5000)) {
         return;

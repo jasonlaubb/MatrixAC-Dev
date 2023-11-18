@@ -1,5 +1,5 @@
 /**
- * @author ravriv & jasonlaubb & RaMiGamerDev
+ * @author Matrix Team
  * @description The config json of the AntiCheat
  * 
  * @warning
@@ -357,6 +357,10 @@ export default {
         },
         checkCreativeMode: true,
         timeout: 60
+    },
+
+    antiCbe: {
+        enabled: true
     },
 
     chatFilter: [

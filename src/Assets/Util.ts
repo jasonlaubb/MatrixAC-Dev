@@ -4,12 +4,14 @@ import {
     GameMode,
     EntityInventoryComponent,
     ItemEnchantsComponent,
-    EntityDamageCause
+    EntityDamageCause,
+    Vector3,
+    Dimension
 } from "@minecraft/server"
 import { ban } from "../Functions/moderateModel/banHandler";
 import config from "../Data/Config";
 import { triggerEvent } from "../Functions/moderateModel/eventHandler";
-import { MinecraftItemTypes, MinecraftEnchantmentTypes } from "../node_modules/@minecraft/vanilla-data/lib/index";
+import { MinecraftItemTypes, MinecraftEnchantmentTypes, MinecraftBlockTypes } from "../node_modules/@minecraft/vanilla-data/lib/index";
 
 world.afterEvents.itemReleaseUse.subscribe(({ itemStack, source: player }) => {
     if (itemStack?.typeId === MinecraftItemTypes.Trident && player instanceof Player) {
@@ -29,7 +31,6 @@ world.afterEvents.itemReleaseUse.subscribe(({ itemStack, source: player }) => {
                 MinecraftEnchantmentTypes.Riptide
             );
             if (checkRipTide) {
-                //@ts-expect-error
                 player.threwTridentAt = Date.now();
             }
         }
@@ -39,8 +40,15 @@ world.afterEvents.itemReleaseUse.subscribe(({ itemStack, source: player }) => {
 world.afterEvents.entityHurt.subscribe(event => {
     const player = event.hurtEntity;
     if (player instanceof Player && (event.damageSource.cause == EntityDamageCause.blockExplosion || event.damageSource.cause == EntityDamageCause.entityExplosion || event.damageSource.cause === EntityDamageCause.entityAttack)) {
-        //@ts-expect-error
         player.lastExplosionTime = Date.now();
+
+        if (world.getDynamicProperty("antiFly") ?? config.antiFly.enabled) {
+            if (!player.hasTag("matrix:knockback")) {
+                player.addTag("matrix:knockback")
+            } else if (player.getVelocity().y <= 0) {
+                player.removeTag("matrix:knockback")
+            }
+        }
     }
 });
 
@@ -52,12 +60,30 @@ export function kick (player: Player, reason?: string, by?: string) {
     }
 }
 
-function formatInformation (arr: string[]) {
+export function formatInformation (arr: string[]) {
     const formattedArr: string[] = arr.map(item => {
       const [key, value, id] = item.split(":");
       return `§r§l§¶${key}:§c ${value}${id == undefined ? '' : ':' + id}§r`;
     });
     return formattedArr.join("\n");
+}
+
+export function checkBlockAround (location: Vector3, blockType: MinecraftBlockTypes, dimension: Dimension): boolean {
+    const floorPos: Vector3 = {
+        x: Math.floor(location.x),
+        y: Math.floor(location.y) - 1,
+        z: Math.floor(location.z)
+    } as Vector3
+
+    let blocks: string[] = []
+
+    for (let x = -1; x <= 1; x++) {
+        for (let z = -1; z <= 1; z++) {
+            blocks.push(dimension.getBlock({ x: floorPos.x + x, y: floorPos.y, z: floorPos.z + z } as Vector3)?.typeId)
+        }
+    }
+
+    return new Set(blocks).has(blockType)
 }
 
 let Vl: any = {};

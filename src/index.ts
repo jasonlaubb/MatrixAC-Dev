@@ -21,6 +21,7 @@ import "./Modules/Movement/NoSlow"
 import "./Modules/World/Nuker"
 import "./Modules/World/Scaffold"
 import "./Modules/World/Tower"
+import "./Modules/World/Cbe"
 
 import "./Modules/Player/BlockReach"
 import "./Modules/Player/Illegal Item"

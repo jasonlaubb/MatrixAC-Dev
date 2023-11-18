@@ -29,11 +29,8 @@ export function helpList (p: string): string {
 }
 
 export function toggleList (p: string): string {
-    let list = []
-    for (const module of validModules) {
-        list.push(`§g${p}toggle ${module} <enable/disable> - Toggle ${module} module`)
-    }
-    return list.join("\n")
+    const moduleList = validModules
+    return moduleList.map((module) => `§g${p}toggle ${module} <enable/disable> - Toggle ${module} module`).join("\n")
 }
 
 export const validModules: string[] = [
@@ -53,5 +50,6 @@ export const validModules: string[] = [
     "antiBlockReach",
     "antiAim",
     "antiScaffold",
-    "antiIllegalItem"
+    "antiIllegalItem",
+    "antiCbe"
 ]
