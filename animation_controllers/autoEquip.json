@@ -20,10 +20,10 @@
 			"states": {
 				"default": {
 					"transitions": [{
-						"totem": "query.get_equipped_item_name(\"off_hand\") == \"shield\""
+						"shield": "query.get_equipped_item_name(\"off_hand\") == \"shield\""
 					}]
 				},
-				"totem": {
+				"shield": {
 					"on_entry": ["@s matrix:shield"],
 					"transitions": [{
 						"default": "query.get_equipped_item_name(\"off_hand\") != \"shield\""
