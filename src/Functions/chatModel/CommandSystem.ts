@@ -508,7 +508,7 @@ async function inputCommand (player: Player, message: string, prefix: string): P
         case "langlist": {
             if (!Command.new(player, config.commands.langlist as Cmds)) return
             const list = getAllLang().map(value => `§a- ${value}`)
-            system.run(() => player.sendMessage(`§bMatrix §7> §g ${lang("-landlist.list")}:\n${list.join("\n")}`))
+            system.run(() => player.sendMessage(`§bMatrix §7> §g ${lang("-langlist.list")}:\n${list.join("\n")}`))
             break
         }
         default: {
