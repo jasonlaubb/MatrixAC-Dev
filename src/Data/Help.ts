@@ -34,7 +34,7 @@ export function helpList (p: string): string {
 
 export function toggleList (p: string): string {
     const moduleList = validModules
-    return moduleList.map((module) => `§g${p}toggle ${module} <enable/disable> - ${lang("-toggle.Toggle")} ${module} ${lang("-toggle.module")}`).join("\n")
+    return moduleList.map((module) => `§g${p}toggle ${module} <enable/disable> - ${lang("-toggles.toggle")} ${module} ${lang("-toggles.module")}`).join("\n")
 }
 
 export const validModules: string[] = [

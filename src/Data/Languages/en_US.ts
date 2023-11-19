@@ -53,8 +53,8 @@ export default {
     "-passwords.wrong": "Wrong password",
     "-passwords.changed": "Password has been changed",
 
-    "-flagmode.mode": "Unknown action, please use set/add/remove only",
-    "-flagmode.change": "Flag mode has been changed to %a",
+    "-flagmode.unknown": "Unknown action, please use all/bypass/admin/tag only",
+    "-flagmode.changed": "Flag mode has been changed to %a",
 
     "-rank.unknownAction": "Unknown action, please use set/add/remove only",
     "-rank.enter": "Please enter the rank",

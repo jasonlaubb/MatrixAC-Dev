@@ -18,6 +18,7 @@ world.afterEvents.worldInitialize.subscribe(() => {
 export function changeLanguage (lang: string) {
     if (Object.keys(langs).includes(lang)) {
         languageNow = lang
+        world.setDynamicProperty("matrix:language", lang)
         return true
     }
     return false

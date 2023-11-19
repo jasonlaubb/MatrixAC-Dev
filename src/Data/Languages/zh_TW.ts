@@ -38,9 +38,9 @@ export default {
     "-toggles.toggleList": "切換清單：",
     "-toggles.unknownModule": "未知模組，嘗試 %atoggles",
     "-toggles.toggleChange": "%a 模組已%bd",
-    "-toggles.unknownAction": "未知操作，請僅使用啟用/停用",
+    "-toggles.unknownAction": "未知操作，請僅使用 enable/disable",
 
-    "-op.hasbeen": "%a 已被 %b 反對",
+    "-op.hasbeen": "%a 已被 %b opped",
     "-op.please": "請輸入密碼",
     "-op.now": "您現在是管理者",
     "-op.wrong": "密碼錯誤",
@@ -53,10 +53,10 @@ export default {
     "-passwords.wrong": "密碼錯誤",
     "-passwords.changed": "密碼已更改",
 
-    "-flagmode.mode": "未知操作，請僅使用設定/新增/刪除",
-    "-flagmode.change": "標誌模式已變更為 %a",
+    "-flagmode.unknown": "未知操作，請僅使用 all/bypass/admin/tag",
+    "-flagmode.changed": "標誌模式已變更為 %a",
 
-    "-rank.unknownAction": "未知操作，請僅使用設定/新增/刪除",
+    "-rank.unknownAction": "未知操作，請僅使用 admin/tag/bypass/all",
     "-rank.enter": "請輸入排名",
     "-rank.hasset": "%a 的排名已設定為 %b",
     "-rank.hasadd": "%a 的排名已新增 %b",
@@ -151,6 +151,7 @@ export default {
     ".CommandSystem.unknown_command": "未知指令。請輸入 \"help\" 取得協助。",
     ".CommandSystem.command_disabled": "該指令已停用",
     ".CommandSystem.no_permisson": "您沒有足夠的權限來使用此指令",
+    ".CommandSystem.command_disabled_reason": "您不是管理員，無法使用此指令",
     ".CommandSystem.no_player": "請指定玩家",
     ".CommandSystem.unknown_player": "未知玩家",
     ".CommandSystem.unknown": "未知指令，請嘗試 %ahelp",

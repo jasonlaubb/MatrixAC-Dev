@@ -79,7 +79,7 @@ async function inputCommand (player: Player, message: string, prefix: string): P
 
             world.setDynamicProperty(regax[1], regax[2] === "enable" ? true : false)
 
-            system.run(() => player.sendMessage(`§bMatrix §7> §g ${lang("-toggle.toggleChange").replace("%a", regax[1]).replace("%b", regax[2])}`))
+            system.run(() => player.sendMessage(`§bMatrix §7> §g ${lang("-toggles.toggleChange").replace("%a", regax[1]).replace("%b", regax[2])}`))
             break
         }
         case "op": {
@@ -496,7 +496,7 @@ async function inputCommand (player: Player, message: string, prefix: string): P
         case "lang": {
             if (!Command.new(player, config.commands.lang as Cmds)) return
             if (regax[1] === undefined) return system.run(() => player.sendMessage(`§bMatrix §7> §g ${lang("-lang.enter")}`))
-            if (!getAllLang().includes(regax[1])) return system.run(() => player.sendMessage(`§bMatrix §7> §c ${lang("-lang.unknown")}`))
+            if (!getAllLang().includes(regax[1])) return system.run(() => player.sendMessage(`§bMatrix §7> §c ${lang("-lang.unknown").replace("%a", prefix)}`))
 
             system.run(() => {
                 changeLanguage(regax[1])
