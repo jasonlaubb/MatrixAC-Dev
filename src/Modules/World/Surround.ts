@@ -33,16 +33,19 @@ async function antiSurround (player: Player, block: Block) {
         z: Math.floor(player.location.z)
     } as Vector3
 
+    //calulate the deff between player and the block
     const xDeff = Math.abs(floorPos.x - block.location.x)
     const zDeff = Math.abs(floorPos.z - block.location.z)
     const yChange = floorPos.y - block.location.y
 
+    //check if the block is obsidian and the deff is less than 1, than push the block right now
     if (block.typeId === MinecraftBlockTypes.Obsidian && xDeff <= 1 && zDeff <= 1 && floorPos.y === block.location.y && yChange <= 2 && yChange >= -1) {
         blockPlaceCount.push(Date.now());
     };
 
     blockPlaceData.set(player.id, blockPlaceCount);
 
+    //if block place is in 2 tick is higher than the limit, flag them
     if (blockPlaceCount.length > config.antiSurrond.maxBlocksPer2Tick) {
         block.setType(MinecraftBlockTypes.Air)
 

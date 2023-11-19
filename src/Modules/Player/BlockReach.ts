@@ -20,6 +20,7 @@ async function antiBlockReachA (event: PlayerBreakBlockBeforeEvent, player: Play
     if (player.hasTag("matrix:break-disabled") || isTargetGamemode(player, 1)) return;
     const distance = Vector.distance(player.getHeadLocation(), block.location);
 
+    //if the distance is higher than the max distance, flag the player
     if (distance > config.antiBlockReach.maxBreakDistance) {
         event.cancel = true;
         system.run(() => {
@@ -35,6 +36,7 @@ async function antiBlockReachB (event: PlayerPlaceBlockBeforeEvent, player: Play
     if (player.hasTag("matrix:place-disabled") || isTargetGamemode(player, 1)) return;
     const distance = Vector.distance(player.getHeadLocation(), block.location);
 
+    //if the distance is higher than the max distance, flag the player
     if (distance > config.antiBlockReach.maxPlaceDistance) {
         event.cancel = true;
         system.run(() => {

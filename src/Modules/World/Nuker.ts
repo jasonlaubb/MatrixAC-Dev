@@ -27,12 +27,14 @@ async function antiNuker (player: Player, block: Block) {
     //get the block break count in the 1 tick
     let blockBreakCount: number[] = blockBreakData.get(player.id)?.filter(time => timeNow - time < 50) ?? [];
 
+    //if the block not the fast broken block, push the block right now
     if (!fastBrokenBlocks.includes(block.typeId as MinecraftBlockTypes)) {
         blockBreakCount.push(Date.now());
     };
 
     blockBreakData.set(player.id, blockBreakCount);
 
+    //if block break is in 1 tick is higher than the limit, flag them
     if (blockBreakCount.length > config.antiNuker.maxBreakPerTick) {
         player.addTag("matrix:break-disabled");
         block.dimension.getEntities({ location: block.location, maxDistance: 2, minDistance: 0, type: "minecraft:item" }).forEach((item) => item.kill() )

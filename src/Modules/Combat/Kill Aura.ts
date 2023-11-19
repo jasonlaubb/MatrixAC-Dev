@@ -15,15 +15,18 @@ import { flag, isAdmin } from "../../Assets/Util.js";
 const hitLength = new Map<string, any[]>();
 
 async function KillAura(damagingEntity: Player, hitEntity: Player) {
+    //constant the infomation
     let playerHitEntity = hitLength.get(damagingEntity.name) ?? [];
     const direction: Vector3 = calculateVector(damagingEntity.location, hitEntity.location) as Vector3;
     const distance: number = calculateMagnitude(direction);
 
+    //if the player hit a target that is not in the list, add it to the list
     if (!playerHitEntity.includes(hitEntity.id)) {
         playerHitEntity.push(hitEntity.id);
         hitLength.set(damagingEntity.id, playerHitEntity);
     }
 
+    //if the player hit more than 1 targets in 2 ticks, flag the player
     if (playerHitEntity.length > config.antiKillAura.maxEntityHit && !damagingEntity.hasTag("matrix:pvp-disabled")) {
         hitLength.delete(damagingEntity.name);
         damagingEntity.addTag("matrix:pvp-disabled");
@@ -33,10 +36,13 @@ async function KillAura(damagingEntity: Player, hitEntity: Player) {
         }, config.antiKillAura.timeout);
     }
 
+    //stop false positive
     if (distance < 2 || damagingEntity.hasTag("matrix:pvp-disabled")) return;
 
+    //get the angle
     const angle: number = calculateAngle(damagingEntity.location, hitEntity.location, damagingEntity.getRotation().y);
 
+    //if the angle is higher than the max angle, flag the player
     if (angle > config.antiKillAura.minAngle) {
         flag (damagingEntity, 'Kill Aura', config.antiKillAura.maxVL, config.antiKillAura.punishment, [`Angle:${angle.toFixed(2)}°`])
 

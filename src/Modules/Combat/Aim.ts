@@ -1,8 +1,17 @@
-class LastAction {
+import { world, system, Player } from "@minecraft/server";
+import config from "../../Data/Config";
+import { flag, isAdmin } from "../../Assets/Util";
+
+/**
+ * @author notthinghere
+ * @description A advanced checks for aim, detect illegal aimming of aimbot clients
+ */
+
+interface LastAction {
     rotation: Record<string, { x: number; y: number; rotationSpeed: { x: number; y: number }; averageSpeed: number }>;
 }
 
-class QueueFlag {
+interface QueueFlag {
     [key: string]: { date: number };
 }
 

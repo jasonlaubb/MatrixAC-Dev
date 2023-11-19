@@ -6,7 +6,7 @@ import {
 import config from "../../Data/Config.js";
 import { flag, isAdmin } from "../../Assets/Util.js";
 
-class ClickData {
+interface ClickData {
     clicks: number[]
 }
 
@@ -22,11 +22,14 @@ async function AutoClicker (player: Player) {
     const { id } = player;
     const { clicks } = clickData.get(id) || { clicks: [] };
 
+    //filter the clicks that are older than 1.5 seconds
     const filteredClicks: number[] = clicks.filter(clickTime => currentTime - clickTime < 1500);
     filteredClicks.push(currentTime);
 
+    //constant the clicks per second
     const cps: number = filteredClicks.length;
 
+    //if the clicks per second is higher than the max clicks per second, flag the player
     if (!player.hasTag("matrix:pvp-disabled") && cps > config.antiAutoClicker.maxClicksPerSecond) {
         flag (player, 'Auto Clicker', config.antiAutoClicker.maxVL,config.antiAutoClicker.punishment, [`Click Per Second:${cps.toFixed(0)}`])
         player.applyDamage(6);
@@ -38,6 +41,7 @@ async function AutoClicker (player: Player) {
         }, config.antiAutoClicker.timeout);
     }
 
+    //set the clicks to the map
     clickData.set(id, { clicks: filteredClicks });
 };
 

@@ -10,35 +10,52 @@ const previousLocations = new Map();
  */
 
 async function antiFly (player: Player, now: number) {
+    //constant the infomation
     const { id, isOnGround, isFlying, isInWater, isGliding, threwTridentAt, lastExplosionTime } = player;
+
+    //get the jump boost effect
     const jumpEffect = player.getEffect(MinecraftEffectTypes.JumpBoost)
+
+    //get the previous location
     const prevLoc = previousLocations.get(id);
+
+    //get the velocity
     const { x, z, y: velocity } = player.getVelocity();
 
+    //calculate the xz velocity
     const xz = Math.hypot(x, z)
 
+    //if player is knocked back, remove the tag and player is falling, remove the tag
     if (player.hasTag("matrix:knockback") && velocity <= 0) {
         player.removeTag("matrix:knockback")
     }
 
-    if (isFlying || isInWater || isGliding || player.hasTag("matrix:levitating") || (jumpEffect && jumpEffect.amplifier > 2) || (threwTridentAt && now - threwTridentAt < 3000) || (lastExplosionTime && now - lastExplosionTime < 5000)) {
-        return;
-    }
-
+    //if player is on ground and velocity is 0, set the previous location
     if (isOnGround && velocity === 0) {
         previousLocations.set(id, player.location);
     }
 
+    //if player is flying, in water, gliding, levitating, has jump boost, threw trident or exploded, return
+    if (isOnGround || isFlying || isInWater || isGliding || player.hasTag("matrix:levitating") || (jumpEffect && jumpEffect.amplifier > 2) || (threwTridentAt && now - threwTridentAt < 3000) || (lastExplosionTime && now - lastExplosionTime < 5000)) {
+        return;
+    }
+
+    //check if player is in slime chunk
     const slimeAround = checkBlockAround(player.location, MinecraftBlockTypes.Slime, player.dimension);
 
+    //if player is in slime chunk and velocity is higher than the max velocity, add the tag
     if (slimeAround === true && xz <= 0.39) {
         player.addTag("matrix:slime");
     }
+
+    //if player is not in slime chunk and player is falling, flag the player
     if (slimeAround === false && velocity <= 0) {
         player.removeTag("matrix:slime");
     }
 
     if (prevLoc) {
+
+        //if player is not in slime chunk and velocity is higher than the max velocity, flag the player
         if (velocity > config.antiFly.maxVelocityY && !player.hasTag("matrix:slime") && !player.hasTag("matrix:knockback") && !player.isOnGround) {
             player.teleport(prevLoc);
             player.applyDamage(0);
@@ -53,10 +70,12 @@ async function antiNoFall (player: Player, now: number) {
     const { x, y, z } = player.getVelocity();
     const xz = Math.hypot(x, z)
 
+    //stop false positive
     if (isOnGround || isFlying || isInWater || isGliding || player.hasTag("matrix:levitating") || (jumpEffect && jumpEffect.amplifier > 2) || (threwTridentAt && now - threwTridentAt < 3000) || (lastExplosionTime && now - lastExplosionTime < 5000)) {
         return;
     }
 
+    //velocityY is 0 and velocityXZ is higher than 0.2, flag the player
     if (y === 0 && xz > 0.2){
         player.teleport(prevLoc);
         player.applyDamage(0);

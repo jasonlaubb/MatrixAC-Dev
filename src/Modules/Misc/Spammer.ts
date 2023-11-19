@@ -14,13 +14,14 @@ export { antiSpamModule };
  * @description This is a simple spammer detector. It stops both player spamming and spammer clients
  */
 
-class Data {
+interface Data {
     warnings: number;
     lastMessageTimes: number[];
 };
 
 const previousMessage: Map<string, string> = new Map<string, string>();
 const spamData: Map<string, Data> = new Map<string, Data>();
+
 
 function checkSpam (player: Player, behavior: string) {
     system.run(() => flag (player, "Spammer", config.antiSpam.maxVL, config.antiSpam.punishment, [`behavior:${behavior}`]));
@@ -69,24 +70,29 @@ function antiSpamModule (message: string, player: Player) {
 };
 
 async function AntiSpam (event: ChatSendBeforeEvent, player: Player, message: string) {
+
+    // Check if the message contain a blacklisted word
     if (config.blacklistedMessages.some((word) => message.includes(word))) {
+
+        // cancel the message
         event.cancel = true;
-        //@ts-expect-error
+
+        // increase their warning
         let warningTime: number = player.blacklistMsgWarn ?? 0;
-        warningTime++
-        //@ts-expect-error
+        warningTime++ 
         player.blacklistMsgWarn = warningTime;
+
+        // if warning time is smaller than 2, send a warning message else kick them
         if (warningTime < 2) {
             system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Blacklisted message, warning (${warningTime}/2)`));
             return;
         }
         system.run(() => {
-          kick(player, 'blacklisted message', 'Matrix')
-          world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has been kicked for saying ${message} a blacklisted message`);
+            kick(player, 'blacklisted message', 'Matrix')
+            world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has been kicked for saying ${message} a blacklisted message`);
         })
         return;
     } else {
-        //@ts-expect-error
         player.blacklistMsgWarn = 0;
     }
     system.run(() => {
@@ -95,21 +101,26 @@ async function AntiSpam (event: ChatSendBeforeEvent, player: Player, message: st
             warnings: 0
         } as Data;
 
+        //basic spammer client check
         if (player.hasTag('matrix:attack_time') && !player.getEffect("mining_fatigue")) checkSpam(player, "sending messages while swinging their hand");
         if (player.hasTag('matrix:using_item')) checkSpam(player, "sending messages while using an item");
 
+        //log the message time
         const currentTime: number = Date.now();
         data.lastMessageTimes.push(currentTime);
 
+        //remove the message time if it's older than 1 second
         if (data.lastMessageTimes.length > config.antiSpam.maxMessagesPerSecond) {
             data.lastMessageTimes.shift();
         }
 
+        //if the player send too many messages in 1 second, flag them
         if (data.lastMessageTimes.length >= config.antiSpam.maxMessagesPerSecond &&
             data.lastMessageTimes[data.lastMessageTimes.length - 1] - data.lastMessageTimes[0] < config.antiSpam.timer) {
             antiSpam(player, data);
         }
 
+        //set the new spammer data
         spamData.set(player.id, data);
     })
 }

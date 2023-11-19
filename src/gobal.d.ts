@@ -8,5 +8,6 @@ declare module "@minecraft/server" {
         lastExplosionTime: number;
         noSlowBuffer: number;
         blockData: any[];
+        blacklistMsgWarn: number;
     }
 }

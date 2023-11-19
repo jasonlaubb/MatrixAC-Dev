@@ -26,17 +26,34 @@ async function antiSpeed(player: Player, now: number) {
     }
 
     const { x, z } = player.getVelocity();
+
+    //calulate the Mph from velocity X and Z
     const playerSpeedMph: number = Math.hypot(x, z) * 72000 / 1609.34;
+
+    //get the info from map
     const playerInfo: PlayerInfo = speedData.get(id);
+
+    //state increase the limit from the speed effect
     const limitIncrease: number = getSpeedIncrease(player.getEffect(MinecraftEffectTypes.Speed));
+
+    //calculate the threshold by adding the limit increase
     const mphThreshold: number = config.antiSpeed.mphThreshold + limitIncrease;
+
+    //check if the player is speeding or not
     const isSpeeding: boolean = playerSpeedMph > mphThreshold && speedData.has(id);
+
+    //check if the player is not speeding or is speeding
     const isNotSpeeding: boolean = playerSpeedMph <= mphThreshold && speedData.has(id);
 
+    //if the player is not moving, set the initial location
     if (playerSpeedMph === 0) {
         speedData.set(id, { initialLocation: player.location });
     } else if (isSpeeding) {
+
+        //if the player hasn't already been flagged, flag them
         if (!playerInfo.highestSpeed) {
+
+            //teleport them back
             player.teleport(playerInfo.initialLocation, { dimension: player.dimension, rotation: { x: -180, y: 0 } });
             flag(player, 'Speed', config.antiSpeed.maxVL, config.antiSpeed.punishment, [`Mph:${playerSpeedMph.toFixed(2)}`]);
             player.applyDamage(6);
@@ -47,7 +64,7 @@ async function antiSpeed(player: Player, now: number) {
     }
 }
 
-class PlayerInfo {
+interface PlayerInfo {
     highestSpeed: number;
     initialLocation: Vector3;
 }
