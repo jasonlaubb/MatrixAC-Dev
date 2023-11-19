@@ -26,7 +26,9 @@ export function helpList (p: string): string {
         `§g${p}`+lang("-help.lockdowncode"),
         `§g${p}`+lang("-help.lockdown"),
         `§g${p}`+lang("-help.unlock"),
-        `§g${p}`+lang("-help.adminchat")
+        `§g${p}`+lang("-help.adminchat"),
+        `§g${p}`+lang("-help.lang"),
+        `§g${p}`+lang("-help.langlist")
     ].join("\n")
 }
 

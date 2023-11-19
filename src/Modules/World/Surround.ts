@@ -8,6 +8,7 @@ import {
 import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
 import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
+import lang from "../../Data/Languages/lang";
 
 const blockPlaceData = new Map<string, number[]>();
 
@@ -53,7 +54,7 @@ async function antiSurround (player: Player, block: Block) {
         system.runTimeout(() => player.removeTag("matrix:place-disabled"), config.antiSurrond.timeout);
 
         blockPlaceData.delete(player.id);
-        flag(player, "Surround", config.antiSurrond.maxVL,config.antiSurrond.punishment, ["block:" + block.typeId]);
+        flag(player, "Surround", config.antiSurrond.maxVL,config.antiSurrond.punishment, [lang(">Block") + ":" + block.typeId]);
     }
 }
 

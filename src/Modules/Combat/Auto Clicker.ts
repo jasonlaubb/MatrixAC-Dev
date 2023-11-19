@@ -5,6 +5,7 @@ import {
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
 import { flag, isAdmin } from "../../Assets/Util.js";
+import lang from "../../Data/Languages/lang.js";
 
 interface ClickData {
     clicks: number[]
@@ -31,7 +32,7 @@ async function AutoClicker (player: Player) {
 
     //if the clicks per second is higher than the max clicks per second, flag the player
     if (!player.hasTag("matrix:pvp-disabled") && cps > config.antiAutoClicker.maxClicksPerSecond) {
-        flag (player, 'Auto Clicker', config.antiAutoClicker.maxVL,config.antiAutoClicker.punishment, [`Click Per Second:${cps.toFixed(0)}`])
+        flag (player, 'Auto Clicker', config.antiAutoClicker.maxVL,config.antiAutoClicker.punishment, [`${lang(">Click Per Second")}:${cps.toFixed(0)}`])
         player.applyDamage(6);
         player.addTag("matrix:pvp-disabled");
 

@@ -64,7 +64,7 @@ export function kick (player: Player, reason?: string, by?: string) {
 export function formatInformation (arr: string[]) {
     const formattedArr: string[] = arr.map(item => {
       const [key, value, id] = item.split(":");
-      return `§r§l§¶${key}:§c ${value}${id == undefined ? '' : ':' + id}§r`;
+      return `§r§c» §7${key}:§9 ${value}${id == undefined ? '' : ':' + id}§r`;
     });
     return formattedArr.join("\n");
 }
@@ -100,7 +100,7 @@ export function flag (player: Player, modules: string, maxVL: number,  punishmen
     let vl = ++Vl[player.id][modules]
     if (vl > 99) vl = 99
 
-    let flagMsg = `§bMatrix §7> §b ${player.name}§m` + lang(".Util.has_failed")+`${modules}§r §7[§cx${vl}§7]§r`
+    let flagMsg = `§bMatrix §7> §c ${player.name}§g ` + lang(".Util.has_failed") + ` §4${modules}§r §7[§dx${vl}§7]§r`
     if (infos !== undefined) flagMsg = flagMsg + "\n" + formatInformation(infos)
 
     const flagMode = world.getDynamicProperty("flagMode") ?? config.flagMode

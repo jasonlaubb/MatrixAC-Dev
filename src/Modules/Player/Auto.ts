@@ -1,6 +1,7 @@
 import { world, Player } from "@minecraft/server";
 import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
+import lang from "../../Data/Languages/lang";
 
 /**
  * @author jasonlaubb
@@ -10,29 +11,29 @@ import config from "../../Data/Config";
 
 async function antiAutoTotem (player: Player) {
     if (player.hasTag("matrix:moving") && player.isOnGround && !player.isJumping && !player.isGliding && !player.hasTag("matrix:riding")) {
-        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, ["type:Moving"])
+        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, [lang(">Type") + ":" + lang(">Moving")])
     } else
 
     if (player.hasTag("matrix:usingItem")) {
-        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, ["type:UsingItem"])
+        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, [lang(">Type") + ":" + lang(">UsingItem")])
     } else
 
     if (player.hasTag("matrix:container")) {
-        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, ["type:Container"])
+        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, [lang(">Type") + ":" + lang(">Container")])
     }
 }
 
 async function antiAutoShield (player: Player) {
     if (player.hasTag("matrix:moving") && player.isOnGround && !player.isJumping && !player.isGliding && !player.hasTag("matrix:riding")) {
-        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, ["type:Moving"])
+        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, [lang(">Type") + ":" + lang(">Moving")])
     } else
 
     if (player.hasTag("matrix:usingItem")) {
-        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, ["type:UsingItem"])
+        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, [lang(">Type") + ":" + lang(">UsingItem")])
     } else
 
     if (player.hasTag("matrix:container")) {
-        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, ["type:Container"])
+        flag (player, "Auto Totem", config.antiAutoTotem.maxVL, config.antiAutoTotem.punishment, [lang(">Type") + ":" + lang(">Container")])
     }
 }
 

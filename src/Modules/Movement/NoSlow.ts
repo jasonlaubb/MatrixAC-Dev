@@ -7,6 +7,7 @@ import {
 import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
+import lang from "../../Data/Languages/lang";
 
 function getSpeedIncrease (speedEffect: Effect | undefined) {
     if (speedEffect === undefined) return 0;
@@ -66,7 +67,7 @@ async function antiNoSlow(player: Player) {
             if (buffer + 1 <= config.antiNoSlow.maxNoSlowBuff) return
             if (player.getEffect(MinecraftEffectTypes.Speed)) return
             player.noSlowBuffer = 0
-            flag (player, "NoSlow", config.antiNoSlow.maxVL,config.antiNoSlow.punishment, [`playerSpeed:${playerSpeed.toFixed(2)}`])
+            flag (player, "NoSlow", config.antiNoSlow.maxVL,config.antiNoSlow.punishment, [`${lang(">playerSpeed")}:${playerSpeed.toFixed(2)}`])
             player.teleport(playerLastPos)
         }
     } else {

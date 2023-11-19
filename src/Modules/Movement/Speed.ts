@@ -9,6 +9,7 @@ import {
 import config from "../../Data/Config.js";
 import { flag, isAdmin } from "../../Assets/Util.js";
 import { MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index.js";
+import lang from "../../Data/Languages/lang.js";
 
 const speedData = new Map();
 
@@ -55,7 +56,7 @@ async function antiSpeed(player: Player, now: number) {
 
             //teleport them back
             player.teleport(playerInfo.initialLocation, { dimension: player.dimension, rotation: { x: -180, y: 0 } });
-            flag(player, 'Speed', config.antiSpeed.maxVL, config.antiSpeed.punishment, [`Mph:${playerSpeedMph.toFixed(2)}`]);
+            flag(player, 'Speed', config.antiSpeed.maxVL, config.antiSpeed.punishment, [`${lang(">Mph")}:${playerSpeedMph.toFixed(2)}`]);
             player.applyDamage(6);
             playerInfo.highestSpeed = playerSpeedMph;
         }

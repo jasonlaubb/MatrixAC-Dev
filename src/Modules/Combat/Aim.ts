@@ -1,6 +1,7 @@
 import { world, system, Player } from "@minecraft/server";
 import config from "../../Data/Config";
 import { flag, isAdmin } from "../../Assets/Util";
+import lang from "../../Data/Languages/lang";
 
 /**
  * @author notthinghere
@@ -34,7 +35,7 @@ async function AntiAim (player: Player) {
             const delay: number = Date.now() - queueFlag[player.id].date
             if (delay < 50) {
                 isFlagged = true
-                flag (player, "Aim", config.antiAim.maxVL, config.antiAim.punishment, ["RotSpeed:" + averageSpeed.toFixed(2), "Delay:" + delay.toFixed(2)])
+                flag (player, "Aim", config.antiAim.maxVL, config.antiAim.punishment, [lang(">RotSpeed") + ":" + averageSpeed.toFixed(2), "Delay:" + delay.toFixed(2)])
             }
         }
 
@@ -43,7 +44,7 @@ async function AntiAim (player: Player) {
             timer.set(`aim-b:${player.id}`, timerSet + 1);
             if (timerSet > 30) {
                 isFlagged = true
-                flag (player, "Aim", config.antiAim.maxVL, config.antiAim.punishment, ["RotSpeedX:" + rotationSpeed.x.toFixed(2), "RotSpeedY:" + rotationSpeed.y.toFixed(2)])
+                flag (player, "Aim", config.antiAim.maxVL, config.antiAim.punishment, [lang(">RotSpeedX") + ":" + rotationSpeed.x.toFixed(2), lang(">RotSpeedY") + ":" + rotationSpeed.y.toFixed(2)])
             }
         } else timer.set(`aim-b:${player.id}`, 0);
         
@@ -53,7 +54,7 @@ async function AntiAim (player: Player) {
                 timer.set(`aim-c:${player.id}`, (timer.get(`aim-c:${player.id}`) || 0) + 1);
                 if ((timer.get(`aim-c:${player.id}`) || 0) > 25) {
                     isFlagged = true
-                    flag (player, "Aim", config.antiAim.maxVL, config.antiAim.punishment, ["RotSpeed:" + averageSpeed.toFixed(2)])
+                    flag (player, "Aim", config.antiAim.maxVL, config.antiAim.punishment, [lang(">RotSpeed") + ":" + averageSpeed.toFixed(2)])
                 }
             } else if (Math.abs(averageSpeed - lastAction.rotation[player.id].averageSpeed) > 0) {
                 timer.set(`aim-c:${player.id}`, 0);

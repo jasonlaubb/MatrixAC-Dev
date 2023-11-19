@@ -1,6 +1,7 @@
 import { world, Player } from "@minecraft/server";
 import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
+import lang from "../../Data/Languages/lang";
 
 /**
  * @author jasonlaubb
@@ -12,7 +13,7 @@ async function antiNameSpoof (player: Player, playerName: string) {
 
     //check if the player name is too long or too short
     if (playerName.length < 3 || playerName.length > 16) {
-        flag (player, "NameSpoof", 0, config.antiNameSpoof.punishment, ["type:illegalLength", "length:" + playerName.length])
+        flag (player, "NameSpoof", 0, config.antiNameSpoof.punishment, [lang(">Type") + ":" + lang(">illegalLength"), lang(">Length") + ":" + playerName.length])
         return
     }
 
@@ -36,7 +37,7 @@ async function antiNameSpoof (player: Player, playerName: string) {
 
         //if the player name is illegal, flag the player
         if (illegalName === true) {
-            flag (player, "NameSpoof", 0, config.antiNameSpoof.punishment, ["type:illegalRegax"])
+            flag (player, "NameSpoof", 0, config.antiNameSpoof.punishment, [lang(">Type") + ":" + lang(">illegalRegax")])
         }
     }
 }

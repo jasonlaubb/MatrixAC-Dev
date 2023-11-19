@@ -9,6 +9,7 @@ import config from "../../Data/Config.js";
 import {
     flag, isAdmin
 } from "../../Assets/Util.js";
+import lang from "../../Data/Languages/lang.js";
 
 const reachData: Map <string, number> = new Map <string, number> ();
 
@@ -67,7 +68,7 @@ async function AntiReach (hurtEntity: Player, damagingEntity: Player) {
 
     //if the vl is higher than 2, flag the player
     if (reachData.get(damagingEntity.id) >= 2) {
-        flag(damagingEntity, 'Reach', config.antiReach.maxVL,config.antiReach.punishment, ["distance:" + distance.toFixed(2), "yReach:" + yReach.toFixed(2)])
+        flag(damagingEntity, 'Reach', config.antiReach.maxVL,config.antiReach.punishment, [lang(">distance") + ":" + distance.toFixed(2), lang(">yReach") + ":" + yReach.toFixed(2)])
         damagingEntity.applyDamage(6);
         reachData.delete(damagingEntity.id);
     }

@@ -2,6 +2,7 @@ import { world, system, Player, Block, Vector3 } from "@minecraft/server";
 import { flag, isAdmin } from "../../Assets/Util";
 import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import config from "../../Data/Config";
+import lang from "../../Data/Languages/lang";
 
 interface TowerData {
     towerBlock: Vector3;
@@ -63,7 +64,7 @@ async function antiTower(player: Player, block: Block) {
 
         //remove the tag after timeout
         system.runTimeout(() => player.removeTag("matrix:place-disabled"), config.antiTower.timeout);
-        flag(player, "Tower", config.antiTower.maxVL, config.antiTower.punishment, ["Delay:" + delay.toFixed(2), "PosDeff:" + playerPosDeff.toFixed(2), "CentreDis:" + playerCentreDis.toFixed(2)]);
+        flag(player, "Tower", config.antiTower.maxVL, config.antiTower.punishment, [lang("Delay") + ":" + delay.toFixed(2), lang(">PosDeff") + ":" + playerPosDeff.toFixed(2), lang("CentreDis") + ":" + playerCentreDis.toFixed(2)]);
     }
 }
 world.afterEvents.playerPlaceBlock.subscribe(({ player, block }) => {

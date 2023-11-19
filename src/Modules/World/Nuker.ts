@@ -8,6 +8,7 @@ import { flag, isAdmin } from "../../Assets/Util";
 import config from "../../Data/Config";
 import { MinecraftBlockTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
 import fastBrokenBlocks from "../../Data/FastBrokenBlocks";
+import lang from "../../Data/Languages/lang";
 
 const blockBreakData = new Map<string, number[]>();
 
@@ -44,7 +45,7 @@ async function antiNuker (player: Player, block: Block) {
         system.runTimeout(() => player.removeTag("matrix:break-disabled"), config.antiNuker.timeout);
 
         blockBreakData.delete(player.id);
-        flag(player, "Nuker", config.antiNuker.maxVL,config.antiNuker.punishment, ["block:" + block.typeId]);
+        flag(player, "Nuker", config.antiNuker.maxVL,config.antiNuker.punishment, [lang(">Block") + ":" + block.typeId]);
     }
 }
 

@@ -1,11 +1,13 @@
 import { world } from "@minecraft/server";
 import en_US from "./en_US";
 import config from "../Config";
+import zh_TW from "./zh_TW";
 
 let languageNow = "en_US"
 
-const lang: { [key: string]: { [key: string]: string } } = {
-    "en_US": en_US
+export const langs: { [key: string]: { [key: string]: string } } = {
+    "en_US": en_US,
+    "zh_TW": zh_TW
 }
 
 world.afterEvents.worldInitialize.subscribe(() => {
@@ -14,9 +16,14 @@ world.afterEvents.worldInitialize.subscribe(() => {
 })
 
 export function changeLanguage (lang: string) {
-    languageNow = lang
+    if (Object.keys(langs).includes(lang)) {
+        languageNow = lang
+        return true
+    }
+    return false
 }
+export const getAllLang = () => Object.keys(langs)
 
 export default function (key: string): string {
-    return lang[languageNow][key]
+    return langs[languageNow][key]
 }

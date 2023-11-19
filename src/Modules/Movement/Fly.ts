@@ -2,6 +2,7 @@ import { world, system, GameMode, Player } from "@minecraft/server";
 import { flag, isAdmin, checkBlockAround } from "../../Assets/Util";
 import config from "../../Data/Config";
 import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../node_modules/@minecraft/vanilla-data/lib/index";
+import lang from "../../Data/Languages/lang";
 
 const previousLocations = new Map();
 /**
@@ -59,7 +60,7 @@ async function antiFly (player: Player, now: number) {
         if (velocity > config.antiFly.maxVelocityY && !player.hasTag("matrix:slime") && !player.hasTag("matrix:knockback") && !player.isOnGround) {
             player.teleport(prevLoc);
             player.applyDamage(0);
-            flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, ["velocityY:" + velocity.toFixed(2)])
+            flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, [lang(">velocityY") + ":" + + velocity.toFixed(2)])
         }
     }
 }
@@ -79,7 +80,7 @@ async function antiNoFall (player: Player, now: number) {
     if (y === 0 && xz > 0.2){
         player.teleport(prevLoc);
         player.applyDamage(0);
-        flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, ["velocityY:" + y.toFixed(2), "velocityXZ:" + xz.toFixed(2)])
+        flag (player, "Fly", config.antiFly.maxVL, config.antiFly.punishment, [lang(">velocityY") + ":" + + y.toFixed(2), lang(">velocityXZ") + ":" + + xz.toFixed(2)])
     }
 }
 

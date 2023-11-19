@@ -161,6 +161,16 @@ export default {
             enabled: true,
             adminOnly: true,
             requireTag: undefined
+        },
+        lang: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
+        },
+        langlist: {
+            enabled: true,
+            adminOnly: true,
+            requireTag: undefined
         }
     },
     /** 

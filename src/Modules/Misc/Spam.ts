@@ -5,6 +5,7 @@ import {
 } from "@minecraft/server";
 import config from "../../Data/Config.js";
 import { isAdmin, kick } from "../../Assets/Util.js";
+import lang from "../../Data/Languages/lang.js";
 
 export { antiSpamModule };
 
@@ -25,7 +26,7 @@ async function spammingWarner (player: Player, data: Data) {
     data.warnings++;
 
     if (data.warnings <= config.antiSpam.kickThreshold) {
-        player.sendMessage(`§2§l§¶Matrix >§m Please send messages slowly §8(${data.warnings}/${config.antiSpam.kickThreshold})`);
+        player.sendMessage(`§bMatrix §7>§g ${lang(".Spam.slowdown")} §8(${data.warnings}/${config.antiSpam.kickThreshold})`);
     }
 
     system.runTimeout(() => {
@@ -35,7 +36,7 @@ async function spammingWarner (player: Player, data: Data) {
 
     if (data.warnings > config.antiSpam.kickThreshold) {
         system.run(() => kick (player, 'spamming', 'Matrix'))
-        world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has been kicked for spamming`);
+        world.sendMessage(`§2§l§¶Matrix §7>§g ${lang(".Spam.kicked").replace("%a", player.name)}`);
     }
 };
 
@@ -46,17 +47,17 @@ function antiSpamModule (message: string, player: Player) {
     let isSpamming = false;
 
     if (previousMessage.has(player.id) && previousMessage.get(player.id) === message) {
-        system.run(() => player.sendMessage('§2§l§¶Matrix >§m You cannot send the same message again'));
+        system.run(() => player.sendMessage('§bMatrix §7>§g ' + lang(".Spam.repeated")));
         isSpamming = true
     } else {
         previousMessage.set(player.id, message);
     }
 
     if (message.length > config.antiSpam.maxCharacterLimit) {
-        player.sendMessage(`§2§2§l§¶Matrix >§m Your message is too long ¶§8(${message.length}/${config.antiSpam.maxCharacterLimit})`);
+        player.sendMessage(`§bMatrix §7>§g ${lang(".Spam.long")} §8(${message.length}/${config.antiSpam.maxCharacterLimit})`);
         isSpamming = true
     } else if (config.chatFilter.some((word) => message.toLowerCase().includes(word))) {
-        system.run(() => player.sendMessage(`§2§l§¶Matrix >§m Your message contains a filtered word`));
+        system.run(() => player.sendMessage(`§bMatrix §7>§g ${lang(".Spam.filter")}`));
         isSpamming = true
     }
 
@@ -73,12 +74,12 @@ function antiSpamModule (message: string, player: Player) {
     
         // if warning time is smaller than 2, send a warning message else kick them
         if (warningTime < 2) {
-            system.run(() => player.sendMessage(`§2§l§¶Matrix >§4 Blacklisted message, warning (${warningTime}/2)`));
+            system.run(() => player.sendMessage(`§bMatrix §7>§4 Blacklisted message, warning §8(${warningTime}/2)`));
             isSpamming = true;
         }
         system.run(() => {
             kick(player, 'blacklisted message', 'Matrix')
-            world.sendMessage(`§2§l§¶Matrix >§4 ${player.name}§m has been kicked for saying ${message} a blacklisted message`);
+            world.sendMessage(`§bMatrix §7>§g ${lang(".Spam.kickedBlacklist").replace("%a", player.name)}`);
         })
         isSpamming = true;
     } else {

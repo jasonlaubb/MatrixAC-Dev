@@ -5,6 +5,8 @@
  * @link https://github.com/jasonlaubb/Matrix-AntiCheat
  */
 
+import "./Data/Languages/lang"
+
 import "./Modules/Combat/Auto Clicker"
 import "./Modules/Combat/Kill Aura"
 import "./Modules/Combat/Reach"
