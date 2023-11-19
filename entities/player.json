@@ -142,9 +142,7 @@
                     "causes_fire": false,
                     "breaks_blocks": false
                 }
-            },
-            "matrix:container_add_tag": {},
-            "matrix:container_remove_tag": {}
+            }
         },
         "components": {
             "minecraft:experience_reward": {
@@ -284,7 +282,7 @@
                                 }
                             ]
                         },
-                        "event": "matrix:has_container_open"
+                        "event": "matrix:containerOpen"
                     },
                     {
                         "filters": {
@@ -297,28 +295,16 @@
                                 }
                             ]
                         },
-                        "event": "matrix:!has_container_open"
+                        "event": "matrix:containerClose"
                     }
                 ]
             }
         },
         "events": {
-            "matrix:has_container_open": {
-                "add": {
-                    "component_groups": ["matrix:container_add_tag"]
-                },
-                "remove": {
-                    "component_groups": ["matrix:container_add_tag"]
-                }
-            },
-            "matrix:!has_container_open": {
-                "add": {
-                    "component_groups": ["matrix:container_remove_tag"]
-                },
-                "remove": {
-                    "component_groups": ["matrix:container_remove_tag"]
-                }
-            },
+            "matrix:containerOpen": {},
+            "matrix:containerClose": {},
+            "matrix:totem": {},
+            "matrix:shield": {},
             "matrix:kick": {
                 "add": {
                     "component_groups": ["matrix:kick"]
