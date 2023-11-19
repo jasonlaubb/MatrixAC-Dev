@@ -1,14 +1,4 @@
-import { world, system, Player } from "@minecraft/server";
-import config from "../../Data/Config";
-import { flag, isAdmin } from "../../Assets/Util";
-
-/**
- * @author notthinghere
- * @description A advanced checks for aim, detect illegal aimming of aimbot clients
- */
-
-class LastAction {
-    rotation: Record<string, { x: number; y: number; rotationSpeed: { x: number; y: number }; averageSpeed: number }>;
+4Ll   rotation: Record<string, { x: number; y: number; rotationSpeed: { x: number; y: number }; averageSpeed: number }>;
 }
 
 class QueueFlag {
@@ -85,13 +75,6 @@ world.afterEvents.itemStartUse.subscribe((event) => {
     const toggle: boolean = (world.getDynamicProperty("antiAim") ?? config.antiAim.enabled) as boolean;
     if (toggle !== true) return;
     const player = event.source;
-    queueFlag[player.id] = {date: Date.now()};
-});
-
-world.afterEvents.entityHitEntity.subscribe((event) => {
-    const toggle: boolean = (world.getDynamicProperty("antiAim") ?? config.antiAim.enabled) as boolean;
-    if (toggle !== true) return;
-    const {damagingEntity: player} = event;
     queueFlag[player.id] = {date: Date.now()};
 });
 
