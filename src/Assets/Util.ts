@@ -12,6 +12,7 @@ import { ban } from "../Functions/moderateModel/banHandler";
 import config from "../Data/Config";
 import { triggerEvent } from "../Functions/moderateModel/eventHandler";
 import { MinecraftItemTypes, MinecraftEnchantmentTypes, MinecraftBlockTypes } from "../node_modules/@minecraft/vanilla-data/lib/index";
+import lang from "../Data/Languages/lang";
 
 world.afterEvents.itemReleaseUse.subscribe(({ itemStack, source: player }) => {
     if (itemStack?.typeId === MinecraftItemTypes.Trident && player instanceof Player) {
@@ -54,7 +55,7 @@ world.afterEvents.entityHurt.subscribe(event => {
 
 export function kick (player: Player, reason?: string, by?: string) {
     try {
-        player.runCommand(`kick "${player.name}" \n§2§l§¶Matrix >§4 ${player.name} §mYou have been kicked\n§fReason: §c${reason ?? 'No reason provided'}\n§fBy: §c${by ?? 'Unknown'}`)
+        player.runCommand(`kick "${player.name}" \n§bMatrix §7> §b ${player.name} §m${lang(".Util.kicked")}\n§f${lang(".Util.reason")}: §c${reason ?? lang(".Util.noreason")}\n§fBy: §c${by ?? lang(".Util.unknown")})}`)
     } catch {
         triggerEvent (player, "matrix:kick")
     }
@@ -99,7 +100,7 @@ export function flag (player: Player, modules: string, maxVL: number,  punishmen
     let vl = ++Vl[player.id][modules]
     if (vl > 99) vl = 99
 
-    let flagMsg = `§2§l§¶Matrix >§4 ${player.name}§m has failed ${modules}§r §7[§cx${vl}§7]§r`
+    let flagMsg = `§bMatrix §7> §b ${player.name}§m` + lang(".Util.has_failed")+`${modules}§r §7[§cx${vl}§7]§r`
     if (infos !== undefined) flagMsg = flagMsg + "\n" + formatInformation(infos)
 
     const flagMode = world.getDynamicProperty("flagMode") ?? config.flagMode
@@ -188,7 +189,7 @@ export function isAdmin (player: Player) {
 }
 
 export function timeToMs(timeStr: string) {
-    const timeUnits = {
+    const timeUnits: { [key: string]: number } = {
         d: 86400000,
         h: 3600000,
         m: 60000,
@@ -201,7 +202,6 @@ export function timeToMs(timeStr: string) {
     for (const unit in timeUnits) {
         match = timeStr.match(new RegExp(`(\\d+)${unit}`));
         if (match) {
-            //@ts-expect-error
             ms += parseInt(match[1]) * timeUnits[unit];
         }
     }

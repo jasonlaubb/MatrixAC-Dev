@@ -8,6 +8,7 @@ import { antiSpamModule } from "../../Modules/Misc/Spam";
 import { inputCommand } from "./CommandSystem";
 import { chatRank } from "./ChatRank";
 import { adminChat } from "./AdminChat";
+import lang from "../../Data/Languages/lang";
 
 //@ts-ignore
 world.beforeEvents.chatSend.subscribe((event) => {
@@ -23,7 +24,7 @@ world.beforeEvents.chatSend.subscribe((event) => {
 
     if (player.getDynamicProperty("mute") === true) {
         event.cancel = true;
-        system.run(() => player.sendMessage("§2§l§¶Matrix >§4 You are muted!"))
+        system.run(() => player.sendMessage("§2§l§¶Matrix >§4 "+lang(".ChatHandler.muted")))
         return
     }
 

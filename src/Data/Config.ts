@@ -11,6 +11,7 @@ export default {
      * @description
      * The setting for our functions
      */
+    language: "en_US",
     flagMode: "tag",
     lockdowncode: "AbCdEfGh",
     commands: {
@@ -335,7 +336,7 @@ export default {
             nameLength: {
                 enabled: true,
                 punishment: undefined,
-                maxItemNameLength: 64
+                maxItemNameLength: 32
             },
             itemTag: {
                 enabled: true,
@@ -351,6 +352,11 @@ export default {
                 punishment: "kick",
                 whiteList: [], //example: ["knockback:4"] than knockback enchantment with level 4 will not be punished
 
+            },
+            enchantConflict: {
+                enabled: true,
+                punishment: "kick",
+                whitList: [], //example: ["mending","infinity"] than mending and infinity will not be punished
             },
             enchantAble: {
                 enabled: true,
@@ -373,6 +379,12 @@ export default {
         timeout: 100,
         punishment: "kick",
         maxVL: 0
+    },
+
+    antiAutoTotem: {
+        enabled: true,
+        punishment: "kick",
+        maxVL: 4
     },
 
     antiOperator: {

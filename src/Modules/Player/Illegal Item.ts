@@ -63,8 +63,9 @@ function ItemCheck (player: Player, container: Container): "Safe" | "Unsafe" {
         const itemEnchant = item.getComponent(ItemEnchantsComponent.componentId) as ItemEnchantsComponent
         const enchantments = itemEnchant.enchantments
 
-        if (config.antiIllegalItem.state.enchantLevel.enabled) {
+        if (config.antiIllegalItem.state.enchantLevel.enabled || config.antiIllegalItem.state.enchantConflict.enabled) {
             let patchedEnchantment = []
+            let mode = "ItemEnchantment"
             for (const enchantment of enchantments) {
                 if (config.antiIllegalItem.state.enchantLevel.enabled) {
                     const enchantmentType = enchantment.type
@@ -75,9 +76,16 @@ function ItemCheck (player: Player, container: Container): "Safe" | "Unsafe" {
                         patchedEnchantment.push(enchantmentType.id + ":" + enchantmentLevel)
                     }
                 }
+                if (config.antiIllegalItem.state.enchantConflict.enabled) {
+                    const isConflict = enchantments.canAddEnchantment(enchantment)
+                    if (isConflict === false) {
+                        patchedEnchantment.push(enchantment.type.id + ":" + enchantment.level)
+                        mode = "ItemEnchantmentConflict"
+                    }
+                }
             }
             if (patchedEnchantment.length > 0) {
-                flag (player, "Illegal Item", 0, config.antiIllegalItem.state.enchantLevel.punishment, ["mode:ItemEnchantment", ...patchedEnchantment])
+                flag (player, "Illegal Item", 0, config.antiIllegalItem.state.enchantLevel.punishment, ["mode:" + mode, ...patchedEnchantment])
                 state = "Unsafe"
                 container.setItem(i)
                 continue
