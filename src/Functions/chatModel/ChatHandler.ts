@@ -4,7 +4,7 @@ import {
 } from "@minecraft/server";
 
 import config from "../../Data/Config";
-import { antiSpamModule } from "../../Modules/Misc/Spammer";
+import { antiSpamModule } from "../../Modules/Misc/Spam";
 import { inputCommand } from "./CommandSystem";
 import { chatRank } from "./ChatRank";
 import { adminChat } from "./AdminChat";

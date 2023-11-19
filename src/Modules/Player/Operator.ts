@@ -13,11 +13,13 @@ async function operator (player: Player) {
 
     const playerIsOp = player.isOp();
 
+    //if the player is op and not admin, remove the op
     if (playerIsOp && !isadmin) {
         player.setOp(false)
         flag (player, "Operator", 0, config.antiOperator.punishment, undefined)
     }
 
+    //if the player isn't op and is admin, add the op
     if (!playerIsOp && isadmin) {
         player.setOp(true)
     }

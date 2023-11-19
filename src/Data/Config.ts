@@ -265,9 +265,13 @@ export default {
         timer: 500,
         maxCharacterLimit: 200,
         kickThreshold: 3,
-        timeout: 200,
+        timeout: 200
+    },
+
+    antiSpammer: {
+        enabled: true,
         punishment: "kick",
-        maxVL: 4
+        maxVL: 2
     },
 
     antiBlockReach: {

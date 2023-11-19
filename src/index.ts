@@ -10,6 +10,7 @@ import "./Modules/Combat/Kill Aura"
 import "./Modules/Combat/Reach"
 import "./Modules/Combat/Aim"
 
+import "./Modules/Misc/Spam"
 import "./Modules/Misc/Spammer"
 import "./Modules/Misc/Crasher"
 
