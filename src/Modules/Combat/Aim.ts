@@ -1,4 +1,5 @@
-4Ll   rotation: Record<string, { x: number; y: number; rotationSpeed: { x: number; y: number }; averageSpeed: number }>;
+class LastAction {
+    rotation: Record<string, { x: number; y: number; rotationSpeed: { x: number; y: number }; averageSpeed: number }>;
 }
 
 class QueueFlag {
