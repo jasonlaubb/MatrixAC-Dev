@@ -6,6 +6,12 @@ import lang from "../../Data/Languages/lang";
 const velocityList = new Map<string, number[]>();
 const lastSafePosition = new Map<string, Vector3>();
 
+/**
+ * @author jasonlaubb
+ * @description A movement check that detect fly with lower false positives
+ * This check tracking player with un-natural falling movement
+*/
+
 async function Movement (player: Player) {
     let distribution: number[] = velocityList.get(player.id) ?? [];
     const { y } = player.getVelocity();
