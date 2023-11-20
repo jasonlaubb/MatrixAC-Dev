@@ -6,7 +6,7 @@ import {
 } from "@minecraft/server";
 import { isAdmin } from "../../Assets/Util";
 
-class Freeze {
+interface Freeze {
     location: Vector3;
     dimension: string;
 }
