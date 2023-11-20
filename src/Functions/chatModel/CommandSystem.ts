@@ -290,7 +290,7 @@ async function inputCommand (player: Player, message: string, prefix: string): P
             if (unfreezed) {
                 system.run(() => world.sendMessage(`§bMatrix §7> §g ${lang("-unfreeze.has").replace("%a", target.name).replace("%b", player.name)}`))
             } else {
-                system.run(() => world.sendMessage(`§bMatrix §7> §c ${lang("-unfreeze.not").replace("%a", target.name)}`))
+                system.run(() => player.sendMessage(`§bMatrix §7> §c ${lang("-unfreeze.not").replace("%a", target.name)}`))
             }
             break
         }
