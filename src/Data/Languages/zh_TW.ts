@@ -37,7 +37,7 @@ export default {
     "-toggles.module": "模組",
     "-toggles.toggleList": "切換清單：",
     "-toggles.unknownModule": "未知模組，嘗試 %atoggles",
-    "-toggles.toggleChange": "%a 模組已%bd",
+    "-toggles.toggleChange": "%a 模組已 %bd",
     "-toggles.unknownAction": "未知操作，請僅使用 enable/disable",
 
     "-op.hasbeen": "%a 已被 %b opped",
@@ -207,6 +207,7 @@ export default {
     ">Block": "方塊",
     ">RotationX": "x軸迴轉",
     ">RotationY": "y軸迴轉",
+    ">relative": "相對值",
     ">Delay": "間隔",
     ">typeId": "類型名稱",
     ">nameLength": "名字長度",

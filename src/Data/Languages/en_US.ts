@@ -207,6 +207,7 @@ export default {
     ">Block": "Block",
     ">RotationX": "RotationX",
     ">RotationY": "RotationY",
+    ">relative": "relative",
     ">Delay": "Delay",
     ">typeId": "typeId",
     ">nameLength": "nameLength",

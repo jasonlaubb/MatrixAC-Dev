@@ -20,6 +20,7 @@ import "./Modules/Movement/Fly"
 import "./Modules/Movement/Phase"
 import "./Modules/Movement/Speed"
 import "./Modules/Movement/NoSlow"
+import "./Modules/Movement/Motion"
 
 import "./Modules/World/Nuker"
 import "./Modules/World/Scaffold"

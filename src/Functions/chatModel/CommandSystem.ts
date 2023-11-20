@@ -96,9 +96,9 @@ async function inputCommand (player: Player, message: string, prefix: string): P
                 if (password === undefined || password.length <= 0) return system.run(() => player.sendMessage(`§bMatrix §7> §c ${lang(".CommandSystem.please")}`))
                 if (password == correctPassword) {
                     player.setDynamicProperty("isAdmin", true)
-                    system.run(() => player.sendMessage(`§bMatrix §7> §g ${lang(".CommandSystem.now")}`))
+                    system.run(() => player.sendMessage(`§bMatrix §7> §g ${lang("-op.now")}`))
                 } else {
-                    system.run(() => player.sendMessage(`§bMatrix §7> §c ${lang(".CommandSystem.wrong")}`))
+                    system.run(() => player.sendMessage(`§bMatrix §7> §c ${lang("-op.wrong")}`))
                 }
             }
             break      

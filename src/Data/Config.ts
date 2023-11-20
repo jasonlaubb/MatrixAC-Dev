@@ -231,6 +231,14 @@ export default {
         maxVL: 4
     },
 
+    antiMotion: {
+        enabled: true,
+        maxrelativeY: 0.6,
+        minrelativeY: 0.1,
+        punishment: "kick",
+        maxVL: 4
+    },
+
     antiPhase: {
         enabled: true,
         punishment: "kick",
