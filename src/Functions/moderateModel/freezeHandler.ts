@@ -38,7 +38,7 @@ function freeze(player: Player) {
     } as Vector3;
     if (player.getDynamicProperty("freeze") !== undefined) return false;
     system.run(() => {
-        player.setDynamicProperty("freeze", JSON.stringify({ location: floorPos, dimension: player.dimension }));
+        player.setDynamicProperty("freeze", JSON.stringify({ location: floorPos, dimension: player.dimension.id }));
     });
     return true;
 }
