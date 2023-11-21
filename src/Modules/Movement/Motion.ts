@@ -12,16 +12,18 @@ const lastSafePosition = new Map<string, Vector3>();
  * This check tracking player with un-natural falling movement
 */
 
-async function Movement (player: Player) {
+async function antiMotion (player: Player) {
     let distribution: number[] = velocityList.get(player.id) ?? [];
     const { y } = player.getVelocity();
 
     const lastPos = lastSafePosition.get(player.id) ?? player.location;
 
-    //end the movement calculation if player is on ground
+    //log the safe position if player is on ground
     if (player.isOnGround && y === 0) {
         lastSafePosition.set(player.id, player.location)
     }
+
+    //end the movement calculation if player is on ground
     if (player.isOnGround) {
         velocityList.delete(player.id)
         return
@@ -34,8 +36,9 @@ async function Movement (player: Player) {
         return;
     }
 
-    //keep same length of the distribution data
+    //remove the first velocity Y and join a new one
     distribution.shift()
+    distribution.push(y)
     velocityList.set(player.id, distribution);
 
     //get the relative velocity by using the distribution data
@@ -74,7 +77,7 @@ system.runInterval(() => {
 
     for (const player of world.getPlayers({ excludeGameModes: [GameMode.spectator, GameMode.creative]})) {
         if (isAdmin (player)) continue;
-        Movement (player)
+        antiMotion (player)
     }
 }, 1)
 

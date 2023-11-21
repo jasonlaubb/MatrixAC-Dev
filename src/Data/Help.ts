@@ -51,11 +51,13 @@ export const validModules: string[] = [
     "antiNuker",
     "antiSurround",
     "antiTower",
+    "antiFastUse",
     "antiNoSlow",
     "antiBlockReach",
     "antiAim",
     "antiScaffold",
     "antiIllegalItem",
     "antiNameSpoof",
-    "antiOperator"
+    "antiOperator",
+    "antiCBE"
 ]
