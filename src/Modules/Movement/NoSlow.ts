@@ -61,6 +61,7 @@ async function antiNoSlow (player: Player) {
     if (headWeb === true || bodyWeb === true) {
         if (playerSpeed <= (0.04 + limitIncrease)) {
             lastPosition.set(player, playerLocation);
+            player.noSlowBuffer = 0
         } else {
             //flag the player, if the buffer is higher than the max buffer, teleport the player back
             player.noSlowBuffer++
@@ -73,6 +74,7 @@ async function antiNoSlow (player: Player) {
     } else {
         if (buffer > 0) {
             player.noSlowBuffer = 0
+            lastPosition.set(player, playerLocation);
         }
     }
 
@@ -93,8 +95,8 @@ async function antiNoSlow (player: Player) {
 system.runInterval(() => {
     const toggle = (world.getDynamicProperty("antiNoSlow") ?? config.antiNoSlow.enabled) as boolean;
     if (toggle !== true) return;
-
-    for (const player of world.getAllPlayers()) {
+    const players = world.getAllPlayers()
+    for (const player of players) {
         if (isAdmin (player)) continue;
         antiNoSlow(player);
     }
