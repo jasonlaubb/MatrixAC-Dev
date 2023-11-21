@@ -401,7 +401,7 @@ export default {
 
     antiFastUse: {
         enabled: true,
-        minUseTime: 200,
+        minUseTime: 50,
         timeout: 60,
         punishment: "kick",
         maxVL: 2
