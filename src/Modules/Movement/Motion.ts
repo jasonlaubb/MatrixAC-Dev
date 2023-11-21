@@ -74,8 +74,8 @@ function findWater (player: Player) {
 system.runInterval(() => {
     const toggle: boolean = Boolean(world.getDynamicProperty("antiMotion")) ?? config.antiMotion.enabled;
     if (toggle !== true) return;
-
-    for (const player of world.getPlayers({ excludeGameModes: [GameMode.spectator, GameMode.creative]})) {
+    const players = world.getPlayers({ excludeGameModes: [GameMode.spectator, GameMode.creative]})
+    for (const player of players) {
         if (isAdmin (player)) continue;
         antiMotion (player)
     }
