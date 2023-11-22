@@ -11,5 +11,6 @@ declare module "@minecraft/server" {
         blacklistMsgWarn: number;
         lastTouchWater: number;
         lastItemUsed: number;
+        lastTouchGround: number;
     }
 }
