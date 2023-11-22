@@ -45,8 +45,8 @@ async function antiMotion (player: Player) {
     const relativeVelocity = distribution.filter(velocity => velocity >= 0).length / distribution.length;
 
     //if the player is falling, and the last 3 velocity is negative, keep falling
-    const keepFalling = (y < 0 && distribution[distribution.length - 2] < 0 && distribution[distribution.length - 3] < 0) && player.isFalling
-
+    const keepFalling = y < 0 && distribution.slice(-3).every(v => v < 0) && player.isFalling;
+    
     //log player touch water time
     if (player.isInWater || player.isSwimming || findWater(player)) {
         player.lastTouchWater = Date.now()

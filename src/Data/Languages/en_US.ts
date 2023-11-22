@@ -202,6 +202,7 @@ export default {
     ">Mode": "Mode",
     ">Break": "Break",
     ">Place": "Place",
+    ">GameMode": "GameMode",
     ">illegalLength": "illegalLength",
     ">illegalRegax": "illegalRegax",
     ">Length": "Length",

@@ -202,6 +202,7 @@ export default {
     ">Mode": "模式",
     ">Break": "破壞",
     ">Place": "放置",
+    ">GameMode": "遊戲模式",
     ">illegalLength": "違規長度",
     ">illegalRegax": "違規字元",
     ">Length": "長度",
