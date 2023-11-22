@@ -59,7 +59,7 @@ async function antiNoSlow (player: Player) {
 
     //check if the player is in the web and the player speed is lower than the max speed
     if (headWeb === true || bodyWeb === true) {
-        if (playerSpeed <= (0.04 + limitIncrease)) {
+        if (playerSpeed <= (0.09 + limitIncrease)) {
             lastPosition.set(player, playerLocation);
             player.noSlowBuffer = 0
         } else {
