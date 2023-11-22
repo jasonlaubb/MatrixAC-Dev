@@ -190,6 +190,7 @@ export default {
     ">RotSpeedY": "RotSpeedY",
     ">Type": "Type",
     ">Pos": "Pos",
+    ">PosDeff": "PosDeff",
     ">AttackTime": "AttackTime",
     ">UsingItem": "UsingItem",
     ">Moving": "Moving",

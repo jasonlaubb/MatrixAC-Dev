@@ -190,6 +190,7 @@ export default {
     ">RotSpeedY": "y軸旋轉速度",
     ">Type": "類型",
     ">Pos": "座標",
+    ">PosDeff": "座標差",
     ">AttackTime": "攻擊時間",
     ">UsingItem": "使用物品",
     ">Moving": "移動",

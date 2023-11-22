@@ -29,7 +29,7 @@ async function antiBlockReachA (event: PlayerBreakBlockBeforeEvent, player: Play
             if (player.hasTag("matrix:break-disabled")) return;
             player.addTag("matrix:break-disabled")
             system.runTimeout(() => player.removeTag("matrix:break-disabled"), config.antiBlockReach.timeout)
-            flag (player, "BlockReach", config.antiBlockReach.maxVL, config.antiBlockReach.punishment, [lang(">Reach") + distance.toFixed(2), lang(">Mode") + lang(">Break")])
+            flag (player, "BlockReach", config.antiBlockReach.maxVL, config.antiBlockReach.punishment, [lang(">Reach") + ":" + distance.toFixed(2), lang(">Mode") + ":" + lang(">Break")])
         })
     }
 }
@@ -45,13 +45,13 @@ async function antiBlockReachB (event: PlayerPlaceBlockBeforeEvent, player: Play
             if (player.hasTag("matrix:place-disabled")) return;
             player.addTag("matrix:place-disabled")
             system.runTimeout(() => player.removeTag("matrix:place-disabled"), config.antiBlockReach.timeout)
-            flag (player, "BlockReach", config.antiBlockReach.maxVL, config.antiBlockReach.punishment, [lang(">Reach") + distance.toFixed(2), lang(">Mode") + lang(">Place")])
+            flag (player, "BlockReach", config.antiBlockReach.maxVL, config.antiBlockReach.punishment, [lang(">Reach") + ":" + distance.toFixed(2), lang(">Mode") + ":" + lang(">Place")])
         })
     }
 }
 
 function absCentrePos (pos: Vector3) {
-    return { x: Math.floor(pos.x) - 0.5, y: Math.floor(pos.y) - 0.5, z: Math.floor(pos.z) - 0.5 } as Vector3
+    return { x: pos.x - 0.5, y: pos.y - 0.5, z: pos.z - 0.5 } as Vector3
 }
 
 world.beforeEvents.playerBreakBlock.subscribe(event => {
